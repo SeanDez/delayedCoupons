@@ -1,0 +1,10 @@
+{
+    "name": "owner/delayed-coupons",
+    "authors": [
+        {
+            "name": "Sean Dez",
+            "email": "sd@seandezoysa.com"
+        }
+    ],
+    "require": {}
+}
