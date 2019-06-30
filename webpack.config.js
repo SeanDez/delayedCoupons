@@ -11,11 +11,13 @@ module.exports = {
   output : {
     filename : 'shared/[name].bundle.js',
     path : path.resolve(__dirname, ''),
+    publicPath : "/",
   },
   devtool: 'inline-source-map',
   devServer : {
     contentBase : './adminSettingsArea/src',
-    hot : true
+    hot : true,
+    historyApiFallback : true
   },
   plugins : [
     new webpack.HotModuleReplacementPlugin(),
