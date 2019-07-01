@@ -8,13 +8,7 @@ import Tab from '@material-ui/core/Tab';
 import {Link as RouterLink} from "react-router-dom";
 import MaterialLink from "@material-ui/core/Link";
 
-////// Styling //////
-const jssClasses = makeStyles(theme => ({
-  appBar : {
-    flexGrow : 1,
-    backgroundColor : theme.palette.background.paper
-  }
-}));
+
 
 ////// View Constants //////
 const addNewCoupon = 'addNewCoupon',
@@ -23,7 +17,10 @@ const addNewCoupon = 'addNewCoupon',
 
 ////// Component //////
 export default () => {
+  
+  ////// State //////
   const [adminView, setAdminView] = useState('addNewCoupon');
+  
   
   return (
     <React.Fragment>
@@ -55,7 +52,17 @@ export default () => {
 };
 
 
-////// STYLED COMPONENTS //////
+////// Styling //////
+
+const jssClasses = makeStyles(theme => ({
+  appBar : {
+    flexGrow : 1,
+    backgroundColor : theme.palette.background.paper
+  }
+}));
+
+
+////// Styled Components //////
 const StyledRouterLink = styled(RouterLink)`
   text-decoration: inherit;
   color: inherit;
