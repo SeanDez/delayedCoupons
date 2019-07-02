@@ -1,4 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
+import {Route} from "react-router-dom";
 import {TestTunnel} from "./index.jsx";
 
 import {makeStyles} from "@material-ui/core/styles";
@@ -17,18 +18,18 @@ import axios from "axios";
 ////// Form Poster //////
 
 // todo get async await ready for this function
-export const postFormData = async (ajaxUrl, formData) => {
+export const postFormData = (ajaxUrl, formData) => {
   const {pageTarget, displayThreshold, numberOfOffers,
           couponHeadline, couponDescription, headlineTextColor, headlineBackgroundColor, descriptionTextColor, descriptionBackgroundColor} = formData;
 
   // todo get the ajaxUrl from php
 
   // try {
-  //   const data = await axios.post(ajaxUrl, {
+  //   const response = await axios.post(ajaxUrl, {
   //     pageTarget, displayThreshold, numberOfOffers,
   //     couponHeadline, couponDescription, headlineTextColor, headlineBackgroundColor, descriptionTextColor, descriptionBackgroundColor
-  //   }).then(res => res);
-  //   return data;
+  //   });
+  //   return response.data.json(); // add await
   // }
   // catch (e) {
   //   console.log(e, `=====error=====`);
@@ -68,15 +69,13 @@ export default props => {
   }, [headlineTextColor]);
   
   
+  // todo split this form in 2 parts after it works
+  
   return (
     <React.Fragment>
       <h3>Add Coupons Form</h3>
       
-      <form
-        action=""
-        method="post"
-        className={styles.form}
-      >
+      <form className={styles.form} >
         <TextField
           label="Target page"
           helperText='Copy and paste the target page for the coupon to be shown here'
@@ -195,13 +194,17 @@ export default props => {
           </Select>
         </div>
         
-        <Button
-          className={[styles.addButton, styles.formChild].join(' ')}
-          onClick={() => {
-            // postFormData(null, null)
-            //   .then(res => res)
-          }}
-        >Add Coupon</Button>
+        <Route render={props => (
+          <Button
+            className={[styles.addButton, styles.formChild].join(' ')}
+            onClick={() => {
+              // postFormData(null, null)
+              //   .then(res => res)
+              props.history.push('/view-coupons')
+            }}
+          >Add Coupon</Button>
+        )}
+        />
       </form>
       
       {/*<p>Test k1 from hook: { testValue.k1 }</p>*/}
@@ -216,7 +219,7 @@ const jssStyles = makeStyles(theme => ({
     width: '100%', // Fix IE 11 issue.
     // minHeight : 800,
     marginTop: theme.spacing(0),
-    border: '1px solid lightgray',
+    // border: '1px solid lightgray',
     padding: '0 3vw',
     display : "flex",
     flexFlow : "column wrap",
