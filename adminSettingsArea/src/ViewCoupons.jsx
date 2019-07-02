@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext} from "react";
+import {CurrentCouponChannel} from "./index.jsx";
 
 import {makeStyles} from "@material-ui/core/styles";
 import Table from '@material-ui/core/Table';
@@ -11,6 +12,7 @@ import TableCell from '@material-ui/core/TableCell';
 
 
 export default props => {
+  const couponData = useContext(CurrentCouponChannel);
   
   ////// Side Effects //////
 
@@ -19,6 +21,7 @@ export default props => {
   
   return (
     <React.Fragment>
+      {console.log(couponData, `=====couponData=====`)}
       <h3>View Coupons</h3>
       <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click
          the delete icon to remove it.</p>
@@ -34,9 +37,9 @@ export default props => {
               <TableCell>Delete?</TableCell>
             </TableRow>
           </TableHead>
-          <tbody>
+          <TableBody>
         
-          </tbody>
+          </TableBody>
         </Table>
                       :
         <p>No Coupons to Show</p>

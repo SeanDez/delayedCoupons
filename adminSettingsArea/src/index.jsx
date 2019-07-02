@@ -30,7 +30,7 @@ const AdminArea = () => {
           path='/view-coupons'
           render={props => (
             <CurrentCouponChannel.Provider
-              value={state}>
+              value={state.currentCouponsAndTargets}>
               <ViewCoupons />
             </CurrentCouponChannel.Provider>
           )}
