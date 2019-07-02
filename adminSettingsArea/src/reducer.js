@@ -1,6 +1,13 @@
 import {useReducer} from "react";
+import dummyCouponData from "./dummyCouponData";
 
-export const initialState = {count: 0, k1 : 'v1'};
+
+
+export const initialState = {
+  count: 0, 
+  k1 : 'v1',
+  currentCouponsAndTargets : dummyCouponData
+};
 
 export const reducer = (previousState, action) => {
   switch (action.type) {
@@ -11,4 +18,6 @@ export const reducer = (previousState, action) => {
       throw new Error();
   }
 };
+
+
 

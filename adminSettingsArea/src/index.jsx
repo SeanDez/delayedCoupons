@@ -8,7 +8,6 @@ import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
 
 
-const TabSectionTunnel = React.createContext(null);
 
 
 
@@ -30,7 +29,10 @@ const AdminArea = () => {
         <Route
           path='/view-coupons'
           render={props => (
-            <ViewCoupons />
+            <CurrentCouponChannel.Provider
+              value={state}>
+              <ViewCoupons />
+            </CurrentCouponChannel.Provider>
           )}
         />
         
@@ -50,6 +52,8 @@ const AdminArea = () => {
 
 ////// CONTEXT PROVIDERS //////
 export const TestTunnel = React.createContext();
+
+export const CurrentCouponChannel = React.createContext();
 
 
 
