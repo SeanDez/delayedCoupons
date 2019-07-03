@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {CurrentCouponChannel} from "./index.jsx";
 
 import {makeStyles} from "@material-ui/core/styles";
@@ -16,6 +16,9 @@ export default props => {
   const couponData = useContext(CurrentCouponChannel),
         styles = useStyles();
   
+  const [tableMarker, setTableMarker] = useState(0);
+  
+  
   // decides whether or not to render table
   const checkifCouponDataExists = data => {
     if (data && data.length) {
@@ -25,8 +28,16 @@ export default props => {
   };
   
   // renders body cell data
-  const renderTableBody = data => {
-    return data.map((record, i) => (
+  const renderTableBody = (data, marker) => {
+    console.log(marker, `=====marker=====`);
+    
+    const filteredData = data.filter((arrayItem, index) => (
+      index >= marker &&
+      index <= (marker + 9)
+    ));
+    console.log(filteredData, `=====filteredData=====`);
+    
+    return filteredData.map((record, i) => (
       <TableRow key={i}>
         <TableCell align='center'>{record.pageTarget}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
@@ -37,9 +48,29 @@ export default props => {
     ))
   };
   
+  
+  // calculate table position
+  const adjustTableMarker = (currentPosition, direction, upperLimit) => {
+    if ( // below 0, reset to 0
+      currentPosition + direction <= 0) {
+      setTableMarker(0);
+    } else if (currentPosition + direction >= upperLimit) { // goes over limit, no adding
+      setTableMarker(currentPosition);
+    } else { // else let it run
+      setTableMarker(currentPosition + direction);
+    }
+  };
+  
+  
+
+  
+  
   ////// Side Effects //////
 
-  // (Re)Render table rows based on state.currentCouponsAndTargets
+  // (Re)Render table rows based on state change to tableMarker
+  useEffect(() => {
+    renderTableBody(couponData, tableMarker);
+  }, [tableMarker]);
   
   
   return (
@@ -61,7 +92,7 @@ export default props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              { renderTableBody(couponData) }
+              { renderTableBody(couponData, tableMarker) }
             </TableBody>
           </StyledTable>
         
@@ -69,9 +100,15 @@ export default props => {
           <PrevNextContainer>
             <FaChevronCircleLeft
               className={styles.bigIcon}
+              onClick={() => {
+                adjustTableMarker(tableMarker, -10, couponData.length)
+              }}
             />
             <FaChevronCircleRight
               className={styles.bigIcon}
+              onClick={() => {
+                adjustTableMarker(tableMarker, 10, couponData.length)
+              }}
             />
           </PrevNextContainer>
         </React.Fragment>
