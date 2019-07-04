@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
 import styled from "styled-components";
-import {FaChevronCircleLeft, FaChevronCircleRight} from 'react-icons/fa';
+import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
 
 
 export default props => {
@@ -19,31 +19,42 @@ export default props => {
   const [tableMarker, setTableMarker] = useState(0);
   
   
+  // todo use record.couponId to send a delete request
   // decides whether or not to render table
-  const checkifCouponDataExists = data => {
+  const checkIfCouponDataExists = data => {
     if (data && data.length) {
       return true;
     }
     return false
   };
   
+  
+  // send row delete request
+  
+  
+  
+  
   // renders body cell data
   const renderTableBody = (data, marker) => {
-    console.log(marker, `=====marker=====`);
-    
     const filteredData = data.filter((arrayItem, index) => (
       index >= marker &&
       index <= (marker + 9)
     ));
-    console.log(filteredData, `=====filteredData=====`);
     
-    return filteredData.map((record, i) => (
-      <TableRow key={i}>
+    // return a new array of JSX table rows
+    return filteredData.map(record => (
+      <TableRow key={record.couponId}>
         <TableCell align='center'>{record.pageTarget}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
         <TableCell align='center'>{record.numberOfOffers}</TableCell>
-        <TableCell align='center'>{Math.random() * 100}</TableCell>
-        <TableCell align='center'>delete</TableCell>
+        <TableCell align='center'>{Math.round(Math.random() * 100)}</TableCell>
+        <TableCell align='center'>
+          <FaTrashAlt
+            onClick={() => {
+              // todo use record.couponId to send a delete request
+            }}
+          />
+        </TableCell>
       </TableRow>
     ))
   };
@@ -67,10 +78,12 @@ export default props => {
   
   ////// Side Effects //////
 
-  // (Re)Render table rows based on state change to tableMarker
+  // (Re)Render table rows based on state changes
+  // couponData changes after a delete request
+  // tableMarker changes when prev/next selected
   useEffect(() => {
     renderTableBody(couponData, tableMarker);
-  }, [tableMarker]);
+  }, [couponData, tableMarker]);
   
   
   return (
@@ -79,7 +92,7 @@ export default props => {
       <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click
          the delete icon to remove it.</p>
       
-      { checkifCouponDataExists(couponData) ?
+      { checkIfCouponDataExists(couponData) ?
         <React.Fragment>
           <StyledTable className={ styles.table }>
             <TableHead>

@@ -1,3 +1,5 @@
+require("babel-polyfill");
+
 // can't use ES6 here
 const webpack = require("webpack");
 const dotenvWebpack = require("dotenv-webpack");
@@ -7,7 +9,7 @@ module.exports = {
   entry : {
     polyfill : 'babel-polyfill',
     adminArea :
-      './adminSettingsArea/src/index.jsx'
+      ['babel-polyfill', './adminSettingsArea/src/index.jsx']
   },
   output : {
     filename : 'shared/[name].bundle.js',

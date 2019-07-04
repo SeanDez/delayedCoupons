@@ -13,12 +13,12 @@ import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
 
 
-
+//
 
 ////// Form Poster //////
 
 // todo get async await ready for this function
-export const postFormData = (ajaxUrl, formData) => {
+export const postFormData = async (ajaxUrl, formData) => {
   const {pageTarget, displayThreshold, numberOfOffers,
           couponHeadline, couponDescription, headlineTextColor, headlineBackgroundColor, descriptionTextColor, descriptionBackgroundColor} = formData;
 

@@ -7,7 +7,7 @@ import TabSection from "./TabSection.jsx";
 import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
 
-
+import axios from "axios";
 
 
 
@@ -50,14 +50,38 @@ const AdminArea = () => {
 };
 
 
-////// CONTEXT PROVIDERS //////
+////// Context Providers //////
 export const TestTunnel = React.createContext();
 
 export const CurrentCouponChannel = React.createContext();
 
 
 
-////// SCRIPT INJECTION //////
+////// Pure Functions //////
+
+// this returns a promise that resolves to json
+const loadCouponData = () => {
+  let ajaxUrl = '';
+  
+  // if in the browser environment
+  if (window &&
+      window.ajaxUrl
+  ) {
+    ajaxUrl === window.ajaxUrl;
+  }
+  
+  return axios
+    .post(ajaxUrl, {
+    action : 'getCurrentCoupons'
+  })
+    // take the data property. convert it to json and return it as a promise
+    .then(res => res.data.json())
+};
+
+
+
+
+////// Script Injection //////
 ReactDOM.render(
   <AdminArea/>,
   document.getElementById('adminRoot')
