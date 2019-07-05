@@ -1,3 +1,4 @@
+require("./globals");
 import React, {useReducer} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -8,7 +9,6 @@ import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
 
 import axios from "axios";
-
 
 
 
