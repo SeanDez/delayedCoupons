@@ -29,7 +29,7 @@ const ajaxRequestor = new AjaxRequestor(ajaxUrl);
 export default props => {
   const styles = useStyles();
 
-  // const couponData = useContext(CurrentCouponChannel);
+  // const couponData = useContext(CurrentCouponChannel); // decided not to run data through the parent.
   
   // load couponData initially and onChange
   const [couponData, setCouponData] = useState();
@@ -39,8 +39,8 @@ export default props => {
       (async () => {
         const response = await ajaxRequestor.post({
           action : 'loadCouponData'
-        }, undefined, dummyCouponData);
-        console.log(response, `=====response=====`);
+        }, ajaxUrl, dummyCouponData);
+
         setCouponData(response.data);
       })();
     }
@@ -53,26 +53,40 @@ export default props => {
   const [tableMarker, setTableMarker] = useState(0);
   
   
-  // todo use record.couponId to send a delete request
-  // decides whether or not to render table
+  
+  
+  // decides whether to render table or "no data" msg
   const checkIfCouponDataExists = data => {
     if (data && data.length) {
-      console.log(`=====coupon data exist=====`);
       return true;
     }
-    console.log(`=====coupon data doesn't exist=====`);
+    
     return false
   };
   
   
-  // send row delete request
-  
-  
+  // todo use record.couponId to send a delete request
+  // send row delete request to a handler
+  // also force a change on local state key couponData to force refresh it
+  const deleteTableRow = couponId => {
+    // todo create a handler for this on the server
+    
+    try {
+      const response = ajaxRequestor.post({
+        action : 'deleteCurrentCoupon',
+        payload : { couponId }
+      }, ajaxUrl);
+      
+      return response.data;
+    }
+    catch (e) {
+      console.log(e, `=====error=====`);
+    }
+  };
   
   
   // renders body cell data
   const renderTableBody = (data, marker) => {
-    console.log(data, `=====data=====`);
     const filteredData = data.filter((arrayItem, index) => (
       index >= marker &&
       index <= (marker + 9)
