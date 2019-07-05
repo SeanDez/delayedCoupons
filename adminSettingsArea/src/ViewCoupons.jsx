@@ -1,5 +1,7 @@
 import React, {useState, useContext, useEffect} from "react";
 import {CurrentCouponChannel} from "./index.jsx";
+import AjaxRequestor from './utilities/AjaxRequestor';
+import dummyCouponData from "./dummyCouponData";
 
 import {makeStyles} from "@material-ui/core/styles";
 import Table from '@material-ui/core/Table';
@@ -12,9 +14,41 @@ import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
 
 
+// workaround to fill ajaxUrl
+let ajaxUrl = 'hardcoded value';
+if (window && window.ajaxUrl) {
+  ajaxUrl = window.ajaxUrl;
+}
+
+// setup the request handler
+const ajaxRequestor = new AjaxRequestor(ajaxUrl);
+
+
+
+
 export default props => {
-  const couponData = useContext(CurrentCouponChannel),
-        styles = useStyles();
+  const styles = useStyles();
+
+  // const couponData = useContext(CurrentCouponChannel);
+  
+  // load couponData initially and onChange
+  const [couponData, setCouponData] = useState();
+  
+  useEffect( () => {
+    try {
+      async () => {
+        const response = await ajaxRequestor.post({
+          action : 'loadCouponData'
+        }, undefined, dummyCouponData);
+  
+        setCouponData(response.data);
+      }
+    }
+    catch (e) {
+      console.log(e, `=====error=====`);
+    }
+  }, [couponData]);
+  
   
   const [tableMarker, setTableMarker] = useState(0);
   
@@ -23,8 +57,10 @@ export default props => {
   // decides whether or not to render table
   const checkIfCouponDataExists = data => {
     if (data && data.length) {
+      console.log(`=====c data exist=====`);
       return true;
     }
+    console.log(`=====c data doesn't exist=====`);
     return false
   };
   
@@ -36,6 +72,7 @@ export default props => {
   
   // renders body cell data
   const renderTableBody = (data, marker) => {
+    console.log(data, `=====data=====`);
     const filteredData = data.filter((arrayItem, index) => (
       index >= marker &&
       index <= (marker + 9)
@@ -72,18 +109,14 @@ export default props => {
     }
   };
   
-  
-
-  
-  
-  ////// Side Effects //////
-
   // (Re)Render table rows based on state changes
   // couponData changes after a delete request
   // tableMarker changes when prev/next selected
-  useEffect(() => {
-    renderTableBody(couponData, tableMarker);
-  }, [couponData, tableMarker]);
+  // useEffect(() => {
+  //   renderTableBody(couponData, tableMarker);
+  // }, [couponData, tableMarker]);
+
+  
   
   
   return (

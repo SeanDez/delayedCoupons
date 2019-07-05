@@ -11,6 +11,7 @@ import axios from "axios";
 
 
 
+
 const AdminArea = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   
@@ -68,6 +69,14 @@ const loadCouponData = () => {
       window.ajaxUrl
   ) {
     ajaxUrl === window.ajaxUrl;
+  }
+  
+  
+  try {
+    const response = ajaxRequestor.post()
+  }
+  catch (e) {
+    console.log(e, `=====error=====`);
   }
   
   return axios
