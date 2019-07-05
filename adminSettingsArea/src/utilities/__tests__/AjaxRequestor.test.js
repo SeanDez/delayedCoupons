@@ -6,8 +6,8 @@ const ajaxRequestor = new AjaxRequestor('testValue');
 
 test('ajaxRequestor', async () => {
   // test the dev flow
-  const response = await ajaxRequestor.post(undefined, undefined, { k : 'v'});
-  expect(response).toStrictEqual({k : 'v'});
+  const response = await ajaxRequestor.post(undefined, undefined, [{ k : 'v'}]);
+  expect(response.data).toStrictEqual([{k : 'v'}]);
   
   
   // test parameterizing
@@ -19,7 +19,7 @@ test('ajaxRequestor', async () => {
   // test mock returning
   try {
     const response = await ajaxRequestor.post(undefined, undefined, dummyCouponData);
-    expect(response).toEqual(dummyCouponData);
+    expect(response.data).toEqual(dummyCouponData);
   }
   catch (e) {
     console.log(e, `=====error=====`);

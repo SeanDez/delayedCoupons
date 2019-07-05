@@ -36,13 +36,13 @@ export default props => {
   
   useEffect( () => {
     try {
-      async () => {
+      (async () => {
         const response = await ajaxRequestor.post({
           action : 'loadCouponData'
         }, undefined, dummyCouponData);
-  
+        console.log(response, `=====response=====`);
         setCouponData(response.data);
-      }
+      })();
     }
     catch (e) {
       console.log(e, `=====error=====`);
@@ -57,10 +57,10 @@ export default props => {
   // decides whether or not to render table
   const checkIfCouponDataExists = data => {
     if (data && data.length) {
-      console.log(`=====c data exist=====`);
+      console.log(`=====coupon data exist=====`);
       return true;
     }
-    console.log(`=====c data doesn't exist=====`);
+    console.log(`=====coupon data doesn't exist=====`);
     return false
   };
   

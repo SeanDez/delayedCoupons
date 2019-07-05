@@ -26,7 +26,7 @@ export default class AjaxRequestor {
     ) {
       try {
         const resolvedValue = await Promise
-          .resolve(returnData);
+          .resolve({data : returnData});
 
         return resolvedValue;
       }
