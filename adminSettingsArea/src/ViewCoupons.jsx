@@ -31,7 +31,12 @@ export default props => {
 
   // const couponData = useContext(CurrentCouponChannel); // decided not to run data through the parent.
   
-  // load couponData initially and onChange
+  /**
+   * loads couponData initially and onChange
+   *
+   * Automatically updates after a delete request, which also modifies the array bound to couponData
+   */
+
   const [couponData, setCouponData] = useState();
   
   useEffect( () => {
@@ -55,7 +60,13 @@ export default props => {
   
   
   
-  // decides whether to render table or "no data" msg
+  /**
+   * decides whether to render table or "no data" msg
+   *
+   * @return boolean (bound to a test in render)
+   *
+   **/
+  
   const checkIfCouponDataExists = data => {
     if (data && data.length) {
       return true;
@@ -65,8 +76,16 @@ export default props => {
   };
   
   
-  // send row delete request to a handler
-  // also force a change on local state key couponData to force refresh it
+
+  
+  /**
+   * Deletes a single table row
+   * takes in a couponId. Gives it to a handler on the back end to run a delete query
+   *
+   * Also modifies a state key being watched by a useEffect, which will then update automatically on change
+   *
+   */
+  
   const deleteCouponTableRow = couponId => {
     // todo create a handler for this delete request on the server
     
@@ -84,7 +103,17 @@ export default props => {
   };
   
   
-  // renders body cell data
+  /**
+   *  renders body cell data
+   *
+   *  @param data array. Holds coupon, target, and view data
+   *
+   *  @param marker int. decides what list item to start/end rendering
+   *
+   *  @return array of JSX values (table elements) to be created by Javascript
+   *
+   */
+  
   const renderTableBody = (data, marker) => {
     const filteredData = data.filter((arrayItem, index) => (
       index >= marker &&
@@ -110,7 +139,16 @@ export default props => {
   };
   
   
-  // calculate table position
+  /** calculate table position
+   *
+   * prevents the table marker from going too high or low
+   *
+   * @param currentPosition int.
+   * @param direction int. Examples: 10, -10
+   * @param upperLimit int. Gives the .length of the data array in state
+   *
+   * @return void. State is updated. Next, useEffect calls dependent on same state key will auto-update
+   */
   const adjustTableMarker = (currentPosition, direction, upperLimit) => {
     if ( // below 0, reset to 0
       currentPosition + direction <= 0) {
@@ -122,15 +160,11 @@ export default props => {
     }
   };
   
-  // (Re)Render table rows based on state changes
-  // couponData changes after a delete request
-  // tableMarker changes when prev/next selected
-  // useEffect(() => {
-  //   renderTableBody(couponData, tableMarker);
-  // }, [couponData, tableMarker]);
 
   
-  
+  /**
+   * Renders either a data table of current coupons, or a "no coupons" message
+   */
   
   return (
     <React.Fragment>
@@ -178,7 +212,14 @@ export default props => {
   );
 }
 
-////// Jss Styles //////
+
+
+/** a JSS preprocessor that takes styles as a large object argument,
+ *
+ * @type {StylesHook<Styles<Theme, {}, string>>}
+ *
+ * @return function. Resulting function useStyles is executed and returns an object that allows access to the styles below by their key. Styles are assigned in className
+ */
 
 const useStyles = makeStyles(theme => ({
   table : {
