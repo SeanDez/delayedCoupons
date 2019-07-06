@@ -11,22 +11,24 @@ namespace DelayedCoupons;
 require_once ('vendor/autoload.php');
 
 
-// global constants
+////// Global Constants //////
+
 define('PLUGIN_FOLDER_PATH', plugin_dir_path(__FILE__));
 define("PLUGIN_FOLDER_URL", plugin_dir_url(__FILE__));
 
 
-////// ON PLUGIN ACTIVATION //////
+////// On Plugin Activation Hook //////
 
 
 
 
-////// PAGE BUILDER FUNCTIONS AND MATCHING HOOKS //////
+////// Page Builder Functions & Matching Hooks //////
 
-// ADMIN PAGE
+// Admin Page
 require_once ('adminSettingsArea/index.php');
 
-
+// Ajax Handlers
+require_once('adminSettingsArea/ajaxControllers.php');
 
 
 

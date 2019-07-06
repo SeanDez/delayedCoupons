@@ -65,16 +65,15 @@ export default props => {
   };
   
   
-  // todo use record.couponId to send a delete request
   // send row delete request to a handler
   // also force a change on local state key couponData to force refresh it
   const deleteCouponTableRow = couponId => {
-    // todo create a handler for this on the server
+    // todo create a handler for this delete request on the server
     
     try {
       const response = ajaxRequestor.post({
         action : 'deleteCurrentCoupon',
-        couponId
+        payload : { couponId }
       }, ajaxUrl);
       
       return response.data;
