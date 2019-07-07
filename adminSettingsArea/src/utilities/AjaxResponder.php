@@ -3,12 +3,12 @@
 /**
  * Class AjaxResponder
  * Used to respond to post requests
- * During testing its instance will return instead
+ * During testing its main method will return instead
  */
 
 class AjaxResponder {
   
-  protected $environment;
+  protected $environment = 'production';
   
   /**
    * AjaxResponder constructor.
@@ -41,8 +41,10 @@ class AjaxResponder {
   public function res($responseData) {
     if ($this->environment === 'production') {
       wp_send_json($responseData);
-    } else {
+    } else if ($this->environment === 'development') {
       return json_encode($responseData);
+    } else {
+      throw new Error('AjaxRequestor environment misconfigured');
     }
   }
 }
