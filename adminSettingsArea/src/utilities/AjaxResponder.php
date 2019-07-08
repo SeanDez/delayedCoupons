@@ -1,38 +1,29 @@
 <?php
+namespace admin\utilities;
+
+require_once (PLUGIN_FOLDER_PATH . '/vendor/autoload.php');
+require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/src/utilities/setupEnvVariables.php');
+
+use admin\setupEnvVariables;
+
 
 /**
- * Class AjaxResponder
  * Used to respond to post requests
  * During testing its main method will return instead
  */
-
 class AjaxResponder {
+
+  // trait that sets environment and loads env variables
+  use setupEnvVariables { setupEnvVariables::__construct as __sevConstruct;}
   
-  protected $environment = 'production';
-  
-  /**
-   * AjaxResponder constructor.
-   *
-   * Tells the instance how to behave, depending on environment
-   *
-   * @param string $environment
-   */
-  
-  public function __construct($environment = 'production') {
-    $this->setEnvironment($environment);
-  }
+  protected $environment;
   
   
-  /**
-   * Takes a string and sets the appropriate environment
-   *
-   * @param string $environment (production | testing)
-   */
-  public function setEnvironment($environment) {
-    $this->environment = $environment;
-  }
+  public function __construct() {
+      $this->__sevConstruct();
+    }
   
-  
+    
   /**
    * Responds in production. Returns in testing
    * @param mixed $responseData

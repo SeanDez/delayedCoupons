@@ -28,7 +28,7 @@ define("PLUGIN_FOLDER_URL", plugin_dir_url(__FILE__));
 require_once ('adminSettingsArea/index.php');
 
 // Ajax Handlers
-require_once('adminSettingsArea/ajaxControllers.php');
+require_once('adminSettingsArea/AjaxControllers.php');
 
 
 
