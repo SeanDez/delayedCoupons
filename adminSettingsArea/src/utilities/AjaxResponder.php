@@ -14,18 +14,19 @@ use admin\setupEnvVariables;
 class AjaxResponder {
 
   // trait that sets environment and loads env variables
-  use setupEnvVariables { setupEnvVariables::__construct as __sevConstruct;}
+  use setupEnvVariables { setupEnvVariables::__construct as __sevConstruct;
+  }
   
-  protected $environment;
-  
-  
-  public function __construct() {
-      $this->__sevConstruct();
+  /**
+   * @param $environment string. If set to null, defaults to production or gets overridden by a NODE_ENV setting
+   */
+  public function __construct($environment = null) {
+      $this->__sevConstruct($environment);
     }
   
     
   /**
-   * Responds in production. Returns in testing
+   * Responds in production. Returns in testing.
    * @param mixed $responseData
    * @return mixed
    */
@@ -35,7 +36,7 @@ class AjaxResponder {
     } else if ($this->environment === 'development') {
       return json_encode($responseData);
     } else {
-      throw new Error('AjaxRequestor environment misconfigured');
+      throw new Error('AjaxResponder environment misconfigured');
     }
   }
 }

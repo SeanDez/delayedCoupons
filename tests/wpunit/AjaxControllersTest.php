@@ -5,6 +5,7 @@ require_once (PLUGIN_FOLDER_PATH . '/vendor/autoload.php');
 require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/AjaxControllers.php');
 
 use \admin\setupEnvVariables;
+use \phpmock\mockery\PHPMockery;
 
 
 class AjaxControllersTest extends \Codeception\TestCase\WPTestCase {
@@ -41,9 +42,15 @@ class AjaxControllersTest extends \Codeception\TestCase\WPTestCase {
 
   public function testHandleCouponData() {
     // use mockery to mock the $wpdb class to return a fake array
+    $wpdb = \Mockery::mock('\WPDB');
+    $wpdb
+      ->shouldReceive('get_results')
+      ->andReturn([['k', 'v'], ['k2', 'v2']]);
+  
     
-    codecept_debug($this->environment);
-    codecept_debug('=====$this->environment=====');
+    PHPMockery::mock(__NAMESPACE__, "wp_send_json")
+              ->andReturn();
+    
     
     // @expect: <hardcoded array> === $dbQuery
   }

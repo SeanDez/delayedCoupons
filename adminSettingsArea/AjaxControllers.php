@@ -6,7 +6,7 @@ require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/src/utilities/AjaxRespond
 require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/src/utilities/setupEnvVariables.php');
 
 use \admin\setupEnvVariables;
-
+use admin\utilities\AjaxResponder;
 
 
 class AjaxController {
@@ -29,8 +29,8 @@ class AjaxController {
     $recordsList = $wpdb::get_results("select * from {$wpdb->prefix}delayedCoupons_coupons");
     
     // respond with the data
-    $ajaxResponder = new \AjaxResponder(getenv('NODE_ENV'));
-    $ajaxResponder->res($recordsList);
+    $ajaxResponder = new AjaxResponder(getenv('NODE_ENV'));
+    
   }
 
   public function handleDeleteCurrentCoupon() {

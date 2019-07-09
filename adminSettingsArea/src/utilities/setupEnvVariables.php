@@ -24,19 +24,21 @@ trait setupEnvVariables {
   }
   
   
-  /**
-   * Takes a string and sets the appropriate environment
+  /** Sets the environment if given explicitly. Otherwise depends on NODE_ENV.
+   *
+   * If NODE_ENV also not defined, assumes production
+   *
    * Protected: used only by constructor
-   * @param string $environment (production | testing)
+   *
+   * @param string $environment (production | development)
    */
-  protected function setEnvironment($environment) : void {
-  
-    // preferentially set $environment to NODE_ENV
-    // if not defined then set it to the argument. Default === production
-    if (getenv('NODE_ENV')) {
+  protected function setEnvironment($environment = null) : void {
+    if ($environment) {
+      $this->environment = $environment;
+    } else if (getenv('NODE_ENV')) {
       $this->environment = getenv('NODE_ENV');
     } else {
-      $this->environment = $environment;
+      $this->environment = 'production';
     }
   }
   
