@@ -9,11 +9,11 @@ namespace DelayedCoupons;
  * */
 
 require_once ('vendor/autoload.php');
-
+require_once ('bootstrap.php');
 
 ////// Global Constants //////
 
-define('PLUGIN_FOLDER_PATH', plugin_dir_path(__FILE__));
+//define('PLUGIN_FOLDER_PATH', plugin_dir_path(__FILE__));
 define("PLUGIN_FOLDER_URL", plugin_dir_url(__FILE__));
 
 

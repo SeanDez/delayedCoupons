@@ -1,8 +1,8 @@
 <?php
 namespace admin\utilities;
 
-require_once (PLUGIN_FOLDER_PATH . '/vendor/autoload.php');
-require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/src/utilities/setupEnvVariables.php');
+require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons' . '/vendor/autoload.php');
+require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons' . '/adminSettingsArea/src/utilities/setupEnvVariables.php');
 
 use admin\setupEnvVariables;
 

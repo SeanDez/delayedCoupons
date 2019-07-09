@@ -1,8 +1,14 @@
 <?php
 namespace utilities;
 
-require_once (PLUGIN_FOLDER_PATH . '/vendor/autoload.php');
-require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/AjaxControllers.php');
+require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons/vendor/autoload.php');
+require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons/adminSettingsArea/AjaxControllers.php');
+
+////// constants //////
+define('PLUGIN_FOLDER_PATH', '/var/www/html/wptest2/wp-content/plugins/delayedCoupons');
+define("PLUGIN_FOLDER_URL", '/var/www/html/wptest2/wp-content/plugins/delayedCoupons');
+
+
 
 use admin\controllers\AjaxController;
 use \admin\setupEnvVariables;
