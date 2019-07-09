@@ -7,7 +7,9 @@
     "test": "jest --watch",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open --inline",
-    "build": "webpack"
+    "build": "webpack",
+    "phpunit" : "vendor/bin/phpunit --bootstrap bootstrap.php adminSettingsArea/phpTests --colors=always --debug",
+    "phpunit:watch" : "watch 'npm run phpunit' . --wait=5 --silent"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-stage-0": "^6.24.1",
     "jest": "^24.8.0",
+    "watch": "^1.0.2",
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.5",
     "webpack-php-loader": "^0.5.0"

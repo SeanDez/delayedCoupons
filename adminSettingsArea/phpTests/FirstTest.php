@@ -20,7 +20,13 @@ class FirstTest extends TestCase {
     $first = new First();
     
     $result = $first->add(2, 5);
+   
+    var_dump([4, 82, 823, 23]);
+    print_r('=====test=====');
+    
+    
     
     $this->assertEquals(7, $result);
+    $this->assertEquals(5, $result);
   }
 }
