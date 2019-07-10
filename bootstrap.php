@@ -18,8 +18,4 @@ define('ADMIN_SETTINGS_UTILITIES', ADMIN_SETTINGS_SRC . '/utilities');
 
 
 
-////// Conditional Requires //////
-if (getenv('NODE_ENV') === 'development') {
-  require_once (ADMIN_SETTINGS_UTILITIES . '/wordpressMockFunctions.php');
-}
 
