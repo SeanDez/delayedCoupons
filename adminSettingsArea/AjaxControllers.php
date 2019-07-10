@@ -43,7 +43,7 @@ class AjaxController {
     $couponId = $decodedContents->couponId;
     
     global $wpdb;
-    $result = $wpdb::delete("{$wpdb->prefix}delayedCoupons_coupons", ['couponId' => "{$couponId}"]);
+    $result = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons", ['couponId' => "{$couponId}"]);
     
     // false on error, otherwise 1
     wp_send_json($result);
