@@ -28,12 +28,7 @@ class AjaxController {
     
     $recordsList = $wpdb->get_results("select * from {$wpdb->prefix}delayedCoupons_coupons");
     
-    codecept_debug(json_encode($recordsList));
-    codecept_debug('=====$recordsList=====');
-    
-    // respond with the data
-    $ajaxResponder = new AjaxResponder(getenv('NODE_ENV'));
-    return $ajaxResponder->res($recordsList);
+    return wp_send_json($recordsList);
   }
   
 
@@ -48,7 +43,10 @@ class AjaxController {
     $couponId = $decodedContents->couponId;
     
     global $wpdb;
-      $wpdb::delete("{$wpdb->prefix}delayedCoupons_coupons", ['couponId' => "{$couponId}"]);
+    $result = $wpdb::delete("{$wpdb->prefix}delayedCoupons_coupons", ['couponId' => "{$couponId}"]);
+    
+    // false on error, otherwise 1
+    wp_send_json($result);
   }
 }
 

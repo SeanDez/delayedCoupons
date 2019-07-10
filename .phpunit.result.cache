@@ -1,1 +1,1 @@
-C:37:"PHPUnit\Runner\DefaultTestResultCache":113:{a:2:{s:7:"defects";a:0:{}s:5:"times";a:2:{s:18:"FirstTest::testAdd";d:0.003;s:23:"FirstTest::testDummyRes";d:0;}}}
+C:37:"PHPUnit\Runner\DefaultTestResultCache":227:{a:2:{s:7:"defects";a:1:{s:45:"AjaxControllersTest::testHandleLoadCouponData";i:3;}s:5:"times";a:3:{s:18:"FirstTest::testAdd";d:0;s:23:"FirstTest::testDummyRes";d:0;s:45:"AjaxControllersTest::testHandleLoadCouponData";d:0.004;}}}

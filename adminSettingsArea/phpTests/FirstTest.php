@@ -32,13 +32,6 @@ class FirstTest extends TestCase {
   public function testDummyRes() {
     $first = new First();
     $result = $first->dummyRes(4);
-
-   echo '====================================================';
-   var_dump($result);
-   echo '****************************************************';
-   print_r('=====$result=====');
-   echo '====================================================';
-   
     
     $this->assertEquals(4, json_decode($result));
     

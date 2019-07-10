@@ -1,10 +1,9 @@
 <?php
 namespace admin\utilities;
 
-require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons' . '/vendor/autoload.php');
-require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons' . '/adminSettingsArea/src/utilities/setupEnvVariables.php');
+require_once (ADMIN_SETTINGS_UTILITIES . '/setupEnvVariables.php');
 
-use admin\setupEnvVariables;
+use \admin\setupEnvVariables;
 
 
 /**
@@ -23,21 +22,6 @@ class AjaxResponder {
   public function __construct($environment = null) {
       $this->__sevConstruct($environment);
     }
-  
     
-  /**
-   * Responds in production. Returns in testing.
-   * @param mixed $responseData
-   * @return mixed
-   */
-  public function res($responseData) {
-    if ($this->environment === 'production') {
-      wp_send_json($responseData);
-    } else if ($this->environment === 'development') {
-      return json_encode($responseData);
-    } else {
-      throw new Error('AjaxResponder environment misconfigured');
-    }
-  }
 }
 
