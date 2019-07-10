@@ -52,8 +52,8 @@ class AjaxController {
 
 ////// Wordpress Action Hooks //////
 /// todo add handlers
-//add_action('wp_ajax_loadCouponData', null);
-//add_action('wp_ajax_deleteCurrentCoupon', null);
+add_action('wp_ajax_loadCouponData', 'handleLoadCouponData');
+add_action('wp_ajax_deleteCurrentCoupon', 'handleDeleteCurrentCoupon');
 
 
 

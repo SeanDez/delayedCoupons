@@ -49,3 +49,6 @@ $wpdb = new WPDB();
 
 
 
+////// mocks just to avoid errors //////
+function add_action() {};
+function add_filter() {};
