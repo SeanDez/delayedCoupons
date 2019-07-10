@@ -1,0 +1,10 @@
+<phpunit
+        bootstrap="phpunitBootstrap.php"
+        colors="true"
+>
+    <testsuites>
+        <testsuite name="adminSettings">
+            <directory>adminSettingsArea/phpTests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

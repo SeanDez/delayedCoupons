@@ -8,8 +8,8 @@
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open --inline",
     "build": "webpack",
-    "phpunit" : "vendor/bin/phpunit --bootstrap bootstrap.php adminSettingsArea/phpTests --colors=always --debug",
-    "phpunit:watch" : "watch 'npm run phpunit' . --wait=5 --silent"
+    "phpunit" : "vendor/bin/phpunit --configuration phpunitConfig.xml --debug",
+    "phpunit:watch" : "watch 'npm run phpunit' . --wait=8 --silent"
   },
   "keywords": [],
   "author": "",
