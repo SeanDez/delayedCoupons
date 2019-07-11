@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Route} from "react-router-dom";
+import {Route, withRouter} from "react-router-dom";
 import {TestTunnel} from "./index.jsx";
 
 import {makeStyles} from "@material-ui/core/styles";
@@ -13,7 +13,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
 
 
-//
+
 
 ////// Form Poster //////
 
@@ -39,7 +39,7 @@ export const postFormData = async (ajaxUrl, formData) => {
 
 
 
-export default props => {
+const AddCouponForm = props => {
   const testValue = useContext(TestTunnel);
   const styles = jssStyles();
   
@@ -51,7 +51,7 @@ export default props => {
   
   
   ////// State for dropdowns //////
-  const [headlineTextColor, setHeadlineTextColor] = useState("Orange");
+  const [headlineTextColor, setHeadlineTextColor] = useState("");
   const [headlineBackgroundColor, setHeadlineBackgroundColor] = useState("");
   const [descriptionTextColor, setDescriptionTextColor] = useState("");
   const [descriptionBackgroundColor, setDescriptionBackgroundColor] = useState("");
@@ -77,7 +77,15 @@ export default props => {
       <p>There are 2 main parts to add a coupon. First are the coupon settings itself, including information like the text and colors. Then you will also need to define the page that a user must visit, and how many times to count visits before showing a coupon</p>
       <p>Click here for a full explanation of how the plugin works and how to setup your first coupon</p>
       
-      <form className={styles.form} >
+      <form
+        className={styles.form}
+        onSubmit={e => {
+          e.preventDefault();
+          console.log(`=====SUBMIT FIRED=====`);
+          console.log(props, `=====props=====`);
+          props.history.push('/view-coupons')
+        }}
+      >
         <TextField
           label="Target page"
           helperText='Copy and paste the target page for the coupon to be shown here'
@@ -198,12 +206,8 @@ export default props => {
         
         <Route render={props => (
           <Button
+            type='submit'
             className={[styles.addButton, styles.formChild].join(' ')}
-            onClick={() => {
-              // postFormData(null, null)
-              //   .then(res => res)
-              props.history.push('/view-coupons')
-            }}
           >Add Coupon</Button>
         )}
         />
@@ -213,6 +217,8 @@ export default props => {
     </React.Fragment>
   );
 }
+
+
 
 ////// Styles //////
 
@@ -240,7 +246,7 @@ const jssStyles = makeStyles(theme => ({
 
 
 
-
+export default withRouter(AddCouponForm);
 
 
 
