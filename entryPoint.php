@@ -2,14 +2,20 @@
 
 namespace DelayedCoupons;
 
-/*
+////// Plugin Declaration (read by WP Core) //////
+
+/**
  * Plugin Name: Delayed Coupons
  * Description: Show coupons after a visitor visits a specific page
  * a certain number of times
  * */
 
-require_once ('vendor/autoload.php');
+
+
+
 require_once ('bootstrap.php');
+
+
 
 ////// Global Constants //////
 

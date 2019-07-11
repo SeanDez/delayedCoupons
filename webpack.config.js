@@ -7,7 +7,6 @@ const path = require("path");
 
 module.exports = {
   entry : {
-    polyfill : 'babel-polyfill',
     adminArea :
       ['babel-polyfill', './adminSettingsArea/src/index.jsx']
   },

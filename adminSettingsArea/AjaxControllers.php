@@ -1,9 +1,9 @@
 <?php
 namespace admin\controllers;
 
-require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons' . '/vendor/autoload.php');
-require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons' . '/adminSettingsArea/src/utilities/AjaxResponder.php');
-require_once ('/var/www/html/wptest2/wp-content/plugins/delayedCoupons' . '/adminSettingsArea/src/utilities/setupEnvVariables.php');
+require_once (PLUGIN_FOLDER_PATH . '/vendor/autoload.php');
+require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/src/utilities/AjaxResponder.php');
+require_once (PLUGIN_FOLDER_PATH . '/adminSettingsArea/src/utilities/setupEnvVariables.php');
 
 use \admin\setupEnvVariables;
 use admin\utilities\AjaxResponder;
@@ -51,7 +51,7 @@ class AjaxController {
 }
 
 ////// Wordpress Action Hooks //////
-/// todo add handlers
+
 add_action('wp_ajax_loadCouponData', 'handleLoadCouponData');
 add_action('wp_ajax_deleteCurrentCoupon', 'handleDeleteCurrentCoupon');
 

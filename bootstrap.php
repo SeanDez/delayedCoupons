@@ -1,13 +1,16 @@
 <?php
 
 ////// Project Requires //////
-require_once('vendor/autoload.php');
+
+require_once(__DIR__ . '/vendor/autoload.php');
+
 
 
 ////// Env Variable Setup //////
 Dotenv\Dotenv
   ::create(__DIR__)
   ->load();
+
 
 
 ////// Constants //////

@@ -7,7 +7,7 @@
     "test": "jest --watch",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open --inline",
-    "build": "webpack",
+    "build": "webpack --mode production",
     "phpunit": "vendor/bin/phpunit --configuration phpunitConfig.xml --debug",
     "phpunit:watch": "watch 'npm run phpunit' . --wait=8 --silent"
   },
