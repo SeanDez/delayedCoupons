@@ -5,38 +5,16 @@ import {TestTunnel} from "./index.jsx";
 import {makeStyles} from "@material-ui/core/styles";
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
-// import NumberField from "material-ui-number-input";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem"
 import InputLabel from "@material-ui/core/InputLabel";
+import SnackBar from '@material-ui/core/Snackbar';
+import SnackBarContent from '@material-ui/core/SnackbarContent'
 
 import axios from "axios";
 
 
-
-
-////// Form Poster //////
-
-// todo get async await ready for this function
-export const postFormData = async (ajaxUrl, formData) => {
-  const {pageTarget, displayThreshold, numberOfOffers,
-          couponHeadline, couponDescription, headlineTextColor, headlineBackgroundColor, descriptionTextColor, descriptionBackgroundColor} = formData;
-
-  // todo get the ajaxUrl from php
-
-  // try {
-  //   const response = await axios.post(ajaxUrl, {
-  //     pageTarget, displayThreshold, numberOfOffers,
-  //     couponHeadline, couponDescription, headlineTextColor, headlineBackgroundColor, descriptionTextColor, descriptionBackgroundColor
-  //   });
-  //   return response.data.json(); // add await
-  // }
-  // catch (e) {
-  //   console.log(e, `=====error=====`);
-  // }
-
-};
-
+// todo create a success / error Snackbar and send it data (will be a direct child)
 
 
 const AddCouponForm = props => {
@@ -60,16 +38,97 @@ const AddCouponForm = props => {
   const [couponDescription, setCouponDescription] = useState('');
   
   
-  const [dummyVal, setDummyVal] = useState(0);
+  /** Form Handling
+   * Submits post request
+   * @response: object. If success, success key. if error, error key.
+   */
+  
+  const setAjaxUrl = () => {
+    // axios can handle a full or relative path
+    let ajaxUrlPath;
+    
+    if (window && window.ajaxUrl) {
+      ajaxUrlPath = window.ajaxUrl; // relative path
+      console.log(ajaxUrlPath, `=====ajaxUrlPath=====`);
+    }
+    else if (
+      process.env.NODE_ENV === 'development' && (!window || !window.ajaxUrl) && ajaxUrlForTesting) {
+      ajaxUrlPath = ajaxUrlForTesting;  
+    }
+    else if (window && window.location && window.location.origin) {
+      ajaxUrlPath = window.location.origin + '/wp-admin/admin-ajax.php'; // full path
+      console.log(ajaxUrlPath, `=====ajaxUrlPath=====`);
+    }
+    
+    return ajaxUrlPath;
+  };
+  
+  const postCouponAndSetSnackBarMessage = async () => {
+    // push all state keys into an object
+    const formData = {
+      pageTarget,
+      displayThreshold,
+      numberOfOffers,
+      couponHeadline,
+      couponDescription,
+      headlineTextColor,
+      headlineBackgroundColor,
+      descriptionTextColor,
+      descriptionBackgroundColor
+    };
+    
+    const ajaxUrl = setAjaxUrl();
+    console.log(ajaxUrl, `=====ajaxUrl=====`);
+    
+    // if nonstandard errors occur I still want them handled
+    // errors I can key on the server will be handled in the try block
+    try {
+      const response = await axios(ajaxUrl, {
+        action : 'wp_ajax_addNewCoupon',
+        payload : formData,
+        config: {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      });
+      
+      console.log(response, `=====response=====`);
+      return setupSnackBarData(response.data);
+    }
+    catch (e) {
+      console.log(e, `=====error=====`);
+      return setupSnackBarData(e);
+    }
+    
+  };
+  
+  /** Snackbar
+   * Will immediately be handed success or error information to fire
+   *
+   * State will not be held. This would cause problems with future additions
+   */
+  const snackBarTypes = Object.freeze({
+    success : 'success',
+    error : 'error'
+  });
+  
+  const [snackBarType, setSnackBarType] = useState();
+  const [snackBarMessage, setSnackBarMessage] = useState('');
+  
+  const setupSnackBarData = responseData => {
+    if (responseData.success) {
+      // fire snackbar with success state
+      setSnackBarType(snackBarTypes.success);
+      setSnackBarMessage("Successfully added a new coupon. Click 'View Coupons' to see your new coupon.")
+    } else if (responseData.error) {
+      // setup error snackBar
+      setSnackBarType(snackBarTypes.error);
+      setSnackBarMessage(responseData.error);
+    }
+  };
   
   
-  ////// Side Effects //////
-  useEffect(() => {
-    console.log(headlineTextColor, `=====headlineTextColor=====`);
-  }, [headlineTextColor]);
-  
-  
-  // todo split this form in 2 parts after it works
   
   return (
     <React.Fragment>
@@ -77,13 +136,12 @@ const AddCouponForm = props => {
       <p>There are 2 main parts to add a coupon. First are the coupon settings itself, including information like the text and colors. Then you will also need to define the page that a user must visit, and how many times to count visits before showing a coupon</p>
       <p>Click here for a full explanation of how the plugin works and how to setup your first coupon</p>
       
+     
       <form
         className={styles.form}
         onSubmit={e => {
           e.preventDefault();
-          console.log(`=====SUBMIT FIRED=====`);
-          console.log(props, `=====props=====`);
-          props.history.push('/view-coupons')
+          postCouponAndSetSnackBarMessage();
         }}
       >
         <TextField
@@ -212,8 +270,27 @@ const AddCouponForm = props => {
         )}
         />
       </form>
-      
-      {/*<p>Test k1 from hook: { testValue.k1 }</p>*/}
+  
+      {/*
+       The snackbar below is triggered by an ajax response
+       It is closed automatically, triggering onClose
+       onClose wipes state keys for the next round (add or submit attempt).
+       */}
+  
+      <SnackBar
+        open={snackBarType}
+        autoHideDuration={1000}
+        message={<p>{snackBarMessage}</p>}
+        onClose={() =>  {
+          setSnackBarType('');
+          setSnackBarMessage('');
+        }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+      />
+
     </React.Fragment>
   );
 }
@@ -241,6 +318,9 @@ const jssStyles = makeStyles(theme => ({
   },
   formChild : {
     margin : '30px 0'
+  },
+  errorSnackbar : {
+    backgroundColor : theme.palette.error.dark
   }
 }));
 

@@ -1,6 +1,3 @@
-global.ajaxUrl = "hardCoded value";
+global.ajaxUrlForTesting = 'http://localhost/wptest2/wp-admin/admin-ajax.php';
 
-if (window) {
-  if (window.ajaxUrl) { global.ajaxUrl = window.ajaxUrl }
-}
 
