@@ -66,15 +66,15 @@ const AddCouponForm = props => {
   const postCouponAndSetSnackBarMessage = async () => {
     // push all state keys into an object
     const formData = {
-      pageTarget,
-      displayThreshold,
-      numberOfOffers,
-      couponHeadline,
-      couponDescription,
-      headlineTextColor,
-      headlineBackgroundColor,
-      descriptionTextColor,
-      descriptionBackgroundColor
+      pageTarget, // target
+      displayThreshold, // target table
+      numberOfOffers, // target table
+      couponHeadline, // coupon table
+      couponDescription, // coupon table
+      headlineTextColor, // coupon table
+      headlineBackgroundColor, // coupon table
+      descriptionTextColor, // coupon table
+      descriptionBackgroundColor // coupon table
     };
     
     const ajaxUrl = setAjaxUrl();
@@ -84,6 +84,7 @@ const AddCouponForm = props => {
     // errors I can key on the server will be handled in the try block
     try {
       const response = await axios(ajaxUrl, {
+        method : 'POST',
         action : 'wp_ajax_addNewCoupon',
         payload : formData,
         config: {
