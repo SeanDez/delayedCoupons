@@ -11,6 +11,17 @@ import ViewCoupons from "./ViewCoupons.jsx";
 import axios from "axios";
 
 
+// todo fix routing problem (wordpress install/subfolder not included)
+
+
+/** Handle PHP variable passage from back end (initial pageload)
+ */
+
+let sessionNonce;
+if (window && window.ajaxNonce) {
+  sessionNonce = window.ajaxNonce;
+} else throw new Error('ajaxNonce not found');
+
 
 const AdminArea = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -41,7 +52,9 @@ const AdminArea = () => {
           path={'(/|/add-coupon)'} exact
           render={props => (
             <TestTunnel.Provider value={state}>
-              <AddCouponForm />
+              <AddCouponForm
+                sessionNonce={sessionNonce}
+              />
             </TestTunnel.Provider>
           )}
         />

@@ -18,6 +18,7 @@ import axios from "axios";
 
 
 const AddCouponForm = props => {
+  let {sessionNonce} = props;
   const testValue = useContext(TestTunnel);
   const styles = jssStyles();
   
@@ -85,20 +86,21 @@ const AddCouponForm = props => {
     try {
       const response = await axios(ajaxUrl, {
         method : 'POST',
-        action : 'wp_ajax_addNewCoupon',
+        action : 'addNewCoupon',
         payload : formData,
         config: {
           headers: {
             'Access-Control-Allow-Origin': '*',
+            'X-WP-Nonce' : sessionNonce
           }
         }
       });
       
-      console.log(response, `=====response=====`);
+      console.log(response, `=====postCouponAndSetSnackBarMessage response=====`);
       return setupSnackBarData(response.data);
     }
     catch (e) {
-      console.log(e, `=====error=====`);
+      console.log(e, `=====postCouponAndSetSnackBarMessage error=====`);
       return setupSnackBarData(e);
     }
     
@@ -130,6 +132,38 @@ const AddCouponForm = props => {
   };
   
   
+  const sendXhrLinkRequest = () => {
+    // try {
+    //   const response = await axios('http://localhost/wptest2/wp-admin/admin-ajax.php', {
+    //     method : 'POST',
+    //     action : 'xhrLink',
+    //     config : {
+    //       headers : {
+    //         'Access-Control-Allow-Origin' : '*',
+    //         'X-WP-Nonce' : wpApiSettings.nonce,
+    //       }
+    //     }
+    //   });
+  
+      let form_data = new FormData;
+      form_data.append('action', 'xhrLink');
+  
+      axios
+        .post('http://localhost/wptest2/wp-admin/admin-ajax.php', form_data)
+        .then(response => {
+          console.log(response, `=====sendXhrLinkRequest response=====`);
+      });
+      
+      // console.log(response, `=====sendXhrLinkRequest response=====`);
+      // return (response.data);
+    // }
+    // catch (e) {
+    //   console.log(e, `=====sendXhrLinkRequest error=====`);
+    //   return (e);
+    // }
+  };
+  
+  
   
   return (
     <React.Fragment>
@@ -142,7 +176,7 @@ const AddCouponForm = props => {
         className={styles.form}
         onSubmit={e => {
           e.preventDefault();
-          postCouponAndSetSnackBarMessage();
+          // postCouponAndSetSnackBarMessage();
         }}
       >
         <TextField
@@ -165,7 +199,7 @@ const AddCouponForm = props => {
         />
         <TextField
           label='Number of times offer shown'
-          helperText="Maximium number of visits the user then sees the coupon"
+          helperText="Maximum number of visits the user then sees the coupon"
           required
           name='numberOfOffers'
           type='number'
@@ -267,6 +301,10 @@ const AddCouponForm = props => {
           <Button
             type='submit'
             className={[styles.addButton, styles.formChild].join(' ')}
+            onClick={ () => {
+              sendXhrLinkRequest();
+              // console.log(data, `=====button data capture=====`);
+            }}
           >Add Coupon</Button>
         )}
         />

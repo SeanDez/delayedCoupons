@@ -3,6 +3,7 @@
 namespace DelayedCoupons;
 
 ////// Plugin Declaration (read by WP Core) //////
+use admin\controllers\AjaxController;
 
 /**
  * Plugin Name: Delayed Coupons
@@ -36,8 +37,33 @@ require_once ('adminSettingsArea/index.php');
 require_once('adminSettingsArea/AjaxControllers.php');
 
 
+////// Wordpress Action Hooks //////
+
+// AjaxControllers
+$ajaxController = new AjaxController();
+
+add_action('wp_ajax_loadCouponData', '$ajaxController->handleLoadCouponData');
+add_action('wp_ajax_deleteCurrentCoupon', '$ajaxController->handleDeleteCurrentCoupon');
+//add_action('wp_ajax_addNewCoupon', '$ajaxController->handleAddNewCoupon');
 
 
+function handleAddNewCoupon() {
+  $fileContents = file_get_contents('php://input');
+  $decodedContents = json_decode($fileContents);
+
+//    global $wpdb;
+//    $wpdb->insert;
+  
+  wp_send_json('placeholder');
+}
+
+add_action('wp_ajax_addNewCoupon', 'handleAddNewCoupon');
+
+
+function handleX() {
+  wp_send_json('x passed back');
+}
+add_action('wp_ajax_x', 'handleX');
 
 
 

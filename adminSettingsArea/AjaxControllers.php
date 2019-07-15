@@ -50,22 +50,23 @@ class AjaxController {
   }
   
   public function handleAddNewCoupon() {
+    
     $fileContents = file_get_contents('php://input');
     $decodedContents = json_decode($fileContents);
     
-    global $wpdb;
-    $wpdb->insert;
+    // get and check the nonce
+    $uncheckedNonce = $decodedContents['sessionNonce'];
+    
+    
+//    global $wpdb;
+//    $wpdb->insert;
     
     wp_send_json('placeholder');
   }
   
 }
 
-////// Wordpress Action Hooks //////
 
-add_action('wp_ajax_loadCouponData', 'handleLoadCouponData');
-add_action('wp_ajax_deleteCurrentCoupon', 'handleDeleteCurrentCoupon');
-add_action('wp_ajax_addNewCoupon', 'handleAddNewCoupon');
 
 
 

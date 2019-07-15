@@ -4,6 +4,8 @@ function loadReactAdminAreaBundle() {
   require_once ('jsInjectContainer.php');
 }
 
+// todo namespace this and everything else
+
 function setupAdminSettingsPageParameters() {
   add_options_page(
     'Delayed Coupons Settings',
