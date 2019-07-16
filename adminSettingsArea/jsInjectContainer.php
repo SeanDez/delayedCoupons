@@ -7,7 +7,9 @@
 
 <div id="nonceCreator">
   <script>
-    var ajaxNonce = <?php echo json_encode(wp_create_nonce()); ?>;
+    let _wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+    
+    let cookiesArray = <?php echo json_encode($_COOKIE) ?>;
   </script>
 </div>
 

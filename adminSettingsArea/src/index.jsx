@@ -17,10 +17,13 @@ import axios from "axios";
 /** Handle PHP variable passage from back end (initial pageload)
  */
 
-let sessionNonce;
-if (window && window.ajaxNonce) {
-  sessionNonce = window.ajaxNonce;
-} else throw new Error('ajaxNonce not found');
+
+if (_wpnonce === undefined) {
+  throw new Error('_wpnonce not found: ', _wpnonce);
+}
+
+
+console.log(cookiesArray, `=====cookiesArray=====`);
 
 
 const AdminArea = () => {
@@ -53,7 +56,7 @@ const AdminArea = () => {
           render={props => (
             <TestTunnel.Provider value={state}>
               <AddCouponForm
-                sessionNonce={sessionNonce}
+                _wpnonce={_wpnonce}
               />
             </TestTunnel.Provider>
           )}

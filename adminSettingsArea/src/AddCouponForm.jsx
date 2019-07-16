@@ -18,7 +18,7 @@ import axios from "axios";
 
 
 const AddCouponForm = props => {
-  let {sessionNonce} = props;
+  let {_wpnonce} = props;
   const testValue = useContext(TestTunnel);
   const styles = jssStyles();
   
@@ -64,6 +64,8 @@ const AddCouponForm = props => {
     return ajaxUrlPath;
   };
   
+  
+  
   const postCouponAndSetSnackBarMessage = async () => {
     // push all state keys into an object
     const formData = {
@@ -91,7 +93,7 @@ const AddCouponForm = props => {
         config: {
           headers: {
             'Access-Control-Allow-Origin': '*',
-            'X-WP-Nonce' : sessionNonce
+            'X-WP-Nonce' : _wpnonce
           }
         }
       });
@@ -105,6 +107,25 @@ const AddCouponForm = props => {
     }
     
   };
+  
+  
+  const getUserNameFromRestApi = () => {
+    console.log(_wpnonce, `=====_wpnonce=====`);
+    
+    fetch('http://localhost/wptest2/?rest_route=/wp/v2/users/me', {
+      method : 'get',
+      mode : 'cors',
+      headers : {
+        'Access-Control-Allow-Origin' : '*',
+        'X-WP-Nonce' : _wpnonce
+      }
+    })
+      .then(response => console.log(response.json(), `=====response.json()=====`))
+      .catch(error => console.log(error, `=====error=====`));
+  };
+  
+  
+  
   
   /** Snackbar
    * Will immediately be handed success or error information to fire
@@ -302,8 +323,7 @@ const AddCouponForm = props => {
             type='submit'
             className={[styles.addButton, styles.formChild].join(' ')}
             onClick={ () => {
-              sendXhrLinkRequest();
-              // console.log(data, `=====button data capture=====`);
+              getUserNameFromRestApi();
             }}
           >Add Coupon</Button>
         )}
