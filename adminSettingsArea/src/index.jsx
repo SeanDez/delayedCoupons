@@ -3,6 +3,7 @@ import React, {useReducer, useState, useEffect} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import {initialState, reducer} from './reducer';
+import styled from 'styled-components';
 
 import Fade from "@material-ui/core/Fade";
 
@@ -43,10 +44,7 @@ const AdminArea = props => {
   
   const [state, dispatch] = useReducer(reducer, initialState);
   
-  useEffect(() => {
-    console.log(Boolean(adminView === bodyViews.addNewCoupon), `=====Boolean(adminView === bodyViews.addNewCoupon)=====`);
-    console.log(Boolean(adminView === bodyViews.viewCurrentCoupons), `=====Boolean(adminView === bodyViews.viewCurrentCoupons)=====`);
-  });
+  
   
   return (
     <React.Fragment>
@@ -59,18 +57,20 @@ const AdminArea = props => {
       
       
       {/* ////// BODY ////// */ }
-      {/* todo add transitions */ }
+      
       
       {/*{adminView === bodyViews.addNewCoupon &&*/ }
       <Fade
         in={ Boolean(adminView === bodyViews.addNewCoupon) }
         timeout={ 1000 }
       >
-        <div>
+        <ConditionalDiv
+          displayBool={adminView === bodyViews.addNewCoupon}
+        >
           <AddCouponForm
             clientNonce={ clientNonce }
           />
-        </div>
+        </ConditionalDiv>
       </Fade>
       {/*}*/ }
       
@@ -79,9 +79,11 @@ const AdminArea = props => {
         in={ Boolean(adminView === bodyViews.viewCurrentCoupons) }
         timeout={ 1000 }
       >
-        <div>
+        <ConditionalDiv
+          displayBool={adminView === bodyViews.viewCurrentCoupons}
+        >
           <ViewCoupons />
-        </div>
+        </ConditionalDiv>
       </Fade>
       {/*}*/ }
       
@@ -124,6 +126,19 @@ const loadCouponData = () => {
     // take the data property. convert it to json and return it as a promise
     .then(res => res.data.json())
 };
+
+
+/** ConditionalDiv
+ *
+ * Goal: to move hidden body components out of the way so the active one dominates the screen area
+ *
+ * If its value is true, display block
+ * If its value is false, display none
+ */
+const ConditionalDiv = styled.div`
+    display : ${props => props.displayBool ? 'block' : 'none'}
+`;
+
 
 
 
