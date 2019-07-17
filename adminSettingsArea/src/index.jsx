@@ -32,6 +32,11 @@ const AdminArea = props => {
   
   /** Controls the body section of the admin area 
    */
+  const bodyViews = Object.freeze({
+    addNewCoupon : 'addNewCoupon',
+    viewCurrentCoupons : 'viewCurrentCoupons'
+  });
+  
   const [adminView, setAdminView] = useState('addNewCoupon');
   
   
@@ -47,11 +52,16 @@ const AdminArea = props => {
         setAdminView={setAdminView}
       />
   
-      <ViewCoupons />
+      {adminView === bodyViews.viewCurrentCoupons &&
+       <ViewCoupons />
+      }
+  
+      {adminView === bodyViews.addNewCoupon &&
+       <AddCouponForm
+         clientNonce={clientNonce}
+       />
+      }
       
-      <AddCouponForm
-        clientNonce={clientNonce}
-      />
     </React.Fragment>
   );
 };
