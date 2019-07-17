@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import {initialState, reducer} from './reducer';
 
+import Fade from "@material-ui/core/Fade";
+
 import TabSection from "./TabSection.jsx";
 import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
@@ -47,20 +49,40 @@ const AdminArea = props => {
   
   return (
     <React.Fragment>
+  
+      {/* ////// HEADER ////// */}
       <TabSection
         adminView={adminView}
         setAdminView={setAdminView}
       />
   
-      {adminView === bodyViews.viewCurrentCoupons &&
-       <ViewCoupons />
-      }
-  
-      {adminView === bodyViews.addNewCoupon &&
-       <AddCouponForm
-         clientNonce={clientNonce}
-       />
-      }
+      
+      {/* ////// BODY ////// */}
+      {/* todo add transitions */}
+      
+      {/*{adminView === bodyViews.addNewCoupon &&*/}
+       <Fade
+         in={Boolean(adminView === bodyViews.addNewCoupon)}
+         timeout={2000}
+       >
+         <AddCouponForm
+           clientNonce={clientNonce}
+         />
+       </Fade>
+      {/*}*/}
+      
+      {/*{adminView === bodyViews.viewCurrentCoupons &&*/}
+       <Fade
+         in={Boolean(adminView === bodyViews.viewCurrentCoupons)}
+         timeout={2000}
+       >
+        <ViewCoupons />
+       </Fade>
+      {/*}*/}
+      
+      
+      
+      {/* ////// FOOTER ////// */}
       
     </React.Fragment>
   );

@@ -92,7 +92,7 @@ const AddCouponForm = props => {
         config: {
           headers: {
             'Access-Control-Allow-Origin': '*',
-            'X-WP-Nonce' : _wpnonce
+            'X-WP-Nonce' : clientNonce
           }
         }
       });
