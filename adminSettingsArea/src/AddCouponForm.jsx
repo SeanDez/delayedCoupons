@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Route, withRouter} from "react-router-dom";
-import {TestTunnel} from "./index.jsx";
+import {Route} from "react-router-dom";
+
 
 import {makeStyles} from "@material-ui/core/styles";
 import TextField from '@material-ui/core/TextField';
@@ -18,8 +18,7 @@ import axios from "axios";
 
 
 const AddCouponForm = props => {
-  let {_wpnonce} = props;
-  const testValue = useContext(TestTunnel);
+  let {clientNonce} = props;
   const styles = jssStyles();
   
   ////// State for inputs //////
@@ -110,14 +109,14 @@ const AddCouponForm = props => {
   
   
   const getUserNameFromRestApi = () => {
-    console.log(_wpnonce, `=====_wpnonce=====`);
+    console.log(clientNonce, `=====clientNonce=====`);
     
     fetch('http://localhost/wptest2/?rest_route=/wp/v2/users/me', {
       method : 'get',
       mode : 'cors',
       headers : {
         'Access-Control-Allow-Origin' : '*',
-        'X-WP-Nonce' : _wpnonce
+        'X-WP-Nonce' : clientNonce
       }
     })
       .then(response => console.log(response.json(), `=====response.json()=====`))
@@ -318,16 +317,13 @@ const AddCouponForm = props => {
           </Select>
         </div>
         
-        <Route render={props => (
-          <Button
-            type='submit'
-            className={[styles.addButton, styles.formChild].join(' ')}
-            onClick={ () => {
-              getUserNameFromRestApi();
-            }}
-          >Add Coupon</Button>
-        )}
-        />
+        <Button
+          type='submit'
+          className={[styles.addButton, styles.formChild].join(' ')}
+          onClick={ () => {
+            getUserNameFromRestApi();
+          }}
+        >Add Coupon</Button>
       </form>
   
       {/*
@@ -385,7 +381,7 @@ const jssStyles = makeStyles(theme => ({
 
 
 
-export default withRouter(AddCouponForm);
+export default AddCouponForm;
 
 
 

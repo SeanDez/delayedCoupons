@@ -12,50 +12,33 @@ import MaterialLink from "@material-ui/core/Link";
 
 ////// View Constants //////
 const addNewCoupon = 'addNewCoupon',
-      seeCurrentCoupons = 'seeCurrentCoupons';
+      viewCurrentCoupons = 'viewCurrentCoupons';
 
 
 ////// Component //////
 export default props => {
-  const {getPluginUrl} = props;
-  
-  ////// State //////
-  const [adminView, setAdminView] = useState('addNewCoupon');
-  
-  useEffect(() => {
-    console.log(adminView, `=====adminView=====`);
-  });
+  const {adminView, setAdminView} = props;
   
   return (
     <React.Fragment>
       <AppBar position="static">
-        {/*<Tabs*/}
-        {/*  value={adminView}*/}
-        {/*  centered*/}
-        {/*>*/}
-          <StyledMaterialLink component={RouterLink} to={`&section=add-coupon`}>
-            <Tab
-              label="Add New Coupon"
-              value={addNewCoupon}
-              onClick={() => {
-                console.log(location.href, `=====location.href=====`);
-                setAdminView(addNewCoupon)
-              }}
-            />
-          </StyledMaterialLink>
-          <StyledMaterialLink
-            component={RouterLink}
-            to={`/wptest2/wp-admin/options-general.php?`}>
-            <Tab
-              label="See Current Coupons"
-              value={seeCurrentCoupons}
-              onClick={() => {
-                console.log(location.href, `=====location.href=====`);
-                setAdminView(seeCurrentCoupons)
-              }}
-            />
-        </StyledMaterialLink>
-        {/*</Tabs>*/}
+        <Tabs
+          value={adminView}
+          centered
+        >
+          <Tab
+            label="Add New Coupon"
+            value={addNewCoupon}
+            onClick={() => setAdminView(addNewCoupon)}
+          />
+
+          <Tab
+            label="View Current Coupons"
+            value={viewCurrentCoupons}
+            onClick={() => setAdminView(viewCurrentCoupons)
+            }
+          />
+        </Tabs>
     </AppBar>
     </React.Fragment>
   )
@@ -78,7 +61,7 @@ const StyledRouterLink = styled(RouterLink)`
   color: inherit;
 `;
 
-const StyledMaterialLink = styled(MaterialLink)`
+const StyledAnchor = styled('a')`
   text-decoration: inherit;
   color: inherit;
 `;

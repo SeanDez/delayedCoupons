@@ -1,5 +1,5 @@
 require("./globals");
-import React, {useReducer} from "react";
+import React, {useReducer, useState} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import {initialState, reducer} from './reducer';
@@ -17,10 +17,12 @@ import axios from "axios";
 /** Handle PHP variable passage from back end (initial pageload)
  */
 
-
-// if (!_wpnonce) {
-//   throw new Error('_wpnonce not found: ', _wpnonce);
-// }
+let clientNonce;
+if (typeof _wpnonce === 'undefined') {
+  clientNonce = 10;
+} else {
+  clientNonce = _wpnonce;
+}
 
 // console.log(cookiesArray, `=====cookiesArray=====`);
 
@@ -28,66 +30,32 @@ import axios from "axios";
 const AdminArea = props => {
   const {match} = props;
   
+  /** Controls the body section of the admin area 
+   */
+  const [adminView, setAdminView] = useState('addNewCoupon');
+  
+  
+  
   const [state, dispatch] = useReducer(reducer, initialState);
   
-  const getPluginUrl = () => {
-      return 'options-general.php?page=delayed-coupons';
-    
-    // todo add fallbacks
-  };
+
   
   return (
-    <BrowserRouter>
+    <React.Fragment>
       <TabSection
-        getPluginUrl={getPluginUrl}
+        adminView={adminView}
+        setAdminView={setAdminView}
       />
   
-      <p>Count: {state.count}</p>
-      <button onClick={() => {
-        dispatch({type : "increment"})
-      }}>
-        Raise Count
-      </button>
+      <ViewCoupons />
       
-      <Switch>
-        <Route
-          path={`/wptest2/wp-admin/options-general.php`}
-          render={props => {
-            {console.log(props.match, `=====props.match=====`)}
-            
-            return (
-              <CurrentCouponChannel.Provider
-                value={state.currentCouponsAndTargets}>
-                <ViewCoupons />
-              </CurrentCouponChannel.Provider>
-            )
-          }}
-        />
-        
-        <Route
-          path={`&section=add-coupon`}
-          render={props => {
-            {console.log(props.match, `=====props.match=====`)}
-  
-            return (
-              <TestTunnel.Provider value={state}>
-                <AddCouponForm
-                  _wpnonce={_wpnonce}
-                />
-              </TestTunnel.Provider>
-            )
-          }}
-        />
-      </Switch>
-    </BrowserRouter>
+      <AddCouponForm
+        clientNonce={clientNonce}
+      />
+    </React.Fragment>
   );
 };
 
-
-////// Context Providers //////
-export const TestTunnel = React.createContext();
-
-export const CurrentCouponChannel = React.createContext();
 
 
 
