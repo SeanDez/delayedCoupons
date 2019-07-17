@@ -1,5 +1,5 @@
 require("./globals");
-import React, {useReducer, useState} from "react";
+import React, {useReducer, useState, useEffect} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import {initialState, reducer} from './reducer';
@@ -41,49 +41,54 @@ const AdminArea = props => {
   
   const [adminView, setAdminView] = useState('addNewCoupon');
   
-  
-  
   const [state, dispatch] = useReducer(reducer, initialState);
   
-
+  useEffect(() => {
+    console.log(Boolean(adminView === bodyViews.addNewCoupon), `=====Boolean(adminView === bodyViews.addNewCoupon)=====`);
+    console.log(Boolean(adminView === bodyViews.viewCurrentCoupons), `=====Boolean(adminView === bodyViews.viewCurrentCoupons)=====`);
+  });
   
   return (
     <React.Fragment>
-  
-      {/* ////// HEADER ////// */}
+      
+      {/* ////// HEADER ////// */ }
       <TabSection
-        adminView={adminView}
-        setAdminView={setAdminView}
+        adminView={ adminView }
+        setAdminView={ setAdminView }
       />
-  
-      
-      {/* ////// BODY ////// */}
-      {/* todo add transitions */}
-      
-      {/*{adminView === bodyViews.addNewCoupon &&*/}
-       <Fade
-         in={Boolean(adminView === bodyViews.addNewCoupon)}
-         timeout={2000}
-       >
-         <AddCouponForm
-           clientNonce={clientNonce}
-         />
-       </Fade>
-      {/*}*/}
-      
-      {/*{adminView === bodyViews.viewCurrentCoupons &&*/}
-       <Fade
-         in={Boolean(adminView === bodyViews.viewCurrentCoupons)}
-         timeout={2000}
-       >
-        <ViewCoupons />
-       </Fade>
-      {/*}*/}
       
       
+      {/* ////// BODY ////// */ }
+      {/* todo add transitions */ }
       
-      {/* ////// FOOTER ////// */}
+      {/*{adminView === bodyViews.addNewCoupon &&*/ }
+      <Fade
+        in={ Boolean(adminView === bodyViews.addNewCoupon) }
+        timeout={ 1000 }
+      >
+        <div>
+          <AddCouponForm
+            clientNonce={ clientNonce }
+          />
+        </div>
+      </Fade>
+      {/*}*/ }
       
+      {/*{adminView === bodyViews.viewCurrentCoupons &&*/ }
+      <Fade
+        in={ Boolean(adminView === bodyViews.viewCurrentCoupons) }
+        timeout={ 1000 }
+      >
+        <div>
+          <ViewCoupons />
+        </div>
+      </Fade>
+      {/*}*/ }
+      
+      
+      
+      {/* ////// FOOTER ////// */ }
+    
     </React.Fragment>
   );
 };
