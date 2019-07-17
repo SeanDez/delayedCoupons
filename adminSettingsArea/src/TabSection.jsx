@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import styled from "styled-components";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,11 +16,15 @@ const addNewCoupon = 'addNewCoupon',
 
 
 ////// Component //////
-export default () => {
+export default props => {
+  const {getPluginUrl} = props;
   
   ////// State //////
   const [adminView, setAdminView] = useState('addNewCoupon');
   
+  useEffect(() => {
+    console.log(adminView, `=====adminView=====`);
+  });
   
   return (
     <React.Fragment>
@@ -29,20 +33,26 @@ export default () => {
         {/*  value={adminView}*/}
         {/*  centered*/}
         {/*>*/}
-          <StyledMaterialLink component={RouterLink} to='/add-coupon'>
+          <StyledMaterialLink component={RouterLink} to={`&section=add-coupon`}>
             <Tab
               label="Add New Coupon"
               value={addNewCoupon}
-              onClick={() => setAdminView(addNewCoupon)}
+              onClick={() => {
+                console.log(location.href, `=====location.href=====`);
+                setAdminView(addNewCoupon)
+              }}
             />
           </StyledMaterialLink>
           <StyledMaterialLink
             component={RouterLink}
-            to='/view-coupons'>
+            to={`/wptest2/wp-admin/options-general.php?`}>
             <Tab
               label="See Current Coupons"
               value={seeCurrentCoupons}
-              onClick={() => setAdminView(seeCurrentCoupons)}
+              onClick={() => {
+                console.log(location.href, `=====location.href=====`);
+                setAdminView(seeCurrentCoupons)
+              }}
             />
         </StyledMaterialLink>
         {/*</Tabs>*/}

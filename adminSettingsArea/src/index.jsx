@@ -18,20 +18,29 @@ import axios from "axios";
  */
 
 
-if (_wpnonce === undefined) {
-  throw new Error('_wpnonce not found: ', _wpnonce);
-}
+// if (!_wpnonce) {
+//   throw new Error('_wpnonce not found: ', _wpnonce);
+// }
+
+// console.log(cookiesArray, `=====cookiesArray=====`);
 
 
-console.log(cookiesArray, `=====cookiesArray=====`);
-
-
-const AdminArea = () => {
+const AdminArea = props => {
+  const {match} = props;
+  
   const [state, dispatch] = useReducer(reducer, initialState);
+  
+  const getPluginUrl = () => {
+      return 'options-general.php?page=delayed-coupons';
+    
+    // todo add fallbacks
+  };
   
   return (
     <BrowserRouter>
-      <TabSection />
+      <TabSection
+        getPluginUrl={getPluginUrl}
+      />
   
       <p>Count: {state.count}</p>
       <button onClick={() => {
@@ -42,24 +51,32 @@ const AdminArea = () => {
       
       <Switch>
         <Route
-          path='/view-coupons'
-          render={props => (
-            <CurrentCouponChannel.Provider
-              value={state.currentCouponsAndTargets}>
-              <ViewCoupons />
-            </CurrentCouponChannel.Provider>
-          )}
+          path={`/wptest2/wp-admin/options-general.php`}
+          render={props => {
+            {console.log(props.match, `=====props.match=====`)}
+            
+            return (
+              <CurrentCouponChannel.Provider
+                value={state.currentCouponsAndTargets}>
+                <ViewCoupons />
+              </CurrentCouponChannel.Provider>
+            )
+          }}
         />
         
         <Route
-          path={'(/|/add-coupon)'} exact
-          render={props => (
-            <TestTunnel.Provider value={state}>
-              <AddCouponForm
-                _wpnonce={_wpnonce}
-              />
-            </TestTunnel.Provider>
-          )}
+          path={`&section=add-coupon`}
+          render={props => {
+            {console.log(props.match, `=====props.match=====`)}
+  
+            return (
+              <TestTunnel.Provider value={state}>
+                <AddCouponForm
+                  _wpnonce={_wpnonce}
+                />
+              </TestTunnel.Provider>
+            )
+          }}
         />
       </Switch>
     </BrowserRouter>
