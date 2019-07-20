@@ -14,17 +14,20 @@ class ApiController extends \WP_Rest_Controller {
   
   public function __construct() {
     $this->urlBase = $this->namespace . '/' . $this->version;
-    echo '====================================================';
-    echo var_export($this->urlBase, true);
-    echo'                   =====$this->urlBase=====                 ';
     
   }
   
   
+  /** Callback functions
+   */
   
   public function respondAllCoupons() {
     global $wpdb;
-    $query = $wpdb->get_results("select * from {$wpdb->prefix}delayedCoupons_coupons");
+    $query = $wpdb->get_results("SELECT * FROM delayedCoupons_coupons");
+    
+
+    echo var_export($query, true);
+    echo'                   =====$query=====                 ';
     
     wp_send_json($query);
   }
@@ -34,7 +37,7 @@ class ApiController extends \WP_Rest_Controller {
     global $wpdb;
     
     if ($couponId) {
-      $result = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons", [
+      $result = $wpdb->delete("delayedCoupons_coupons", [
         'couponId' => $couponId
       ]);
       
@@ -51,10 +54,15 @@ class ApiController extends \WP_Rest_Controller {
   
   
   public function respondWithString() {
-    return 'dummy return from object';
+    wp_send_json('dummy return from object');
   }
   
   
+  
+  /** Route registrations
+   */
+  
+  // todo remove dummy rest route later
   public function registerDummyRoute() {
     register_rest_route($this->urlBase, 'dummyMethod', [
       'methods' => 'GET',

@@ -28,6 +28,13 @@ define("PLUGIN_FOLDER_URL", plugin_dir_url(__FILE__));
 
 ////// On Plugin Activation Hook //////
 
+require_once ('adminSettingsArea/DataBase.php');
+use \DataBase; // this is the default when you don't add one to the top of file
+$database = new DataBase();
+
+register_activation_hook(__FILE__, [$database, 'initializeTables']);
+register_activation_hook(__FILE__, [$database, 'initializeDummyTable']);
+
 
 
 
