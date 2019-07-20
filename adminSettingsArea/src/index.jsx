@@ -58,34 +58,30 @@ const AdminArea = props => {
       
       {/* ////// BODY ////// */ }
       
-      
-      {/*{adminView === bodyViews.addNewCoupon &&*/ }
+      {/* todo refactor this so the fade is styled, and AddCouponForm can pass its prop without issues */}
       <Fade
         in={ Boolean(adminView === bodyViews.addNewCoupon) }
         timeout={ 1000 }
       >
         <ConditionalDiv
-          displayBool={adminView === bodyViews.addNewCoupon}
+          displayBool={Boolean(adminView === bodyViews.addNewCoupon)}
         >
           <AddCouponForm
             clientNonce={ clientNonce }
           />
         </ConditionalDiv>
       </Fade>
-      {/*}*/ }
       
-      {/*{adminView === bodyViews.viewCurrentCoupons &&*/ }
       <Fade
         in={ Boolean(adminView === bodyViews.viewCurrentCoupons) }
         timeout={ 1000 }
       >
         <ConditionalDiv
-          displayBool={adminView === bodyViews.viewCurrentCoupons}
+          displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}
         >
           <ViewCoupons />
         </ConditionalDiv>
       </Fade>
-      {/*}*/ }
       
       
       
@@ -136,10 +132,12 @@ const loadCouponData = () => {
  * If its value is false, display none
  */
 const ConditionalDiv = styled.div`
-    display : ${props => props.displayBool ? 'block' : 'none'}
+  display : ${props => props.displayBool ? 'block' : 'none'}
 `;
 
-
+const ConditionalFade = styled(Fade)`
+  display : ${props => props.in ? 'block' : 'none'}
+`;
 
 
 
@@ -148,4 +146,27 @@ ReactDOM.render(
   <AdminArea/>,
   document.getElementById('adminRoot')
   );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

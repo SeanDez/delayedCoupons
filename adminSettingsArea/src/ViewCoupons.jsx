@@ -167,7 +167,9 @@ export default props => {
    */
   
   return (
-    <React.Fragment>
+    <div
+      {...props}
+    >
       <h3>View Coupons</h3>
       <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click
          the delete icon to remove it.</p>
@@ -208,7 +210,7 @@ export default props => {
                                             :
         <p>No Coupons to Show</p>
       }
-    </React.Fragment>
+    </div>
   );
 }
 

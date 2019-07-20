@@ -186,7 +186,8 @@ const AddCouponForm = props => {
   
   
   return (
-    <React.Fragment>
+    <div
+    >
       <h3>Add Coupons Form</h3>
       <p>There are 2 main parts to add a coupon. First are the coupon settings itself, including information like the text and colors. Then you will also need to define the page that a user must visit, and how many times to count visits before showing a coupon</p>
       <p>Click here for a full explanation of how the plugin works and how to setup your first coupon</p>
@@ -346,7 +347,7 @@ const AddCouponForm = props => {
         }}
       />
 
-    </React.Fragment>
+    </div>
   );
 }
 

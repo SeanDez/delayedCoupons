@@ -13,6 +13,9 @@ use admin\controllers\AjaxController;
 
 
 
+
+
+
 // todo doing absolute path on this seems to break it. Find out why
 require_once ('bootstrap.php');
 
@@ -117,6 +120,67 @@ add_action('wp_ajax_x', 'handleX');
 //}
 //
 //add_action( 'rest_api_init', 'resetPreServeRequest', 15 );
+
+
+/** Rest Api Extensions
+ *
+ * Extensions include endpoints for adding coupons, deleting them, and loading all current coupon data.
+ *
+ */
+require_once ('adminSettingsArea/ApiController.php');
+use \admin\controllers\ApiController;
+
+
+
+function hookAllRestControllers() {
+  $apiController = new ApiController();
+  $apiController->registerDummyRoute();
+}
+add_action('rest_api_init', '\DelayedCoupons\hookAllRestControllers');
+
+
+
+
+
+
+function displayDummyData() {
+  return 'dummy return from outside function';
+}
+
+function checkIfAdmin() {
+  $isAdmin = current_user_can('delete_site');
+  return $isAdmin;
+}
+
+function checkIfAnyone() {
+  return true;
+}
+
+
+function registerDummyRoute() {
+  register_rest_route('delayedCoupons/1.0', 'dummyFunc', [
+    'methods' => 'GET',
+    'callback' => '\DelayedCoupons\displayDummyData',
+    'permission_callback' => '\DelayedCoupons\checkIfAnyone'
+  ]);
+}
+add_action('rest_api_init', '\DelayedCoupons\registerDummyRoute');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
