@@ -66,7 +66,7 @@ class ApiController extends \WP_Rest_Controller {
   public function registerLoadCouponRoute() {
     register_rest_route($this->urlBase, 'loadAllCoupons', [
       'methods' => 'GET',
-      'callback' => 'respondAllCoupons'
+      'callback' => [$this, 'respondAllCoupons']
     ]);
   }
   
@@ -74,7 +74,7 @@ class ApiController extends \WP_Rest_Controller {
   public function registerDeleteSingleCouponRoute() {
     register_rest_route($this->urlBase, 'deleteCoupon/(?P<couponId>\d+)', [
       'methods' => 'get',
-      'callback' => 'deleteSingleCoupon'
+      'callback' => [$this, 'deleteSingleCoupon']
     ]);
   }
   

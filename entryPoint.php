@@ -135,6 +135,8 @@ use \admin\controllers\ApiController;
 function hookAllRestControllers() {
   $apiController = new ApiController();
   $apiController->registerDummyRoute();
+  $apiController->registerLoadCouponRoute();
+  $apiController->registerDeleteSingleCouponRoute();
 }
 add_action('rest_api_init', '\DelayedCoupons\hookAllRestControllers');
 
