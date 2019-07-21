@@ -31,7 +31,7 @@ class SeedDataLoader {
   /** Connect to database
    * Also see if there's a connection error
    */
-  public function connectToDbReportAnyError() : void {
+  protected function connectToDbReportAnyError() : void {
     $this->dbConnection = new mysqli(
       $this->server,
       $this->userName,
@@ -44,8 +44,6 @@ class SeedDataLoader {
     }
     
   }
-  
-  
   
   
    /**
@@ -83,8 +81,6 @@ class SeedDataLoader {
   }
   
   
-  
-  
   /** Seeds the database
    *
    * Each loop stitches another value to an insert query (following the values keyword)
@@ -114,32 +110,39 @@ class SeedDataLoader {
   }
   
   
-  public function runInsertQuery (string $valuesConcattedString) {
+  protected function runInsertQuery (string $valuesConcattedString) : void {
     global $dbConnection;
-
-//  $resultOfQuery = $dbConnection->query("insert into delayedCoupons_coupons values {$valuesConcattedString};");
+    
     $resultOfQuery = ("insert into delayedCoupons_coupons values {$valuesConcattedString};");
     
-    echo '====================================================';
-    echo var_export($resultOfQuery, true);
-    echo'                   ==========                 ';
+    // todo check database for a response
     
   }
   
   
-  
   /** Close connection
    */
-  public function closeConnection() {
+  protected function closeConnection() {
     $this->dbConnection->close();
   }
   
   
   
+  /** Public Methods
+   */
+  
+  public function addCouponDataAndClose(int $recordCount) {
+    $recordArray = $this->generateCouponData($recordCount);
+    $concattedString = $this->buildInsertQuery($recordArray);
+    $this->runInsertQuery($concattedString);
+    $this->closeConnection();
+  }
+  
 }
 
 
-
+$seedDataLoader = new SeedDataLoader();
+$seedDataLoader->addCouponDataAndClose(15);
 
 
 
