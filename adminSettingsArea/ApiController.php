@@ -25,10 +25,6 @@ class ApiController extends \WP_Rest_Controller {
     global $wpdb;
     $query = $wpdb->get_results("SELECT * FROM delayedCoupons_coupons");
     
-
-    echo var_export($query, true);
-    echo'                   =====$query=====                 ';
-    
     wp_send_json($query);
   }
   

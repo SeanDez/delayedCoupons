@@ -6,5 +6,8 @@
         <testsuite name="adminSettings">
             <directory>adminSettingsArea/phpTests</directory>
         </testsuite>
+        <testsuite name="projectRoot">
+            <directory>tests</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
