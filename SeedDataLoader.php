@@ -207,7 +207,10 @@ catch (Exception $error) {
   throw $error;
 }
 
-
+// if target, select parent method. Give records
+if ($_GET['target'] === 'coupons') {
+  $seedDataLoader->addCouponDataAndClose($_GET['count']);
+}
 
 
 

@@ -23,7 +23,7 @@ class ApiController extends \WP_Rest_Controller {
   
   public function respondAllCoupons() {
     global $wpdb;
-    $query = $wpdb->get_results("SELECT * FROM delayedCoupons_coupons");
+    $query = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}delayedCoupons_coupons");
     
     wp_send_json($query);
   }
@@ -33,7 +33,7 @@ class ApiController extends \WP_Rest_Controller {
     global $wpdb;
     
     if ($couponId) {
-      $result = $wpdb->delete("delayedCoupons_coupons", [
+      $result = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons", [
         'couponId' => $couponId
       ]);
       
