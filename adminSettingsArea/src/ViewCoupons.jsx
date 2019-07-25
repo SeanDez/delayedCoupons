@@ -37,27 +37,34 @@ export default props => {
    * Automatically updates after a delete request, which also modifies the array bound to couponData
    */
 
-  const [couponData, setCouponData] = useState();
+  const [couponData, setCouponData] = useState([]);
   
-  useEffect( () => {
+  // return a promise which if resolves, responds with the data array
+  const fetchAllCoupons = async () => {
     try {
-      (async () => {
-        const response = await ajaxRequestor.post({
-          action : 'loadCouponData'
-        }, ajaxUrl, dummyCouponData);
-
-        setCouponData(response.data);
-      })();
+      const response = await fetch('http://localhost/wptest2/?rest_route=/delayedCoupons/1.0/loadAllCoupons');
+      let data = await response.json();
+      return data;
     }
     catch (e) {
-      console.log(e, `=====error=====`);
+      // console.log(e, `=====error=====`);
+      throw e;
     }
-  }, [couponData]);
+  };
+  
+  useEffect( () => {
+    fetchAllCoupons()
+      .then(data => setCouponData(data))
+      .catch(e => console.log(e, '====error===='));
+  }, []);
   
   
   const [tableMarker, setTableMarker] = useState(0);
   
-  
+  useEffect(() => {
+    console.log(couponData, `=====couponData=====`);
+    console.log(tableMarker, `=====tableMarker=====`);
+  });
   
   
   /**
@@ -126,7 +133,7 @@ export default props => {
         <TableCell align='center'>{record.pageTarget}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
         <TableCell align='center'>{record.numberOfOffers}</TableCell>
-        <TableCell align='center'>{Math.round(Math.random() * 100)}</TableCell>
+        <TableCell align='center'>{"placeholder"}</TableCell>
         <TableCell align='center'>
           <FaTrashAlt
             onClick={() => {
@@ -168,7 +175,7 @@ export default props => {
   
   return (
     <div
-      {...props}
+      // {...props}
     >
       <h3>View Coupons</h3>
       <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click
@@ -207,7 +214,9 @@ export default props => {
             />
           </PrevNextContainer>
         </React.Fragment>
-                                            :
+        
+        // no couponData
+        :
         <p>No Coupons to Show</p>
       }
     </div>
@@ -220,7 +229,8 @@ export default props => {
  *
  * @type {StylesHook<Styles<Theme, {}, string>>}
  *
- * @return function. Resulting function useStyles is executed and returns an object that allows access to the styles below by their key. Styles are assigned in className
+ * @return function. Resulting function useStyles is executed and returns an object that allows access to the styles
+ *   below by their key. Styles are assigned in className
  */
 
 const useStyles = makeStyles(theme => ({
