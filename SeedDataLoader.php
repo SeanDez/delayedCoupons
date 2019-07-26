@@ -7,7 +7,7 @@ use \Dotenv\Dotenv;
 
 
 class SeedDataLoader {
-  public $dbConnection;
+  public $pdo;
   
   
   public function __construct() {
@@ -28,13 +28,15 @@ class SeedDataLoader {
       PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ];
     
-    try {
-      $this->dbConnection = new PDO($dsn, $userName, $password, $options);
-      return $this->dbConnection;
-    }
-    catch (PDOException $error) {
-      echo 'Connection error: ' . $error->getMessage();
-      die;
+    if ($this->pdo === null) {
+      try {
+        $this->pdo = new PDO($dsn, $userName, $password, $options);
+        return $this->pdo;
+      }
+      catch (PDOException $error) {
+        echo 'Connection error: ' . $error->getMessage();
+        die;
+      }
     }
   }
   
@@ -87,49 +89,40 @@ class SeedDataLoader {
   }
   
   
-  /** Seeds the database
+  /** Generates array of records ready to be fed to a PDO statement inside execute
    *
-   * Each loop stitches another value to an insert query (following the values keyword)
+   * @param $recordCount. controls how many records are made
+   *
+   * @param $idOffset. set this to the lowest value id in the coupons table to match creation of foreign keys to that table
+   *
+   * @return array of records
    */
-// setup the query string to concat add
-  protected function buildInsertQuery(array $dataList) : string {
-    $values = '';
-    
-    for ($i = 0; $i < sizeof($dataList); $i++) {
-      // setup the final lined modifier
-      $endingMark = ',';
-      if ($i === (sizeof($dataList) - 1)) {
-        $endingMark = ';';
-      }
-      
-      if ($i === 0) {
-        var_export('i is 0', true);
-      }
-      
-      
-      // interpolate properties into the string
-      $values = $values . " ('{$dataList[$i]['isSiteWide']}', '{$dataList[$i]['targetUrl']}', '{$dataList[$i]['displayThreshold']}', '{$dataList[$i]['offerCutoff']}'){$endingMark}";
-    
+  protected function generateTargetRecords(int $recordCount, int $idOffset) : array {
+    $records = [];
+    for ($i = 0; $i < $recordCount; $i++) {
+      $records[] = [
+        'isSitewide' => false,
+        'targetUrl' => $this->createDummyUrl(),
+        'displayThreshold' => mt_rand(3, 10),
+        'offerCutoff' => mt_rand(1, 7),
+        'fk_coupons_targets' => $idOffset + $i
+      ];
     }
-    var_dump($values, '==== vd');
-    return $values;
-  }
-  
-  
-  protected function runInsertQuery (string $valuesConcattedString) {
     
-    $resultOfQuery = $this->dbConnection->query("insert into wp_delayedCoupons_coupons values {$valuesConcattedString};");
-    
-    return $resultOfQuery;
+    return $records;
   }
   
-  
-  /** Close connection
-   */
-  protected function closeConnection() {
-    $this->dbConnection->close();
+  protected function executePdoStatement(PDOStatement $statement, array $records) : void {
+    foreach ($records as $record) {
+      $statement->execute([
+        $record['isSitewide'],
+        $record['targetUrl'],
+        $record['displayThreshold'],
+        $record['offerCutoff'],
+        $record['fk_coupons_targets']
+      ]);
+    }
   }
-  
   
   
   /** Public Methods
@@ -139,78 +132,113 @@ class SeedDataLoader {
     $recordArray = $this->generateCouponData($recordCount);
     
     $concattedString = $this->buildInsertQuery($recordArray);
-    echo '====================================================';
-    echo var_dump($concattedString);
-    echo'     =====$concattedString=====     ';
-    
     
     $queryResult = $this->runInsertQuery($concattedString);
-    echo '====================================================';
-    echo var_dump($queryResult);
-    echo'     =====$queryResult=====     ';
+  }
+  
+  public function addTargetRecordsAndClose(int $recordCount, int $idOffset) {
     
+    try {
+      // start an instance. Begin the transaction
+      $this->connectToDbReportAnyError();
+      $this->pdo->beginTransaction();
+  
+      // prepare the statement / define the query
+      $pdoStatement = $this->pdo->prepare('insert into wp_delayedCoupons_targets (`isSitewide`, `targetUrl`, `displayThreshold`, `offerCutoff`, `fk_coupons_targets`) values (?, ?, ?, ?, ?)');
+  
+      // prepare values data for the statement
+      $targetRecordValues = $this->generateTargetRecords(5, $idOffset);
+  
+      // execute statement and commit
+      $this->executePdoStatement($pdoStatement, $targetRecordValues);
+      $this->pdo->commit();
+  
+      // set connection object to null, closing the transaction
+      $this->pdo = null; // can also use ->close() on pdo;
+    }
     
+    catch (Exception $error) {
+      throw $error;
+    }
   }
   
 }
 
 
-$seedDataLoader = new SeedDataLoader();
-//$seedDataLoader->addCouponDataAndClose(2);
-
-try {
-  $seedDataLoader->connectToDbReportAnyError();
-  if ($seedDataLoader->dbConnection) {
-    echo '===========Connected to db============';
-  }
-  else {
-    echo 'COULD NOT CONNECT';
-  }
-}
-catch (PDOException $error) {
-  echo $error->getMessage();
-}
 
 
-/** THE SCRIPT
- * generates records and inserts them
- */
 
-try {
-  $seedDataLoader->dbConnection->beginTransaction();
-  $sqlStatement = $seedDataLoader->dbConnection
-    ->prepare('insert into `wp_delayedCoupons_coupons`(`totalHits`, `titleText`, `descriptionText`, `titleTextColor`, `titleBackgroundColor`, `descriptionTextColor`, `descriptionBackgroundColor`) values (?, ?, ?, ?, ?, ?, ?)');
-  
-  // generate data array. bind it's values in a loop
-  $data2dArray = $seedDataLoader->generateCouponArray(5);
-  echo '====================================================';
-  echo var_dump($data2dArray);
-  echo'     =====$data2dArray=====     ';
-  
-  
-  foreach ($data2dArray as $array1d) {
-    $sqlStatement
-      ->execute([
-        $array1d['totalHits'],
-        $array1d['titleText'],
-        $array1d['descriptionText'],
-        $array1d['titleTextColor'],
-        $array1d['titleBackgroundColor'],
-        $array1d['descriptionTextColor'],
-        $array1d['descriptionBackgroundColor']
-      ]);
-  }
-  
-  $seedDataLoader->dbConnection->commit();
-}
-catch (Exception $error) {
-  throw $error;
-}
 
-// if target, select parent method. Give records
-if ($_GET['target'] === 'coupons') {
-  $seedDataLoader->addCouponDataAndClose($_GET['count']);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//$seedDataLoader = new SeedDataLoader();
+////$seedDataLoader->addCouponDataAndClose(2);
+//
+//try {
+//  $seedDataLoader->connectToDbReportAnyError();
+//  if ($seedDataLoader->pdo) {
+//    echo '===========Connected to db============';
+//  }
+//  else {
+//    echo 'COULD NOT CONNECT';
+//  }
+//}
+//catch (PDOException $error) {
+//  echo $error->getMessage();
+//}
+//
+//
+///** THE SCRIPT
+// * generates records and inserts them
+// */
+//
+//try {
+//  $seedDataLoader->pdo->beginTransaction();
+//  $sqlStatement = $seedDataLoader->pdo
+//    ->prepare('insert into `wp_delayedCoupons_coupons`(`totalHits`, `titleText`, `descriptionText`, `titleTextColor`, `titleBackgroundColor`, `descriptionTextColor`, `descriptionBackgroundColor`) values (?, ?, ?, ?, ?, ?, ?)');
+//
+//  // generate data array. bind it's values in a loop
+//  $data2dArray = $seedDataLoader->generateCouponArray(5);
+//
+//
+//  foreach ($data2dArray as $array1d) {
+//    $sqlStatement
+//      ->execute([
+//        $array1d['totalHits'],
+//        $array1d['titleText'],
+//        $array1d['descriptionText'],
+//        $array1d['titleTextColor'],
+//        $array1d['titleBackgroundColor'],
+//        $array1d['descriptionTextColor'],
+//        $array1d['descriptionBackgroundColor']
+//      ]);
+//  }
+//
+//  $seedDataLoader->pdo->commit();
+//}
+//catch (Exception $error) {
+//  throw $error;
+//}
+//
+//// if target, select parent method. Give records
+//if ($_GET['target'] === 'coupons') {
+//  $seedDataLoader->addCouponDataAndClose($_GET['count']);
+//}
 
 
 
