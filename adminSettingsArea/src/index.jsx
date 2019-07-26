@@ -59,29 +59,29 @@ const AdminArea = props => {
       {/* ////// BODY ////// */ }
       
       {/* todo refactor this so the fade is styled, and AddCouponForm can pass its prop without issues */}
-      {/*<Fade*/}
-      {/*  in={ Boolean(adminView === bodyViews.addNewCoupon) }*/}
-      {/*  timeout={ 1000 }*/}
-      {/*>*/}
-      {/*  <ConditionalDiv*/}
-      {/*    displayBool={Boolean(adminView === bodyViews.addNewCoupon)}*/}
-      {/*  >*/}
+      <Fade
+        in={ Boolean(adminView === bodyViews.addNewCoupon) }
+        timeout={ 1000 }
+      >
+        <ConditionalDiv
+          displayBool={Boolean(adminView === bodyViews.addNewCoupon)}
+        >
           <AddCouponForm
             clientNonce={ clientNonce }
           />
-        {/*</ConditionalDiv>*/}
-      {/*</Fade>*/}
+        </ConditionalDiv>
+      </Fade>
       
-      {/*<Fade*/}
-      {/*  in={ Boolean(adminView === bodyViews.viewCurrentCoupons) }*/}
-      {/*  timeout={ 1000 }*/}
-      {/*>*/}
-      {/*  <ConditionalDiv*/}
-      {/*    displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}*/}
-      {/*  >*/}
+      <Fade
+        in={ Boolean(adminView === bodyViews.viewCurrentCoupons) }
+        timeout={ 1000 }
+      >
+        <ConditionalDiv
+          displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}
+        >
           <ViewCoupons />
-        {/*</ConditionalDiv>*/}
-      {/*</Fade>*/}
+        </ConditionalDiv>
+      </Fade>
       
       
       

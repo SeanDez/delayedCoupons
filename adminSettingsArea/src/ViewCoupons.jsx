@@ -127,13 +127,17 @@ export default props => {
       index <= (marker + 9)
     ));
     
+    console.log(filteredData, `=====filteredData=====`);
+    
     // return a new array of JSX table rows
     return filteredData.map(record => (
       <TableRow key={record.couponId}>
-        <TableCell align='center'>{record.pageTarget}</TableCell>
+        <TableCell align='center'>{record.titleText}</TableCell>
+        <TableCell align='center'>{record.descriptionText}</TableCell>
+        <TableCell align='center'>target page here</TableCell>
+        <TableCell align='center'>total hits here</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
         <TableCell align='center'>{record.numberOfOffers}</TableCell>
-        <TableCell align='center'>{"placeholder"}</TableCell>
         <TableCell align='center'>
           <FaTrashAlt
             onClick={() => {
@@ -186,13 +190,16 @@ export default props => {
           <StyledTable className={ styles.table }>
             <TableHead>
               <TableRow>
+                <TableCell align='center'>Title Text</TableCell>
+                <TableCell align='center'>Description Text</TableCell>
                 <TableCell align='center'>Target Page</TableCell>
+                <TableCell align='center'>Total Hits</TableCell>
                 <TableCell align='center'>Delay</TableCell>
                 <TableCell align='center'># of Offers</TableCell>
-                <TableCell align='center'>Total times coupon seen</TableCell>
                 <TableCell align='center'>Delete?</TableCell>
               </TableRow>
             </TableHead>
+            
             <TableBody>
               { renderTableBody(couponData, tableMarker) }
             </TableBody>
