@@ -28,7 +28,7 @@ class SeedDataLoader {
       PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ];
     
-    if ($this->pdo === null) {
+    if (isset($this->pdo) === false) {
       try {
         $this->pdo = new PDO($dsn, $userName, $password, $options);
         return $this->pdo;
@@ -158,15 +158,35 @@ class SeedDataLoader {
     }
     
     catch (Exception $error) {
-      throw $error;
+      echo $error->getMessage();
     }
   }
   
 }
 
 
+$cliArgs = getopt(null, ['type:', 'count:', 'id-offset:']);
+if ($cliArgs) {
+  // convert strings to ints and shorten variable names
+  if ($cliArgs['count']) {
+    $count = intval($cliArgs['count']);
+  }
+  
+  if ($cliArgs['id-offset']) {
+    $idOffset = intVal($cliArgs['id-offset']);
+  }
 
-
+  // create object, select the right parent method and run it with cli arguments
+  $seedDataLoader = new SeedDataLoader();
+  
+  if ($cliArgs['type'] === 'targets') {
+    $seedDataLoader->addTargetRecordsAndClose($count, $idOffset);
+  }
+  
+}
+else {
+  echo '=======no parameters passed======';
+}
 
 
 
