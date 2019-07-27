@@ -137,7 +137,7 @@ export default props => {
         <TableCell align='center'>target page here</TableCell>
         <TableCell align='center'>total hits here</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
-        <TableCell align='center'>{record.numberOfOffers}</TableCell>
+        <TableCell align='center'>{record.offerCutoff}</TableCell>
         <TableCell align='center'>
           <FaTrashAlt
             onClick={() => {
