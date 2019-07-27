@@ -97,15 +97,15 @@ class SeedDataLoader {
    *
    * @return array of records
    */
-  protected function generateTargetRecords(int $recordCount, int $idOffset) : array {
+  protected function generateTargetRecords(int $recordCount, array $couponIds) : array {
     $records = [];
     for ($i = 0; $i < $recordCount; $i++) {
       $records[] = [
-        'isSitewide' => false,
+        'isSitewide' => 0,
         'targetUrl' => $this->createDummyUrl(),
         'displayThreshold' => mt_rand(3, 10),
         'offerCutoff' => mt_rand(1, 7),
-        'fk_coupons_targets' => $idOffset + $i
+        'fk_coupons_targets' => $couponIds[$i]
       ];
     }
     
@@ -136,7 +136,7 @@ class SeedDataLoader {
     $queryResult = $this->runInsertQuery($concattedString);
   }
   
-  public function addTargetRecordsAndClose(int $recordCount, int $idOffset) {
+  public function addTargetRecordsAndClose(int $recordCount, array $couponIds) {
     
     try {
       // start an instance. Begin the transaction
@@ -147,8 +147,12 @@ class SeedDataLoader {
       $pdoStatement = $this->pdo->prepare('insert into wp_delayedCoupons_targets (`isSitewide`, `targetUrl`, `displayThreshold`, `offerCutoff`, `fk_coupons_targets`) values (?, ?, ?, ?, ?)');
   
       // prepare values data for the statement
-      $targetRecordValues = $this->generateTargetRecords(5, $idOffset);
-  
+      $targetRecordValues = $this->generateTargetRecords($recordCount, $couponIds);
+      echo '====================================================';
+      echo var_dump($targetRecordValues);
+      echo'     =====$targetRecordValues=====     ';
+      
+      
       // execute statement and commit
       $this->executePdoStatement($pdoStatement, $targetRecordValues);
       $this->pdo->commit();
@@ -164,23 +168,26 @@ class SeedDataLoader {
   
 }
 
+// setup cli arguments
+$cliArgs = getopt(null, ['type:', 'count:', 'couponIds:']);
 
-$cliArgs = getopt(null, ['type:', 'count:', 'id-offset:']);
+// run the script if cli arguments are present
 if ($cliArgs) {
+
   // convert strings to ints and shorten variable names
   if ($cliArgs['count']) {
     $count = intval($cliArgs['count']);
   }
   
-  if ($cliArgs['id-offset']) {
-    $idOffset = intVal($cliArgs['id-offset']);
+  if ($cliArgs['couponIds']) {
+    $couponIds = explode(',', $cliArgs['couponIds']);
   }
 
   // create object, select the right parent method and run it with cli arguments
   $seedDataLoader = new SeedDataLoader();
   
   if ($cliArgs['type'] === 'targets') {
-    $seedDataLoader->addTargetRecordsAndClose($count, $idOffset);
+    $seedDataLoader->addTargetRecordsAndClose($count, $couponIds);
   }
   
 }
