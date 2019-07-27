@@ -23,7 +23,7 @@ class ApiController extends \WP_Rest_Controller {
   
   public function respondAllCoupons() {
     global $wpdb;
-    $query = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}delayedCoupons_coupons");
+    $query = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}delayedCoupons_coupons c left join {$wpdb->prefix}delayedCoupons_targets t on c.couponId = t.fk_coupons_targets");
     
     wp_send_json($query);
   }
