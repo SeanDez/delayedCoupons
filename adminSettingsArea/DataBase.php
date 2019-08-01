@@ -20,7 +20,7 @@ class DataBase {
     titleBackgroundColor varchar(50) not null,
     descriptionTextColor varchar(50) not null,
     descriptionBackgroundColor varchar(50) not null
-    )";
+    ) {$charset_collate}";
     dbDelta($createCouponTableQuery);
     
     
@@ -33,7 +33,7 @@ class DataBase {
        offerCutoff tinyint(5),
        fk_coupons_targets mediumint not null unique,
        foreign key (fk_coupons_targets) references {$prefix}delayedCoupons_coupons(couponId) on delete cascade
-      )";
+      ) {$charset_collate}";
     dbDelta($createTargetTableQuery);
   
   
@@ -41,20 +41,13 @@ class DataBase {
     visitId mediumint(5) not null unique auto_increment,
     primary key (visitId),
     visitorId mediumInt(9) not null,
-    urlVisited varchar(500) not null
-    )";
+    urlVisited varchar(500) not null,
+    fk_targets_visits mediumint(5) not null unique,
+    foreign key (fk_targets_visits) references {$wpdb->prefix}delayedCoupons_targets(targetId) on delete cascade
+    ) {$charset_collate}";
     dbDelta($createVisitsTableQuery);
     
   }
   
-  public function initializeDummyTable() {
-    $query = "CREATE TABLE IF NOT EXISTS tableX (
-    visitId mediumint(5) not null unique auto_increment,
-    primary key (visitId),
-    visitorId mediumInt(9) not null,
-    urlVisited varchar(500) not null
-    )";
-    dbDelta($query);
-  }
   
 }

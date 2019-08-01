@@ -23,9 +23,45 @@ class ApiController extends \WP_Rest_Controller {
   
   public function respondAllCoupons() {
     global $wpdb;
-    $query = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}delayedCoupons_coupons c left join {$wpdb->prefix}delayedCoupons_targets t on c.couponId = t.fk_coupons_targets");
-    
-    wp_send_json($query);
+//    $couponsTargets = $wpdb->get_results("
+//      SELECT *
+//      FROM {$wpdb->prefix}delayedCoupons_coupons c
+//      left join {$wpdb->prefix}delayedCoupons_targets t
+//      on c.couponId = t.fk_coupons_targets
+//    ");
+//
+//    $urlCounts = $wpdb->get_results("
+//      SELECT urlVisited, count(*) as 'totalHits'
+//      FROM {$wpdb->prefix}delayedCoupons_visits
+//      group by urlVisited
+//    ");
+//
+//    wp_send_json([
+//      'couponsTargets' => $couponsTargets,
+//      'urlCounts' => $urlCounts
+//    ]);
+  
+      $urlCounts = $wpdb->get_results("
+      
+      -- step 2
+      SELECT *
+      FROM {$wpdb->prefix}delayedCoupons_coupons c
+      left join {$wpdb->prefix}delayedCoupons_targets t
+      on c.couponId = t.fk_coupons_targets
+      
+      left join -- left retains all left (target) rows
+      ( -- step 1
+        SELECT urlVisited -- needed for the join
+        , count(*) as 'totalVisits'
+        FROM {$wpdb->prefix}delayedCoupons_visits
+        group by urlVisited
+      ) as visitCounts
+
+      on t.targetUrl = visitCounts.urlVisited
+      order by c.couponId
+      ");
+      
+      wp_send_json($urlCounts);
   }
   
   
