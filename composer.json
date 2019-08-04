@@ -2,22 +2,25 @@
     "name": "owner/delayed-coupons",
     "authors": [
         {
-            "name": "Sean Dez",
-            "email": "sd@seandezoysa.com"
+            "name": "Sean Dez"
+            , "email": "sd@seandezoysa.com"
         }
     ],
     "require": {
-        "codeception/mockery-module": "^0.3.0",
-        "symfony/http-foundation": "^4.3",
-        "ext-json": "*",
-        "vlucas/phpdotenv": "^3.4"
+        "codeception/mockery-module": "^0.3.0"
+        , "symfony/http-foundation": "^4.3"
+        , "ext-json": "*"
+        , "vlucas/phpdotenv": "^3.4",
+        "jeremykendall/php-domain-parser": "^5.5",
+        "league/uri-parser": "^1.4",
+        "league/uri-schemes": "^1.2"
     },
     "require-dev": {
-        "lucatume/wp-browser": "^2.2",
-        "mockery/mockery": "^1.2",
-        "php-mock/php-mock-mockery": "^1.3",
-        "phpunit/phpunit": "^8.2",
-        "greenlion/php-sql-parser": "^4.3"
+        "lucatume/wp-browser": "^2.2"
+        , "mockery/mockery": "^1.2"
+        , "php-mock/php-mock-mockery": "^1.3"
+        , "phpunit/phpunit": "^8.2"
+        , "greenlion/php-sql-parser": "^4.3"
     },
     "autoload": {
         "psr-4": {

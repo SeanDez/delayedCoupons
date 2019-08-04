@@ -5,14 +5,16 @@ function wp_send_json($data) {
   return $encodedData;
 }
 
+function wp_get_referrer() : string {
+  return 'http://subdomain.maindomain.com/?query1=value1&query2=value2';
+}
 
 
 
-////// Database Access Mocking for Ajax Handler Methods //////
 
 
-/** This class makes object instances for $wpdb responses
- * Needed because get_results() returns an array of objects by default, not associative arrays
+/** This class makes instances for $wpdb responses
+ * Needed because $wpdb->get_results() returns an array of objects by default, not associative arrays
  * @param $key, string
  * @param $value, string
  */

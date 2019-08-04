@@ -1,64 +1,16 @@
 <?php
 namespace admin\controllers;
 
-use mysql_xdevapi\Exception;
+require_once(PLUGIN_FOLDER_PATH . '/vendor/autoload.php');
+use League\Uri\Parser;
+use Pdp\Cache;
+use Pdp\CurlHttpClient;
+use Pdp\Manager;
+use Pdp\Rules;
 
-require (PLUGIN_FOLDER_PATH . 'vendor/autoload.php');
-
-
-trait protectedMethodsinVisitors {
-  // to enable importing protected methods into test class
-  
-  
-  /** Get visitor Id from cookie
-   * If none, return an explicit value to indicate none
-   *
-   * @return mixed. string = value, otherwise false
-   */
-  protected function getVisitorIdCookie() {
-    if ($_COOKIE['visitorId']) {
-      return $_COOKIE['visitorId'];
-    }
-    else {
-      return false;
-    };
-  }
-  
-  /** Creates a new database visitor record in the visits table
-   */
-  protected function createVisitorIdCookie() : bool {
-    global $wpdb;
-    // select max(visitorId) from wp_dc_visits
-    $highestVisitorId = $wpdb->get_var("SELECT MAX(visitorId) from {$wpdb->prefix}delayedCoupons_visits");
-    
-    $newIdForNewVisitor = intval($highestVisitorId) + 1;
-    $setResult = setcookie(
-      'visitorId',
-      "{$newIdForNewVisitor}", [
-        'httponly' => true
-        , 'expires' => time() + (50 * 365 * 24 * 60 * 60)
-      ]
-    );
-    
-    return $setResult;
-  }
-  
-  protected function logVisit($visitorIdCookie) {
-    global $wpdb;
-    $wpdb->insert(
-    "{$wpdb->prefix}delayedCoupons_visits",
-      [
-        "visitorId" => $visitorIdCookie
-        , "urlVisited" => wp_get_referrer()
-      ]
-    );
-  }
-  
-}
 
 class Visitors {
   use protectedMethodsinVisitors;
-  
   
   
   ////// Public Functions //////
@@ -108,3 +60,128 @@ class Visitors {
     
   }
 }
+
+
+trait protectedMethodsInVisitors {
+  
+  /** Get visitor Id from cookie
+   * If none, return an explicit value to indicate none
+   *
+   * @return mixed. string = value, otherwise false
+   */
+  protected function getVisitorIdCookie() {
+    if ($_COOKIE['visitorId']) {
+      return $_COOKIE['visitorId'];
+    }
+    else {
+      return false;
+    };
+  }
+  
+  /** Creates a new database visitor record in the visits table
+   */
+  protected function createVisitorIdCookie() : bool {
+    global $wpdb;
+    // select max(visitorId) from wp_dc_visits
+    $highestVisitorId = $wpdb->get_var("SELECT MAX(visitorId) from {$wpdb->prefix}delayedCoupons_visits");
+    
+    $newIdForNewVisitor = intval($highestVisitorId) + 1;
+    $setResult = setcookie(
+      'visitorId',
+      "{$newIdForNewVisitor}", [
+        'httponly' => true
+        , 'expires' => time() + (50 * 365 * 24 * 60 * 60)
+      ]
+    );
+    
+    return $setResult;
+  }
+  
+  /** Captures the subdomain, if any
+   * @return string,
+   */
+  protected function captureSubdomain() : string {
+    // strip http:// out of the url
+    $rawUrl = wp_get_referrer();
+    
+    $regexArray = [];
+    preg_match('/http:\/\/(.*)/', $rawUrl, $regexArray);
+    $urlWithHttpDeleted = $regexArray[1];
+    
+    $regexArray2 = [];
+    $subPlusMainDomainWithQueryStringRemoved = $urlWithHttpDeleted;
+    // strip out ending / and query string if / is detected
+    if (
+    preg_match('/(.*)\/.*/', $urlWithHttpDeleted, $regexArray2)
+    ) {
+      $subPlusMainDomainWithQueryStringRemoved = $regexArray2[1];
+    }
+    
+    $manager = new Manager(new Cache(), new CurlHttpClient());
+    $rules = $manager->getRules(); //$rules is a Pdp\Rules object
+    $uriComponents = $rules->resolve(
+      $subPlusMainDomainWithQueryStringRemoved
+    );
+    
+    $subdomain = $uriComponents->getSubDomain();
+    
+    return $subdomain;
+  }
+  
+  /** Captures path excluding subdomain
+   *
+   */
+  protected function capturePathWithoutSubdomain() : string {
+    $regexOutput = [];
+    
+    // searches for 2 period delimiters. No match if none
+    $regexTest = '/http:\/\/(\w*)\.\w*\./';
+    
+    preg_match($regexTest, wp_get_referrer(), $regexOutput);
+    
+    if (count($regexOutput) > 0) {
+      return $regexOutput[1];
+    }
+    return '';
+  }
+  
+  /** Remove query strings from url
+   * @return string. Cleaned URL
+   */
+  protected function normalizeUrl() {
+    $rawUrl = wp_get_referrer();
+    
+    $regexPattern = '';
+    $cleanUrl = preg_match($pattern, $rawUrl);
+    
+  }
+  
+  /** Insert a new row into visits table
+   * @param $visitorIdCookie string. Value of cookie visitorId
+   * @return int = 1 on success. returns false on error
+   */
+  protected function logVisit($visitorIdCookie) : int {
+    global $wpdb;
+    $result = $wpdb->insert(
+      "{$wpdb->prefix}delayedCoupons_visits",
+      [
+        "visitorId" => $visitorIdCookie
+        , "urlVisited" => wp_get_referrer()
+      ]
+    );
+    
+    return $result;
+  }
+  
+  protected function scanAgainstUrlTargets() {
+  
+  }
+  
+}
+
+
+
+
+
+
+
