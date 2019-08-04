@@ -97,30 +97,48 @@ trait protectedMethodsInVisitors {
     return $setResult;
   }
   
+  /** Chunks a url down to an associative array
+   * @return array. Named array of sub.main.tld, ald /?query=values
+   */
+  protected function breakApartUrl() : array {
+  
+    // strip http:// out of the url
+    $rawUrl = wp_get_referrer();
+  
+    $regexArray = [];
+    preg_match('/http:\/\/(.*)/', $rawUrl, $regexArray);
+    $urlWithHttpDeleted = $regexArray[1];
+  
+    $regexArray2 = [];
+    $urlPartsIndexed = [];
+    $urlPartsIndexed[] = $urlWithHttpDeleted;
+    // split sub.main.com and trailing / + query string if detected
+    if (
+    preg_match('/(.*)(\/.*)/', $urlWithHttpDeleted, $regexArray2)
+    ) {
+      $urlPartsIndexed[0] = $regexArray2[1];
+      $urlPartsIndexed[] = $regexArray2[2];
+    }
+    
+    // convert to associative array
+    $urlPartsNamed = [
+      'subMainTld' => $urlPartsIndexed[0],
+      'slashQueryString' => $urlPartsIndexed[1]
+    ];
+    
+    return $urlPartsNamed;
+  }
+  
   /** Captures the subdomain, if any
    * @return string,
    */
   protected function captureSubdomain() : string {
-    // strip http:// out of the url
-    $rawUrl = wp_get_referrer();
-    
-    $regexArray = [];
-    preg_match('/http:\/\/(.*)/', $rawUrl, $regexArray);
-    $urlWithHttpDeleted = $regexArray[1];
-    
-    $regexArray2 = [];
-    $subPlusMainDomainWithQueryStringRemoved = $urlWithHttpDeleted;
-    // strip out ending / and query string if / is detected
-    if (
-    preg_match('/(.*)\/.*/', $urlWithHttpDeleted, $regexArray2)
-    ) {
-      $subPlusMainDomainWithQueryStringRemoved = $regexArray2[1];
-    }
     
     $manager = new Manager(new Cache(), new CurlHttpClient());
-    $rules = $manager->getRules(); //$rules is a Pdp\Rules object
+    $rules = $manager->getRules();
+    
     $uriComponents = $rules->resolve(
-      $subPlusMainDomainWithQueryStringRemoved
+      $this->breakApartUrl()['subMainTld']
     );
     
     $subdomain = $uriComponents->getSubDomain();
