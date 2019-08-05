@@ -9,11 +9,11 @@ use \admin\controllers\protectedMethodsInVisitors;
 class VisitorsTest extends \PHPUnit\Framework\TestCase {
   use protectedMethodsInVisitors;
   
-//  public function testCaptureSubdomainWithLongUrl() {
-//
-//    $result = $this->captureSubdomain();
-//    $this->assertEquals('subdomain', $result);
-//  }
+  public function testCaptureSubdomainWithLongUrl() {
+
+    $result = $this->captureSubdomain();
+    $this->assertEquals('subdomain', $result);
+  }
   
   public function testBreakApartUrl() {
     

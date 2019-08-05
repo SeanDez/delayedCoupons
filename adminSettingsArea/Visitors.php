@@ -137,12 +137,13 @@ trait protectedMethodsInVisitors {
     $manager = new Manager(new Cache(), new CurlHttpClient());
     $rules = $manager->getRules();
     
+    // grab the root of the url, defined as:
+    // subdomain.maindomain.tld
     $uriComponents = $rules->resolve(
       $this->breakApartUrl()['subMainTld']
     );
     
     $subdomain = $uriComponents->getSubDomain();
-    
     return $subdomain;
   }
   
