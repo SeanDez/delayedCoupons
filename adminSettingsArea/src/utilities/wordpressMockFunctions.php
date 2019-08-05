@@ -6,7 +6,7 @@ function wp_send_json($data) {
 }
 
 function wp_get_referrer() : string {
-  return 'http://subdomain.maindomain.com/?query1=value1&query2=value2';
+  return 'http://subdomain.maindomain.com/category/page?query1=value1&query2=value2';
 }
 
 
