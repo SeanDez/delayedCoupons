@@ -18,7 +18,7 @@ trait protectedMethodsInVisitors {
    * @return mixed. string = value, otherwise false
    */
   protected function getVisitorIdCookie() {
-    if ($_COOKIE['visitorId']) {
+    if (array_key_exists('visitorId', $_COOKIE)) {
       return $_COOKIE['visitorId'];
     }
     else {
@@ -37,11 +37,13 @@ trait protectedMethodsInVisitors {
     
     $newIdForNewVisitor = intval($highestVisitorId) + 1;
     $setResult = setcookie(
-      'visitorId',
-      "{$newIdForNewVisitor}", [
-        'httponly' => true
-        , 'expires' => time() + (50 * 365 * 24 * 60 * 60)
-      ]
+      'visitorId'
+      , "{$newIdForNewVisitor}"
+      , time() + (50 * 365 * 24 * 60 * 60)
+      , '/'
+      , null
+      , null
+      , true
     );
     
     return $setResult;
@@ -57,10 +59,11 @@ trait protectedMethodsInVisitors {
     // i = 1: capture group for: subdomain, domain, categories, pages
     // i = 2: capture group: query string
     $regexOutput = [];
-    preg_match('/(^http:\/\/[^\?\s]+)(\?[^\s]+)?/', wp_get_referrer(), $regexOutput);
+    preg_match('/(^http:\/\/[^\?\s]+)(\?[^\s]+)?/', wp_get_referer(), $regexOutput);
     
     $brokenUpUrl = [
-      'urlRoot' => $regexOutput[1]
+      'rawUrl' => $regexOutput[0]
+      , 'urlRoot' => $regexOutput[1]
       , 'queryString' => $regexOutput[2] ? $regexOutput[2] : ''
     ];
     
@@ -109,26 +112,66 @@ trait protectedMethodsInVisitors {
   
   /** Insert a new row into visits table
    * @param $visitorIdCookie string. Value of cookie visitorId
+   * @param $urlData array. the broken up URL data;
    * @return int = 1 on success. returns false on error
    *
    * not test covered
    */
-  protected function logVisit($visitorIdCookie) : int {
+  protected function logVisit(string $visitorIdCookie, array $urlData) : int {
     global $wpdb;
+    
     $result = $wpdb->insert(
       "{$wpdb->prefix}delayedCoupons_visits",
       [
         "visitorId" => $visitorIdCookie
-        , "urlVisited" => wp_get_referrer()
-        , "urlBase" => $this->breakApartUrl()['subMainTld']
+        , "urlVisited" => $urlData['rawUrl'] . $urlData['queryString']
+        , "urlRoot" => $urlData['urlRoot']
+        , 'queryString' => $urlData['queryString']
       ]
     );
     
     return $result;
   }
   
-  protected function scanAgainstUrlTargets() {
+  protected function scanAgainstUrlTargets(array $urlData) {
+    global $wpdb;
+    
+    // check the rawUrl against the target list
+    // todo select against the other columns too. A count is first needed
+    $urlMatch = $wpdb->get_results("
+      SELECT *
+      FROM {$wpdb->prefix}delayedCoupons_targets
+      WHERE targetUrl = {$urlData['rawUrl']}
+      AND displayThreshold < (
+        select count(*)
+        from {$wpdb->prefix}delayedCoupons_visits
+        where urlVisited = {$urlData['rawUrl']}
+        as visitCount)
+      AND visitCount < displayThreshold + offerCutoff
+    ");
+    
+    return $urlMatch;
+  }
   
+  /** Returns coupon data as assoc. array
+   */
+  protected function lookUpCouponData(string $couponId) {
+    global $wpdb;
+    
+    $query = $wpdb->get_results("
+      SELECT *
+      FROM {$wpdb->prefix}delayedCoupons_coupons
+      WHERE couponId = {$couponId}
+    ");
+    
+    return $query;
+  }
+  
+  /** Render the coupon to the page as an overlay
+   * @param $couponSettings array. Has information for text/bg colors, and headline/desc content
+   */
+  protected function renderCoupon(array $couponSettings) {
+//    require_once(PLUGIN_FOLDER_PATH . 'frontFacingOverlay/coupon.php');
   }
   
 }
@@ -154,7 +197,7 @@ class Visitors {
    * @param $urlInfo array. Contains page url of visitor
    */
   
-  public function logVisitsAndControlCouponDisplay($urlInfo) {
+  public function logVisitsAndControlCouponDisplay() {
     // get visitor cookie or set new one
     $cookieInfo = $this->getVisitorIdCookie();
     
@@ -162,22 +205,23 @@ class Visitors {
     if ($cookieInfo === false) {
       $cookieInfo = $this->createVisitorIdCookie();
     }
-    
+  
+    // grab the url pieces
+    $urlInfo = $this->breakApartUrl();
     
     // log the visit
     try {
-      $this->logVisit($cookieInfo);
+      $this->logVisit($cookieInfo, $urlInfo);
     } catch (\Exception $error) {
       print_r('something went awry while logging visit');
     }
     
-    
     // check if this visit matches a URL. if so, return trigger conditions and coupon data
-    $matchData = $this->scanAgainstUrlTargets($urlInfo);
+    $targetMatchData = $this->scanAgainstUrlTargets($urlInfo);
     
-    // if $matchData['found'] then lookup the coupon data and render it. Otherwise die
-    if ($matchData['found']) {
-      $textDescriptionColors = $this->lookupCouponData($urlInfo);
+    // if $matchData then lookup the coupon data and render it. Otherwise die
+    if ($targetMatchData) {
+      $textDescriptionColors = $this->lookUpCouponData($targetMatchData['fk_coupons_targets']);
       $this->renderCoupon($textDescriptionColors);
     } else {
       wp_die();

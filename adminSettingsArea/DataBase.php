@@ -42,6 +42,8 @@ class DataBase {
     primary key (visitId),
     visitorId mediumInt(9) not null,
     urlVisited varchar(500) not null,
+    urlRoot varchar(400) not null,
+    queryString varchar(400),
     fk_targets_visits mediumint(5) not null unique,
     foreign key (fk_targets_visits) references {$wpdb->prefix}delayedCoupons_targets(targetId) on delete cascade
     ) {$charset_collate}";

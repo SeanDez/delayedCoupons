@@ -36,7 +36,7 @@ class WPDB {
   
   public $prefix = 'dummy_';
   
-  public function get_results() {
+  public function get_results($fakeVar = null) {
     return [
       new DummyObject(['k1' => 'v1']),
       new DummyObject(['k2'=> 'v2']),
@@ -52,5 +52,12 @@ $wpdb = new WPDB();
 
 
 ////// mocks just to avoid errors //////
-function add_action() {};
+function add_action(
+  $x = null
+  , $y = null
+  , $z = null
+  , $a = null
+  , $b = null
+) {};
+
 function add_filter() {};

@@ -19,7 +19,8 @@ class VisitorsTest extends \PHPUnit\Framework\TestCase {
     
     $result = $this->breakApartUrl();
     $this->assertEquals([
-        'urlRoot' => 'http://subdomain.maindomain.com/category/page'
+      'rawUrl' => 'http://subdomain.maindomain.com/category/page?query1=value1&query2=value2'
+        , 'urlRoot' => 'http://subdomain.maindomain.com/category/page'
         , 'queryString' => '?query1=value1&query2=value2'
       ]
     , $result);

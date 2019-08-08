@@ -5,6 +5,7 @@ namespace DelayedCoupons;
 ////// Plugin Declaration (read by WP Core) //////
 use admin\controllers\AjaxController;
 
+
 /**
  * Plugin Name: Delayed Coupons
  * Description: Show coupons after a visitor visits a specific page
@@ -29,6 +30,9 @@ define("PLUGIN_FOLDER_URL", plugin_dir_url(__FILE__));
 ////// On Plugin Activation Hook //////
 
 require_once ('adminSettingsArea/DataBase.php');
+require_once (ADMIN_SETTINGS_PATH . '/Visitors.php');
+
+use admin\controllers\Visitors;
 use \DataBase; // this is the default when you don't add one to the top of file
 $database = new DataBase();
 
@@ -70,10 +74,10 @@ function handleAddNewCoupon() {
 add_action('wp_ajax_addNewCoupon', 'handleAddNewCoupon');
 
 
-function handleX() {
-  wp_send_json('x passed back');
-}
-add_action('wp_ajax_x', 'handleX');
+
+// database trigger checks and coupon display control
+$visitors = new Visitors();
+add_action('init', [$visitors, 'logVisitsAndControlCouponDisplay']);
 
 
 
