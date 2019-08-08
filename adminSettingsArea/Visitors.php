@@ -138,16 +138,27 @@ trait protectedMethodsInVisitors {
     
     // check the rawUrl against the target list
     // todo select against the other columns too. A count is first needed
+//    $urlMatch = $wpdb->get_results("
+//      SELECT *, (select count(*) from wp_delayedCoupons_visits v where v.urlVisited = 'demoPosition1') as visitCount
+//      FROM {$wpdb->prefix}delayedCoupons_targets t
+//      WHERE t.targetUrl = 'stringPosition2'
+//      AND t.displayThreshold < visitCount
+//      AND visitCount < t.displayThreshold + t.offerCutoff
+//    ");
     $urlMatch = $wpdb->get_results("
-      SELECT *
-      FROM {$wpdb->prefix}delayedCoupons_targets
-      WHERE targetUrl = {$urlData['rawUrl']}
-      AND displayThreshold < (
-        select count(*)
-        from {$wpdb->prefix}delayedCoupons_visits
-        where urlVisited = {$urlData['rawUrl']}
-        as visitCount)
-      AND visitCount < displayThreshold + offerCutoff
+      SELECT t.*
+      FROM {$wpdb->prefix}delayedCoupons_targets t
+      WHERE t.targetUrl = 'stringPosition2'
+        AND t.displayThreshold < (
+          select count(*)
+          from wp_delayedCoupons_visits v
+          where v.urlVisited = 'demoPosition1'
+          )
+        AND (
+          select count(*)
+          from wp_delayedCoupons_visits v
+          where v.urlVisited = 'demoPosition1'
+          ) < t.displayThreshold + t.offerCutoff
     ");
     
     return $urlMatch;
@@ -219,7 +230,7 @@ class Visitors {
     // check if this visit matches a URL. if so, return trigger conditions and coupon data
     $targetMatchData = $this->scanAgainstUrlTargets($urlInfo);
     
-    // if $matchData then lookup the coupon data and render it. Otherwise die
+    // if $targetMatchData then lookup the coupon data and render it. Otherwise die
     if ($targetMatchData) {
       $textDescriptionColors = $this->lookUpCouponData($targetMatchData['fk_coupons_targets']);
       $this->renderCoupon($textDescriptionColors);
