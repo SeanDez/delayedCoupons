@@ -145,23 +145,19 @@ trait protectedMethodsInVisitors {
 //      AND t.displayThreshold < visitCount
 //      AND visitCount < t.displayThreshold + t.offerCutoff
 //    ");
-    $urlMatch = $wpdb->get_results("
-      SELECT t.*
-      FROM {$wpdb->prefix}delayedCoupons_targets t
-      WHERE t.targetUrl = 'stringPosition2'
-        AND t.displayThreshold < (
+    $conditionMatch = $wpdb->get_results("
+      SELECT t.*, visitData.count
+      FROM
+        {$wpdb->prefix}delayedCoupons_targets t, (
           select count(*)
-          from wp_delayedCoupons_visits v
-          where v.urlVisited = 'demoPosition1'
-          )
-        AND (
-          select count(*)
-          from wp_delayedCoupons_visits v
-          where v.urlVisited = 'demoPosition1'
-          ) < t.displayThreshold + t.offerCutoff
+          from {$wpdb->prefix}delayedCoupons_visits v
+          ) as visitData
+      WHERE t.targetUrl = {$urlData['rawUrl']}
+        AND t.displayThreshold < visitData.count
+        AND  t.displayThreshold + t.offerCutoff >= visitData.count
     ");
     
-    return $urlMatch;
+    return $conditionMatch;
   }
   
   /** Returns coupon data as assoc. array
@@ -231,10 +227,11 @@ class Visitors {
     $targetMatchData = $this->scanAgainstUrlTargets($urlInfo);
     
     // if $targetMatchData then lookup the coupon data and render it. Otherwise die
-    if ($targetMatchData) {
+    if (array_key_exists('targetId', $targetMatchData)) {
       $textDescriptionColors = $this->lookUpCouponData($targetMatchData['fk_coupons_targets']);
       $this->renderCoupon($textDescriptionColors);
     }
+    // else do nothing. DON'T Die
     
   }
 }
