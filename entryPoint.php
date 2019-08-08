@@ -76,7 +76,6 @@ function handleAddNewCoupon() {
 add_action('wp_ajax_addNewCoupon', 'handleAddNewCoupon');
 
 
-
 /** Handles all aspects of triggers and coupon display
  * Cookie setting. Trigger checks. Coupon retrieval and rendering
  */

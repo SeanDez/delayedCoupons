@@ -234,8 +234,6 @@ class Visitors {
     if ($targetMatchData) {
       $textDescriptionColors = $this->lookUpCouponData($targetMatchData['fk_coupons_targets']);
       $this->renderCoupon($textDescriptionColors);
-    } else {
-      wp_die();
     }
     
   }
