@@ -135,16 +135,7 @@ trait protectedMethodsInVisitors {
   
   protected function scanAgainstUrlTargets(array $urlData) {
     global $wpdb;
-    
-    // check the rawUrl against the target list
-    // todo select against the other columns too. A count is first needed
-//    $urlMatch = $wpdb->get_results("
-//      SELECT *, (select count(*) from wp_delayedCoupons_visits v where v.urlVisited = 'demoPosition1') as visitCount
-//      FROM {$wpdb->prefix}delayedCoupons_targets t
-//      WHERE t.targetUrl = 'stringPosition2'
-//      AND t.displayThreshold < visitCount
-//      AND visitCount < t.displayThreshold + t.offerCutoff
-//    ");
+
     $conditionMatch = $wpdb->get_results("
       SELECT t.*, visitData.count
       FROM
