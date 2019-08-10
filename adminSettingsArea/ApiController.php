@@ -23,27 +23,10 @@ class ApiController extends \WP_Rest_Controller {
   
   public function respondAllCoupons() {
     global $wpdb;
-//    $couponsTargets = $wpdb->get_results("
-//      SELECT *
-//      FROM {$wpdb->prefix}delayedCoupons_coupons c
-//      left join {$wpdb->prefix}delayedCoupons_targets t
-//      on c.couponId = t.fk_coupons_targets
-//    ");
-//
-//    $urlCounts = $wpdb->get_results("
-//      SELECT urlVisited, count(*) as 'totalHits'
-//      FROM {$wpdb->prefix}delayedCoupons_visits
-//      group by urlVisited
-//    ");
-//
-//    wp_send_json([
-//      'couponsTargets' => $couponsTargets,
-//      'urlCounts' => $urlCounts
-//    ]);
+    
+    wp_send_json('load hooked');
   
       $urlCounts = $wpdb->get_results("
-      
-      -- step 2
       SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
       FROM {$wpdb->prefix}delayedCoupons_coupons c
       
@@ -87,23 +70,10 @@ class ApiController extends \WP_Rest_Controller {
   }
   
   
-  public function respondWithString() {
-    wp_send_json('dummy return from object');
-  }
-  
   
   
   /** Route registrations
    */
-  
-  // todo remove dummy rest route later
-  public function registerDummyRoute() {
-    register_rest_route($this->urlBase, 'dummyMethod', [
-      'methods' => 'GET',
-      'callback' => [$this, 'respondWithString']
-    ]);
-  }
-  
   
   public function registerLoadCouponRoute() {
     register_rest_route($this->urlBase, 'loadAllCoupons', [

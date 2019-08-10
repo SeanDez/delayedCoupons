@@ -12,7 +12,26 @@ use admin\controllers\AjaxController;
  * */
 
 
+//function hookAllRestControllers() {
+//  $apiController = new ApiController();
 
+//  $apiController->registerLoadCouponRoute();
+//  $apiController->registerDeleteSingleCouponRoute();
+  
+  function xY() {
+    wp_send_json('xy caught');
+  }
+  
+  function registerXY() {
+    register_rest_route('x/', 'y', [
+      'methods' => 'GET',
+      'callback' => 'xY'
+    ]);
+  }
+//  registerXY();
+//}
+
+add_action('rest_api_init', 'registerXY');
 
 
 /** Basic Project Setup
@@ -142,14 +161,27 @@ add_action('init', [$visitors, 'logVisitsAndControlCouponDisplay']);
  */
 require_once ('adminSettingsArea/ApiController.php');
 use \admin\controllers\ApiController;
-
-function hookAllRestControllers() {
-  $apiController = new ApiController();
-  $apiController->registerDummyRoute();
-  $apiController->registerLoadCouponRoute();
-  $apiController->registerDeleteSingleCouponRoute();
-}
-add_action('rest_api_init', '\DelayedCoupons\hookAllRestControllers');
+//
+//function hookAllRestControllers() {
+////  $apiController = new ApiController();
+//
+////  $apiController->registerLoadCouponRoute();
+////  $apiController->registerDeleteSingleCouponRoute();
+//
+//  function xY() {
+//      wp_send_json('xy caught');
+//  }
+//
+//  function registerXY() {
+//    register_rest_route('x', 'y', [
+//      'methods' => 'GET',
+//      'callback' => 'xY'
+//    ]);
+//  }
+//  registerXY();
+//}
+//
+//add_action('rest_api_init', 'hookAllRestControllers');
 
 
 

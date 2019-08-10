@@ -101,7 +101,7 @@ trait protectedMethodsInVisitors {
     // searches for 2 period delimiters. No match if none
     $regexTest = '/http:\/\/(\w*)\.\w*\./';
     
-    preg_match($regexTest, wp_get_referrer(), $regexOutput);
+    preg_match($regexTest, wp_get_referer(), $regexOutput);
     
     if (count($regexOutput) > 0) {
       return $regexOutput[1];
@@ -124,7 +124,7 @@ trait protectedMethodsInVisitors {
       "{$wpdb->prefix}delayedCoupons_visits",
       [
         "visitorId" => $visitorIdCookie
-        , "urlVisited" => $urlData['rawUrl'] . $urlData['queryString']
+        , "urlVisited" => $urlData['rawUrl']
         , "urlRoot" => $urlData['urlRoot']
         , 'queryString' => $urlData['queryString']
       ]
@@ -136,16 +136,20 @@ trait protectedMethodsInVisitors {
   protected function scanAgainstUrlTargets(array $urlData) {
     global $wpdb;
 
+    // todo figure out how to alias the subquery
     $conditionMatch = $wpdb->get_results("
-      SELECT t.*, visitData.count
+      SELECT t.*
       FROM
-        {$wpdb->prefix}delayedCoupons_targets t, (
+        {$wpdb->prefix}delayedCoupons_targets t
+      WHERE t.targetUrl = '{$urlData['rawUrl']}'
+        AND t.displayThreshold < (
           select count(*)
           from {$wpdb->prefix}delayedCoupons_visits v
-          ) as visitData
-      WHERE t.targetUrl = {$urlData['rawUrl']}
-        AND t.displayThreshold < visitData.count
-        AND  t.displayThreshold + t.offerCutoff >= visitData.count
+          )
+        AND  t.displayThreshold + t.offerCutoff >= (
+          select count(*)
+          from {$wpdb->prefix}delayedCoupons_visits v
+          )
     ");
     
     return $conditionMatch;
