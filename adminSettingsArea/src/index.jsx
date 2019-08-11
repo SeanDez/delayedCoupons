@@ -27,8 +27,6 @@ if (typeof _wpnonce === 'undefined') {
   clientNonce = _wpnonce;
 }
 
-// console.log(cookiesArray, `=====cookiesArray=====`);
-
 
 const AdminArea = props => {
   const {match} = props;

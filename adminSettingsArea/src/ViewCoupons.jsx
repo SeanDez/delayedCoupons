@@ -23,13 +23,16 @@ if (window && window.ajaxUrl) {
 // setup the request handler
 const ajaxRequestor = new AjaxRequestor(ajaxUrl);
 
+// sets up the apiBaseUrl
+let apiBaseUrlSet = new Error("Wordpress did not set the api base url");
+if (window && window.apiBaseUrl) {
+  apiBaseUrlSet = apiBaseUrl;
+}
 
 
-
+////// Component //////
 export default props => {
   const styles = useStyles();
-
-  // const couponData = useContext(CurrentCouponChannel); // decided not to run data through the parent.
   
   /**
    * loads couponData initially and onChange
@@ -92,15 +95,15 @@ export default props => {
    * Also modifies a state key being watched by a useEffect, which will then update automatically on change
    *
    */
-  
   const deleteCouponTableRow = couponId => {
-    // todo create a handler for this delete request on the server
+    // this suffix tells the handler which coupon to remove from the db
+    const targetedUrl = `${apiBaseUrlSet}/deleteCoupon/${couponId}`;
     
     try {
       const response = ajaxRequestor.post({
         action : 'deleteCurrentCoupon',
         payload : { couponId }
-      }, ajaxUrl);
+      }, apiBaseUrlSet);
       
       return response.data;
     }
@@ -132,6 +135,7 @@ export default props => {
     // return a new array of JSX table rows
     return filteredData.map(record => (
       <TableRow key={record.couponId}>
+        <TableCell align='center'>{record.couponId}</TableCell>
         <TableCell align='center'>{record.titleText}</TableCell>
         <TableCell align='center'>{record.descriptionText}</TableCell>
         <TableCell align='center'>{record.targetUrl}</TableCell>
@@ -140,8 +144,8 @@ export default props => {
         <TableCell align='center'>{record.offerCutoff}</TableCell>
         <TableCell align='center'>
           <FaTrashAlt
-            onClick={() => {
-              // todo use record.couponId to send a delete request
+            onClick={e => {
+              deleteCouponTableRow(record.couponId);
             }}
           />
         </TableCell>
@@ -190,6 +194,7 @@ export default props => {
           <StyledTable className={ styles.table }>
             <TableHead>
               <TableRow>
+                <TableCell align='center'>Coupon Id</TableCell>
                 <TableCell align='center'>Title Text</TableCell>
                 <TableCell align='center'>Description Text</TableCell>
                 <TableCell align='center'>Target Page</TableCell>

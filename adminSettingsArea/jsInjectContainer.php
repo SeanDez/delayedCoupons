@@ -9,7 +9,9 @@
   <script>
     let _wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
     
-    let cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+    let cookiesArray = <?php echo json_encode($_COOKIE); ?>;
+    
+    let apiBaseUrl = "<?php echo get_rest_url(); ?>";
   </script>
 </div>
 

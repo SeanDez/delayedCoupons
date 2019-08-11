@@ -1,5 +1,10 @@
 import axios from "axios";
 
+/** Handles requests in dev and production
+ *
+ * controls the ajaxUrl setting based on either a specific Env Variable, or assumes production if that variable isn't set
+ *
+ */
 
 export default class AjaxRequestor {
   
@@ -9,12 +14,14 @@ export default class AjaxRequestor {
     this.setUrl();
   }
   
+  
   setUrl() {
     // any non dev env should use undefined (and throw an error) or better, use an actual ajaxUrl
     if (process.env.NODE_ENV === 'development') {
       this.url = 'devUrl'
     }
   }
+  
   
   async post(postData, url = this.url, returnData = null) {
     // if dev just resolve the data
@@ -26,7 +33,9 @@ export default class AjaxRequestor {
     ) {
       try {
         const resolvedValue = await Promise
-          .resolve({data : returnData});
+          .resolve({
+            data : returnData
+          });
 
         return resolvedValue;
       }

@@ -49,30 +49,6 @@ register_activation_hook(__FILE__, [$database, 'initializeDummyTable']);
 // Admin Page
 require_once ('adminSettingsArea/index.php');
 
-// Ajax Handlers
-require_once('adminSettingsArea/AjaxControllers.php');
-
-$ajaxController = new AjaxController();
-
-/** Deprecated after REST API switch
- * todo copy over functionality and then remove
- */
-add_action('wp_ajax_loadCouponData', [$ajaxController, 'handleLoadCouponData']);
-add_action('wp_ajax_deleteCurrentCoupon', [$ajaxController, 'handleDeleteCurrentCoupon']);
-// add_action('wp_ajax_addNewCoupon', [$ajaxController, 'handleAddNewCoupon']);
-
-
-function handleAddNewCoupon() {
-  $fileContents = file_get_contents('php://input');
-  $decodedContents = json_decode($fileContents);
-
-//    global $wpdb;
-//    $wpdb->insert;
-  
-  wp_send_json('placeholder');
-}
-
-add_action('wp_ajax_addNewCoupon', 'handleAddNewCoupon');
 
 
 /** Handles all aspects of triggers and coupon display
@@ -146,12 +122,6 @@ $apiController = new ApiController();
 add_action('rest_api_init', [$apiController, 'registerLoadCouponRoute']);
 add_action('rest_api_init', [$apiController, 'registerDeleteSingleCouponRoute']);
 
-//function hookAllRestControllers() {
-//  global $apiController;
-//
-//  $apiController->registerLoadCouponRoute();
-//  $apiController->registerDeleteSingleCouponRoute();
-//}
 
 
 

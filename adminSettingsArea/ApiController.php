@@ -21,6 +21,17 @@ class ApiController extends \WP_Rest_Controller {
   /** Callback functions
    */
   
+  
+  public function addNewCoupon() {
+    global $wpdb;
+  
+    $fileContents = file_get_contents('php://input');
+    $decodedContents = json_decode($fileContents);
+  
+    wp_send_json('placeholder');
+  }
+  
+  
   public function respondAllCoupons() {
     global $wpdb;
     
