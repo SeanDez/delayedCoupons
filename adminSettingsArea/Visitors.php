@@ -62,9 +62,9 @@ trait protectedMethodsInVisitors {
     preg_match('/(^http:\/\/[^\?\s]+)(\?[^\s]+)?/', wp_get_referer(), $regexOutput);
     
     $brokenUpUrl = [
-      'rawUrl' => $regexOutput[0]
-      , 'urlRoot' => $regexOutput[1]
-      , 'queryString' => $regexOutput[2] ? $regexOutput[2] : ''
+      'rawUrl' => array_key_exists(0, $regexOutput) ? $regexOutput[0] : ''
+      , 'urlRoot' => array_key_exists(1, $regexOutput) ? $regexOutput[1] : ''
+      , 'queryString' => array_key_exists(2, $regexOutput) ? $regexOutput[2] : ''
     ];
     
     return $brokenUpUrl;

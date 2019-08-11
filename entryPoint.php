@@ -12,33 +12,13 @@ use admin\controllers\AjaxController;
  * */
 
 
-//function hookAllRestControllers() {
-//  $apiController = new ApiController();
-
-//  $apiController->registerLoadCouponRoute();
-//  $apiController->registerDeleteSingleCouponRoute();
-  
-  function xY() {
-    wp_send_json('xy caught');
-  }
-  
-  function registerXY() {
-    register_rest_route('x/', 'y', [
-      'methods' => 'GET',
-      'callback' => 'xY'
-    ]);
-  }
-//  registerXY();
-//}
-
-add_action('rest_api_init', 'registerXY');
-
 
 /** Basic Project Setup
  * Env variables, constant definitions, class autoloads
  */
 // todo doing absolute path on this seems to break it. Find out why
 require_once ('bootstrap.php');
+
 
 
 
@@ -114,10 +94,10 @@ add_action('init', [$visitors, 'logVisitsAndControlCouponDisplay']);
  * As plugins can not depend on what is in other php files this needs to be fixed
  */
  
-//function add_cors_http_header() {
-//  header("Access-Control-Allow-Origin: *");
-//}
-//add_action('init','add_cors_http_header');
+function add_cors_http_header() {
+  header("Access-Control-Allow-Origin: *");
+}
+add_action('init', __NAMESPACE__ . '\\' . 'add_cors_http_header');
 
 
 //function add_allowed_origins(array $origins = []) {
@@ -161,57 +141,20 @@ add_action('init', [$visitors, 'logVisitsAndControlCouponDisplay']);
  */
 require_once ('adminSettingsArea/ApiController.php');
 use \admin\controllers\ApiController;
-//
+
+$apiController = new ApiController();
+add_action('rest_api_init', [$apiController, 'registerLoadCouponRoute']);
+add_action('rest_api_init', [$apiController, 'registerDeleteSingleCouponRoute']);
+
 //function hookAllRestControllers() {
-////  $apiController = new ApiController();
+//  global $apiController;
 //
-////  $apiController->registerLoadCouponRoute();
-////  $apiController->registerDeleteSingleCouponRoute();
-//
-//  function xY() {
-//      wp_send_json('xy caught');
-//  }
-//
-//  function registerXY() {
-//    register_rest_route('x', 'y', [
-//      'methods' => 'GET',
-//      'callback' => 'xY'
-//    ]);
-//  }
-//  registerXY();
+//  $apiController->registerLoadCouponRoute();
+//  $apiController->registerDeleteSingleCouponRoute();
 //}
-//
-//add_action('rest_api_init', 'hookAllRestControllers');
 
 
 
-
-////// Please ignore below //////
-
-
-//
-//function displayDummyData() {
-//  return 'dummy return from outside function';
-//}
-//
-//function checkIfAdmin() {
-//  $isAdmin = current_user_can('delete_site');
-//  return $isAdmin;
-//}
-//
-//function checkIfAnyone() {
-//  return true;
-//}
-//
-//
-//function registerDummyRoute() {
-//  register_rest_route('delayedCoupons/1.0', 'dummyFunc', [
-//    'methods' => 'GET',
-//    'callback' => '\DelayedCoupons\displayDummyData',
-//    'permission_callback' => '\DelayedCoupons\checkIfAnyone'
-//  ]);
-//}
-//add_action('rest_api_init', '\DelayedCoupons\registerDummyRoute');
 
 
 

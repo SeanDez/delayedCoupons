@@ -24,8 +24,6 @@ class ApiController extends \WP_Rest_Controller {
   public function respondAllCoupons() {
     global $wpdb;
     
-    wp_send_json('load hooked');
-  
       $urlCounts = $wpdb->get_results("
       SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
       FROM {$wpdb->prefix}delayedCoupons_coupons c
