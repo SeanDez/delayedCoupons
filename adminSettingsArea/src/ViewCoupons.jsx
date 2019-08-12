@@ -14,17 +14,14 @@ import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
 
 
-// workaround to fill ajaxUrl
-let ajaxUrl = 'hardcoded value';
-if (window && window.ajaxUrl) {
-  ajaxUrl = window.ajaxUrl;
-}
 
 // setup the request handler
-const ajaxRequestor = new AjaxRequestor(ajaxUrl);
+const ajaxRequestor = new AjaxRequestor();
 
 // sets up the apiBaseUrl
-let apiBaseUrlSet = new Error("Wordpress did not set the api base url");
+// todo revert to the error when out of testing
+// let apiBaseUrlSet = new Error("Custom Message: Wordpress did not set the api base url");
+let apiBaseUrlSet = 'http://localhost/wptest2/index.php/wp-json/';
 if (window && window.apiBaseUrl) {
   apiBaseUrlSet = apiBaseUrl;
 }
@@ -32,6 +29,7 @@ if (window && window.apiBaseUrl) {
 
 ////// Component //////
 export default props => {
+  
   const styles = useStyles();
   
   /**
@@ -45,7 +43,7 @@ export default props => {
   // return a promise which if resolves, responds with the data array
   const fetchAllCoupons = async () => {
     try {
-      const response = await fetch('http://localhost/wptest2/?rest_route=/delayedCoupons/1.0/loadAllCoupons');
+      const response = await fetch('http://localhost/wptest2/?rest_route=/delayedCoupons/1.0/loadAll');
       let data = await response.json();
       return data;
     }
@@ -95,17 +93,13 @@ export default props => {
    * Also modifies a state key being watched by a useEffect, which will then update automatically on change
    *
    */
-  const deleteCouponTableRow = couponId => {
-    // this suffix tells the handler which coupon to remove from the db
-    const targetedUrl = `${apiBaseUrlSet}/deleteCoupon/${couponId}`;
+  const deleteCouponTableRow = async couponId => {
+    const appendedUrl = `${apiBaseUrlSet}delayedCoupons/1.0/delete/${couponId}`;
     
     try {
-      const response = ajaxRequestor.post({
-        action : 'deleteCurrentCoupon',
-        payload : { couponId }
-      }, apiBaseUrlSet);
-      
-      return response.data;
+      const jsonResponse = await ajaxRequestor.post(appendedUrl);
+      console.log(jsonResponse, `=====jsonResponse=====`);
+      return jsonResponse;
     }
     catch (e) {
       console.log(e, `=====error=====`);
@@ -129,7 +123,9 @@ export default props => {
       index >= marker &&
       index <= (marker + 9)
     ));
-    
+  
+    console.log(`====View Coupons has loaded======`);
+  
     console.log(filteredData, `=====filteredData=====`);
     
     // return a new array of JSX table rows

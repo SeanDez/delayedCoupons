@@ -60,6 +60,7 @@ const AdminArea = props => {
       <Fade
         in={ Boolean(adminView === bodyViews.addNewCoupon) }
         timeout={ 1000 }
+        mountOnEnter unmountOnExit
       >
         <ConditionalDiv
           displayBool={Boolean(adminView === bodyViews.addNewCoupon)}
@@ -73,6 +74,7 @@ const AdminArea = props => {
       <Fade
         in={ Boolean(adminView === bodyViews.viewCurrentCoupons) }
         timeout={ 1000 }
+        mountOnEnter unmountOnExit
       >
         <ConditionalDiv
           displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}

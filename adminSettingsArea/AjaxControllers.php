@@ -49,20 +49,6 @@ class AjaxController {
     wp_send_json($result);
   }
   
-  public function handleAddNewCoupon() {
-    
-    $fileContents = file_get_contents('php://input');
-    $decodedContents = json_decode($fileContents);
-    
-    // get and check the nonce
-    $uncheckedNonce = $decodedContents['sessionNonce'];
-    
-    
-//    global $wpdb;
-//    $wpdb->insert;
-    
-    wp_send_json('placeholder');
-  }
   
 }
 

@@ -12,9 +12,11 @@ import SnackBar from '@material-ui/core/Snackbar';
 import SnackBarContent from '@material-ui/core/SnackbarContent'
 
 import axios from "axios";
-
+import AjaxRequestor from "./utilities/AjaxRequestor";
 
 // todo create a success / error Snackbar and send it data (will be a direct child)
+
+const ajaxRequestor = new AjaxRequestor();
 
 
 const AddCouponForm = props => {
@@ -25,7 +27,8 @@ const AddCouponForm = props => {
   const [pageTarget, setPageTarget] = useState('');
   const [displayThreshold, setDisplayThreshold] = useState(0);
   const [numberOfOffers, setNumberOfOffers] = useState(0);
-  
+  const [couponHeadline, setCouponHeadline] = useState('');
+  const [couponDescription, setCouponDescription] = useState('');
   
   ////// State for dropdowns //////
   const [headlineTextColor, setHeadlineTextColor] = useState("");
@@ -33,8 +36,7 @@ const AddCouponForm = props => {
   const [descriptionTextColor, setDescriptionTextColor] = useState("");
   const [descriptionBackgroundColor, setDescriptionBackgroundColor] = useState("");
   
-  const [couponHeadline, setCouponHeadline] = useState('');
-  const [couponDescription, setCouponDescription] = useState('');
+
   
   
   /** Form Handling
@@ -78,26 +80,10 @@ const AddCouponForm = props => {
       descriptionBackgroundColor // coupon table
     };
     
-    const ajaxUrl = setAjaxUrl();
-    console.log(ajaxUrl, `=====ajaxUrl=====`);
-    
-    // if nonstandard errors occur I still want them handled
-    // errors I can key on the server will be handled in the try block
     try {
-      const response = await axios(ajaxUrl, {
-        method : 'POST',
-        action : 'addNewCoupon',
-        payload : formData,
-        config: {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'X-WP-Nonce' : clientNonce
-          }
-        }
-      });
+      const response = await ajaxRequestor.post( `http://localhost/wptest2/index.php/wp-json/delayedCoupons/1.0/add`, formData);
       
-      console.log(response, `=====postCouponAndSetSnackBarMessage response=====`);
-      return setupSnackBarData(response.data);
+      return response.data;
     }
     catch (e) {
       console.log(e, `=====postCouponAndSetSnackBarMessage error=====`);
@@ -196,7 +182,8 @@ const AddCouponForm = props => {
         className={styles.form}
         onSubmit={e => {
           e.preventDefault();
-          // postCouponAndSetSnackBarMessage();
+          const wpRes = postCouponAndSetSnackBarMessage();
+          console.log(wpRes, `=====wpRes=====`);
         }}
       >
         <TextField
@@ -204,7 +191,6 @@ const AddCouponForm = props => {
           helperText='Copy and paste the target page for the coupon to be shown here'
           name='targetPage'
           className={styles.formChild}
-          type='number'
           value={pageTarget}
           onChange={e => setPageTarget(e.target.value)}
         />

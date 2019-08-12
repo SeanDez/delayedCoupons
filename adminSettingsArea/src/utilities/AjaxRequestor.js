@@ -10,24 +10,14 @@ export default class AjaxRequestor {
   
   constructor(ajaxUrl = undefined) {
     this.environment = process.env.NODE_ENV;
-    this.url = ajaxUrl;
-    this.setUrl();
   }
   
   
-  setUrl() {
-    // any non dev env should use undefined (and throw an error) or better, use an actual ajaxUrl
-    if (process.env.NODE_ENV === 'development') {
-      this.url = 'devUrl'
-    }
-  }
-  
-  
-  async post(postData, url = this.url, returnData = null) {
+  async post(url, postData = undefined, returnData = undefined) {
     // if dev just resolve the data
     
     if (
-      this.environment &&
+      this.environment && returnData &&
       (this.environment === 'development' ||
        this.environment === 'test' )
     ) {
@@ -43,11 +33,17 @@ export default class AjaxRequestor {
         console.log(e, `=====error=====`);
       }
       
-    } else {
+    } else { // live
       try {
-        const response = await axios
-          .post(url, postData);
-        return response.data;
+        const response = await fetch(url, {
+          method : 'post'
+          , mode : 'cors'
+          , headers : {
+            'Content-Type' : 'application/json'
+          }
+          , body : JSON.stringify(postData)
+        });
+        return await response.json(); // returns promise that resolves with the response body
       }
       catch (e) {
         console.log(e, `=====error=====`);

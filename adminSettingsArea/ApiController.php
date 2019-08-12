@@ -20,16 +20,30 @@ class ApiController extends \WP_Rest_Controller {
   
   /** Callback functions
    */
-  public function addNewCoupon() {
-    global $wpdb;
   
-    // grab the json data
-    $fileContents = file_get_contents('php://input');
-    $decodedContents = json_decode($fileContents);
-  
+  /** Adds coupon and also target data
+   * responds with single success or error key
+   * success key sends back success data
+   * error key sends back error message to be shown in an error box
+   *
+   * @param $request. all params including json, route, queries, body are consolidated into this one object
+   */
+  public function addNewCoupon(\WP_REST_Request $request) {
     
+    $x = $request;
+    $stop = 0;
+
+//    $fileContents = file_get_contents('php://input');
+//    $decodedContents = json_decode($fileContents);
     
-    wp_send_json('placeholder');
+    // get and check the nonce
+//    $uncheckedNonce = $decodedContents['sessionNonce'];
+
+
+//    global $wpdb;
+//    $wpdb->insert;
+    
+    wp_send_json($request);
   }
   
   
@@ -66,6 +80,9 @@ class ApiController extends \WP_Rest_Controller {
     $fullRequest = $request;
     $stop = 0;
     
+    wp_send_json($request);
+    wp_send_json('test string');
+    
 //    if ($couponId) {
 //      $result = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons", [
 //        'couponId' => $couponId
@@ -91,16 +108,23 @@ class ApiController extends \WP_Rest_Controller {
    */
   
   public function registerLoadCouponRoute() {
-    register_rest_route($this->urlBase, 'loadAllCoupons', [
-      'methods' => 'GET',
+    register_rest_route($this->urlBase, 'loadAll', [
+      'methods' => ['GET', 'post'],
       'callback' => [$this, 'respondAllCoupons']
+    ]);
+  }
+  
+  public function registerAddCoupon() {
+    register_rest_route($this->urlBase, 'add', [
+      'methods' => 'post',
+      'callback' => [$this, 'addNewCoupon']
     ]);
   }
   
   
   public function registerDeleteSingleCouponRoute() {
-    register_rest_route($this->urlBase, 'deleteCoupon/(?P<couponId>[\d]+)', [
-      'methods' => 'get',
+    register_rest_route($this->urlBase, "delete/(?P<couponId>[\d]+)", [
+      'methods' => ['get', 'post'],
       'callback' => [$this, 'deleteSingleCoupon']
     ]);
   }
