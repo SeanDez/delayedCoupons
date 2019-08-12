@@ -27,7 +27,6 @@ const AddCouponForm = props => {
   const [numberOfOffers, setNumberOfOffers] = useState(0);
   
   
-  
   ////// State for dropdowns //////
   const [headlineTextColor, setHeadlineTextColor] = useState("");
   const [headlineBackgroundColor, setHeadlineBackgroundColor] = useState("");

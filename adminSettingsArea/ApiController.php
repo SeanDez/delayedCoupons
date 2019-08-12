@@ -20,14 +20,15 @@ class ApiController extends \WP_Rest_Controller {
   
   /** Callback functions
    */
-  
-  
   public function addNewCoupon() {
     global $wpdb;
   
+    // grab the json data
     $fileContents = file_get_contents('php://input');
     $decodedContents = json_decode($fileContents);
   
+    
+    
     wp_send_json('placeholder');
   }
   
@@ -59,23 +60,28 @@ class ApiController extends \WP_Rest_Controller {
   }
   
   
-  public function deleteSingleCoupon(int $couponId) {
+  public function deleteSingleCoupon(\WP_REST_Request $request) {
     global $wpdb;
     
-    if ($couponId) {
-      $result = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons", [
-        'couponId' => $couponId
-      ]);
+    $fullRequest = $request;
+    $stop = 0;
+    
+//    if ($couponId) {
+//      $result = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons", [
+//        'couponId' => $couponId
+//      ]);
       
       // respond with success or error based on 1 row affected being success
-      wp_send_json($result === 1 ?
-        ['success' => '1 coupon deleted'] :
-        ['error' => 'Something went wrong during the delete db query itself. A non-1 value was returned']
-      );
-    }
-    else {
-      wp_send_json(['error' => 'no couponId key']);
-    }
+      wp_send_json($request);
+      
+//        $result === 1 ?
+//        ['success' => '1 coupon deleted'] :
+//        ['error' => 'Something went wrong during the delete db query itself. A non-1 value was returned']
+//      );
+//    }
+//    else {
+//      wp_send_json(['error' => 'no couponId key']);
+//    }
   }
   
   
@@ -93,7 +99,7 @@ class ApiController extends \WP_Rest_Controller {
   
   
   public function registerDeleteSingleCouponRoute() {
-    register_rest_route($this->urlBase, 'deleteCoupon/(?P<couponId>\d+)', [
+    register_rest_route($this->urlBase, 'deleteCoupon/(?P<couponId>[\d]+)', [
       'methods' => 'get',
       'callback' => [$this, 'deleteSingleCoupon']
     ]);
