@@ -29,7 +29,7 @@ if (window && window.apiBaseUrl) {
 
 ////// Component //////
 export default props => {
-  const {setErrorMessage} = useContext(StatePassingContext);
+  const {setSnackbarMessage} = useContext(StatePassingContext);
   
   const styles = useStyles();
   
@@ -107,35 +107,30 @@ export default props => {
   };
   
   
-  
-  ////// TABLE UPDATES //////
-  
-  /** Remove an array index from state
-   */
-  const removeDeletedRowFromCouponData = couponIdToDelete => {
-    couponIdToDelete = parseInt(indexToDelete);
-    
-    const filteredTable = couponData.filter((record, index) => record.couponid !== couponIdToDelete)
-    
-    setCouponData(filteredTable);
-  };
-  
   /** Handles coupon deletion, updating of table or error box
    * @param couponId number. The id of the row to be deleted
    * @return void
    */
-  const deleteCouponUpdateTableOrDisplayError = couponId => {
-    const result = deleteCouponTableRow(couponId);
+  const deleteCouponRefetchPostSnackbarMessage = async couponId => {
+    const result = await deleteCouponTableRow(couponId);
     // on success a string of the id is returned
     
     if (result.deletedCouponId) {
-      removeDeletedRowFromCouponData(result.deletedCouponId)
-    } else if (result.error) {
-       // use a function passed from the parent
-      // props.setErrorMessageInIndexJsx(result.error);
+      setSnackbarMessage(`Deletion confirmed for coupon ID: ${result.deletedCouponId}`);
+      // fetch is 2nd to let message show right away;
       
+      try {
+        const newData = await fetchAllCoupons();
+        setCouponData(newData);
+      }
+      catch (e) {
+        console.error(e, `=====error=====`);
+      }
+    } else if (result.error) {
+      setSnackbarMessage(result.error)
     } else {
-      throw new Error('else block hit inside deleteCouponUpdateTableOrDisplayError()')
+      setSnackbarMessage('Internal error, please contact the plugin developer with details of what caused you to see this message');
+      console.error('else block hit inside deleteCouponUpdateTableOrDisplayError()');
     }
   };
   
@@ -169,8 +164,8 @@ export default props => {
         <TableCell align='center'>{record.offerCutoff}</TableCell>
         <TableCell align='center'>
           <FaTrashAlt
-            onClick={e => {
-              DeleteCouponUpdateTableOrDisplayError(record.couponId)
+            onClick={() => {
+              deleteCouponRefetchPostSnackbarMessage(record.couponId)
             }}
           />
         </TableCell>
@@ -215,7 +210,7 @@ export default props => {
       
       <button
         onClick={e => {
-          setErrorMessage('test val');
+          setSnackbarMessage('test val');
         }}
       >
         props in view coupons
