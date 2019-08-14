@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {CurrentCouponChannel} from "./index.jsx";
+import {StatePassingContext} from "./index.jsx";
 import AjaxRequestor from './utilities/AjaxRequestor';
 import dummyCouponData from "./dummyCouponData";
 
@@ -29,6 +29,7 @@ if (window && window.apiBaseUrl) {
 
 ////// Component //////
 export default props => {
+  const {setErrorMessage} = useContext(StatePassingContext);
   
   const styles = useStyles();
   
@@ -74,7 +75,6 @@ export default props => {
    * @return boolean (bound to a test in render)
    *
    **/
-  
   const checkIfCouponDataExists = data => {
     if (data && data.length) {
       return true;
@@ -107,6 +107,38 @@ export default props => {
   };
   
   
+  
+  ////// TABLE UPDATES //////
+  
+  /** Remove an array index from state
+   */
+  const removeDeletedRowFromCouponData = couponIdToDelete => {
+    couponIdToDelete = parseInt(indexToDelete);
+    
+    const filteredTable = couponData.filter((record, index) => record.couponid !== couponIdToDelete)
+    
+    setCouponData(filteredTable);
+  };
+  
+  /** Handles coupon deletion, updating of table or error box
+   * @param couponId number. The id of the row to be deleted
+   * @return void
+   */
+  const deleteCouponUpdateTableOrDisplayError = couponId => {
+    const result = deleteCouponTableRow(couponId);
+    // on success a string of the id is returned
+    
+    if (result.deletedCouponId) {
+      removeDeletedRowFromCouponData(result.deletedCouponId)
+    } else if (result.error) {
+       // use a function passed from the parent
+      // props.setErrorMessageInIndexJsx(result.error);
+      
+    } else {
+      throw new Error('else block hit inside deleteCouponUpdateTableOrDisplayError()')
+    }
+  };
+  
   /**
    *  renders body cell data
    *
@@ -117,14 +149,11 @@ export default props => {
    *  @return array of JSX values (table elements) to be created by Javascript
    *
    */
-  
   const renderTableBody = (data, marker) => {
     const filteredData = data.filter((arrayItem, index) => (
       index >= marker &&
       index <= (marker + 9)
     ));
-  
-    console.log(`====View Coupons has loaded======`);
   
     console.log(filteredData, `=====filteredData=====`);
     
@@ -141,7 +170,7 @@ export default props => {
         <TableCell align='center'>
           <FaTrashAlt
             onClick={e => {
-              deleteCouponTableRow(record.couponId);
+              DeleteCouponUpdateTableOrDisplayError(record.couponId)
             }}
           />
         </TableCell>
@@ -173,10 +202,9 @@ export default props => {
   
 
   
-  /**
+  /** RENDER
    * Renders either a data table of current coupons, or a "no coupons" message
    */
-  
   return (
     <div
       // {...props}
@@ -184,6 +212,14 @@ export default props => {
       <h3>View Coupons</h3>
       <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click
          the delete icon to remove it.</p>
+      
+      <button
+        onClick={e => {
+          setErrorMessage('test val');
+        }}
+      >
+        props in view coupons
+      </button>
       
       { checkIfCouponDataExists(couponData) ?
         <React.Fragment>

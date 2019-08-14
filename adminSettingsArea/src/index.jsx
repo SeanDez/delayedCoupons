@@ -6,12 +6,20 @@ import {initialState, reducer} from './reducer';
 import styled from 'styled-components';
 
 import Fade from "@material-ui/core/Fade";
+import Snackbar from "@material-ui/core/Snackbar";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
 
 import TabSection from "./TabSection.jsx";
 import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
 
 import axios from "axios";
+
+
+
+// create and export a context
+export const StatePassingContext = React.createContext(true);
+
 
 
 // todo fix routing problem (wordpress install/subfolder not included)
@@ -28,8 +36,14 @@ if (typeof _wpnonce === 'undefined') {
 }
 
 
+
+
+////// TOP LEVEL COMPONENT //////
 const AdminArea = props => {
   const {match} = props;
+  
+  // todo move this somewhere else
+  const [errorMessage, setErrorMessage] = useState(false);
   
   /** Controls the body section of the admin area 
    */
@@ -46,6 +60,7 @@ const AdminArea = props => {
   
   return (
     <React.Fragment>
+      <StatePassingContext.Provider value={{setErrorMessage}}>
       
       {/* ////// HEADER ////// */ }
       <TabSection
@@ -53,6 +68,7 @@ const AdminArea = props => {
         setAdminView={ setAdminView }
       />
       
+
       
       {/* ////// BODY ////// */ }
       
@@ -79,7 +95,8 @@ const AdminArea = props => {
         <ConditionalDiv
           displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}
         >
-          <ViewCoupons />
+          <ViewCoupons
+          />
         </ConditionalDiv>
       </Fade>
       
@@ -87,6 +104,17 @@ const AdminArea = props => {
       
       {/* ////// FOOTER ////// */ }
     
+      
+    {/* FLOATS / HIDDEN / SPECIAL */}
+    
+    <Snackbar
+      open={true}
+      anchorOrigin={{ vertical : 'bottom', horizontal : 'center' }}
+      message={<p>{errorMessage ? errorMessage : 'placeholder val'}</p>}
+      // test
+    />
+    
+      </StatePassingContext.Provider>
     </React.Fragment>
   );
 };

@@ -15,7 +15,7 @@ module.exports = {
     path : path.resolve(__dirname, ''),
     publicPath : "/",
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval',
   devServer : {
     contentBase : './adminSettingsArea/src',
     hot : true,

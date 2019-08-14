@@ -30,6 +30,9 @@ class ApiController extends \WP_Rest_Controller {
    */
   public function addNewCoupon(\WP_REST_Request $request) {
     
+    // escape and sanitize the url string
+//    $escapedTargetPage = esc_url($url);
+    
     $x = $request;
     $stop = 0;
 
@@ -76,9 +79,21 @@ class ApiController extends \WP_Rest_Controller {
   
   public function deleteSingleCoupon(\WP_REST_Request $request) {
     global $wpdb;
+    $couponId = $request->get_param('couponId');
     
-    $fullRequest = $request;
-    $stop = 0;
+    $queryResult = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons",  ['couponId' => $couponId]);
+    
+    if ($queryResult === 1) {
+      wp_send_json([
+        'deletedCouponId' => $couponId
+      ]);
+    } else if ($queryResult === false) {
+      wp_send_json(['error' => '$queryResult returned false indicating the database failed to delete the row targeted by couponId']);
+    } else {
+      wp_send_json(['error' => 'unspecified error, else block in callback hit']);
+    }
+    
+    // request > params > url > capture group name
     
     wp_send_json($request);
     wp_send_json('test string');
