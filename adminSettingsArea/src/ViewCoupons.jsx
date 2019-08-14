@@ -116,7 +116,7 @@ export default props => {
     // on success a string of the id is returned
     
     if (result.deletedCouponId) {
-      setSnackbarMessage(`Deletion confirmed for coupon ID: ${result.deletedCouponId}`);
+      setSnackbarMessage(`SUCCESS: Coupon ID ${result.deletedCouponId} has been deleted`);
       // fetch is 2nd to let message show right away;
       
       try {
