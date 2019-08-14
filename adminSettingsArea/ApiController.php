@@ -93,27 +93,8 @@ class ApiController extends \WP_Rest_Controller {
       wp_send_json(['error' => 'unspecified error, else block in callback hit']);
     }
     
-    // request > params > url > capture group name
-    
     wp_send_json($request);
     wp_send_json('test string');
-    
-//    if ($couponId) {
-//      $result = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons", [
-//        'couponId' => $couponId
-//      ]);
-      
-      // respond with success or error based on 1 row affected being success
-      wp_send_json($request);
-      
-//        $result === 1 ?
-//        ['success' => '1 coupon deleted'] :
-//        ['error' => 'Something went wrong during the delete db query itself. A non-1 value was returned']
-//      );
-//    }
-//    else {
-//      wp_send_json(['error' => 'no couponId key']);
-//    }
   }
   
   
@@ -122,14 +103,14 @@ class ApiController extends \WP_Rest_Controller {
   /** Route registrations
    */
   
-  public function registerLoadCouponRoute() {
+  public function registerLoadCouponRoute() : void {
     register_rest_route($this->urlBase, 'loadAll', [
       'methods' => ['GET', 'post'],
       'callback' => [$this, 'respondAllCoupons']
     ]);
   }
   
-  public function registerAddCoupon() {
+  public function registerAddCoupon() : void {
     register_rest_route($this->urlBase, 'add', [
       'methods' => 'post',
       'callback' => [$this, 'addNewCoupon']
@@ -137,7 +118,7 @@ class ApiController extends \WP_Rest_Controller {
   }
   
   
-  public function registerDeleteSingleCouponRoute() {
+  public function registerDeleteSingleCouponRoute() : void {
     register_rest_route($this->urlBase, "delete/(?P<couponId>[\d]+)", [
       'methods' => ['get', 'post'],
       'callback' => [$this, 'deleteSingleCoupon']
