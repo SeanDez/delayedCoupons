@@ -5,13 +5,34 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import {initialState, reducer} from './reducer';
 import styled from 'styled-components';
 
+import {makeStyles} from "@material-ui/core/styles";
 import Fade from "@material-ui/core/Fade";
+import Grow from "@material-ui/core/Grow";
+import Snackbar from "@material-ui/core/Snackbar";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
 
 import TabSection from "./TabSection.jsx";
 import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
 
 import axios from "axios";
+
+const useStyles = makeStyles(theme => ({
+  snackbar : {
+    border : '2px dashed yellow',
+    display : 'flex',
+    justifyContent : 'space-around'
+  },
+  snackbarText : {
+    padding : theme.spacing(0.1),
+    margin: '0 auto !important',
+    border: '2px dashed purple'
+  }
+}));
+
+// create and export a context
+export const StatePassingContext = React.createContext(true);
+
 
 
 // todo fix routing problem (wordpress install/subfolder not included)
@@ -28,8 +49,15 @@ if (typeof _wpnonce === 'undefined') {
 }
 
 
+
+
+////// TOP LEVEL COMPONENT //////
 const AdminArea = props => {
   const {match} = props;
+  const styles = useStyles();
+  
+  // todo move this somewhere else
+  const [snackbarMessage, setSnackbarMessage] = useState(false);
   
   /** Controls the body section of the admin area 
    */
@@ -46,6 +74,7 @@ const AdminArea = props => {
   
   return (
     <React.Fragment>
+      <StatePassingContext.Provider value={{setSnackbarMessage}}>
       
       {/* ////// HEADER ////// */ }
       <TabSection
@@ -53,6 +82,7 @@ const AdminArea = props => {
         setAdminView={ setAdminView }
       />
       
+
       
       {/* ////// BODY ////// */ }
       
@@ -60,6 +90,7 @@ const AdminArea = props => {
       <Fade
         in={ Boolean(adminView === bodyViews.addNewCoupon) }
         timeout={ 1000 }
+        mountOnEnter unmountOnExit
       >
         <ConditionalDiv
           displayBool={Boolean(adminView === bodyViews.addNewCoupon)}
@@ -73,11 +104,13 @@ const AdminArea = props => {
       <Fade
         in={ Boolean(adminView === bodyViews.viewCurrentCoupons) }
         timeout={ 1000 }
+        mountOnEnter unmountOnExit
       >
         <ConditionalDiv
           displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}
         >
-          <ViewCoupons />
+          <ViewCoupons
+          />
         </ConditionalDiv>
       </Fade>
       
@@ -85,6 +118,20 @@ const AdminArea = props => {
       
       {/* ////// FOOTER ////// */ }
     
+      
+    {/* FLOATS / HIDDEN / SPECIAL */}
+    
+    <Snackbar
+      open={Boolean(snackbarMessage)}
+      autoHideDuration={8000}
+      onClose={() => setSnackbarMessage('')}
+      anchorOrigin={{ vertical : 'bottom', horizontal : 'center' }}
+      message={<p className={styles.snackbarText}>{snackbarMessage}</p>}
+      TransitionComponent={Grow}
+      className={styles.snackbar}
+    />
+    
+      </StatePassingContext.Provider>
     </React.Fragment>
   );
 };

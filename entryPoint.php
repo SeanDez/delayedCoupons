@@ -120,6 +120,7 @@ use \admin\controllers\ApiController;
 
 $apiController = new ApiController();
 add_action('rest_api_init', [$apiController, 'registerLoadCouponRoute']);
+add_action('rest_api_init', [$apiController, 'registerAddCoupon']);
 add_action('rest_api_init', [$apiController, 'registerDeleteSingleCouponRoute']);
 
 

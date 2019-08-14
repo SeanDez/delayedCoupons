@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {CurrentCouponChannel} from "./index.jsx";
+import {StatePassingContext} from "./index.jsx";
 import AjaxRequestor from './utilities/AjaxRequestor';
 import dummyCouponData from "./dummyCouponData";
 
@@ -14,17 +14,14 @@ import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
 
 
-// workaround to fill ajaxUrl
-let ajaxUrl = 'hardcoded value';
-if (window && window.ajaxUrl) {
-  ajaxUrl = window.ajaxUrl;
-}
 
 // setup the request handler
-const ajaxRequestor = new AjaxRequestor(ajaxUrl);
+const ajaxRequestor = new AjaxRequestor();
 
 // sets up the apiBaseUrl
-let apiBaseUrlSet = new Error("Wordpress did not set the api base url");
+// todo revert to the error when out of testing
+// let apiBaseUrlSet = new Error("Custom Message: Wordpress did not set the api base url");
+let apiBaseUrlSet = 'http://localhost/wptest2/index.php/wp-json/';
 if (window && window.apiBaseUrl) {
   apiBaseUrlSet = apiBaseUrl;
 }
@@ -32,6 +29,8 @@ if (window && window.apiBaseUrl) {
 
 ////// Component //////
 export default props => {
+  const {setSnackbarMessage} = useContext(StatePassingContext);
+  
   const styles = useStyles();
   
   /**
@@ -45,7 +44,7 @@ export default props => {
   // return a promise which if resolves, responds with the data array
   const fetchAllCoupons = async () => {
     try {
-      const response = await fetch('http://localhost/wptest2/?rest_route=/delayedCoupons/1.0/loadAllCoupons');
+      const response = await fetch('http://localhost/wptest2/?rest_route=/delayedCoupons/1.0/loadAll');
       let data = await response.json();
       return data;
     }
@@ -76,7 +75,6 @@ export default props => {
    * @return boolean (bound to a test in render)
    *
    **/
-  
   const checkIfCouponDataExists = data => {
     if (data && data.length) {
       return true;
@@ -95,23 +93,46 @@ export default props => {
    * Also modifies a state key being watched by a useEffect, which will then update automatically on change
    *
    */
-  const deleteCouponTableRow = couponId => {
-    // this suffix tells the handler which coupon to remove from the db
-    const targetedUrl = `${apiBaseUrlSet}/deleteCoupon/${couponId}`;
+  const deleteCouponTableRow = async couponId => {
+    const appendedUrl = `${apiBaseUrlSet}delayedCoupons/1.0/delete/${couponId}`;
     
     try {
-      const response = ajaxRequestor.post({
-        action : 'deleteCurrentCoupon',
-        payload : { couponId }
-      }, apiBaseUrlSet);
-      
-      return response.data;
+      const jsonResponse = await ajaxRequestor.post(appendedUrl);
+      console.log(jsonResponse, `=====jsonResponse=====`);
+      return jsonResponse;
     }
     catch (e) {
       console.log(e, `=====error=====`);
     }
   };
   
+  
+  /** Handles coupon deletion, updating of table or error box
+   * @param couponId number. The id of the row to be deleted
+   * @return void
+   */
+  const deleteCouponRefetchPostSnackbarMessage = async couponId => {
+    const result = await deleteCouponTableRow(couponId);
+    // on success a string of the id is returned
+    
+    if (result.deletedCouponId) {
+      setSnackbarMessage(`Deletion confirmed for coupon ID: ${result.deletedCouponId}`);
+      // fetch is 2nd to let message show right away;
+      
+      try {
+        const newData = await fetchAllCoupons();
+        setCouponData(newData);
+      }
+      catch (e) {
+        console.error(e, `=====error=====`);
+      }
+    } else if (result.error) {
+      setSnackbarMessage(result.error)
+    } else {
+      setSnackbarMessage('Internal error, please contact the plugin developer with details of what caused you to see this message');
+      console.error('else block hit inside deleteCouponUpdateTableOrDisplayError()');
+    }
+  };
   
   /**
    *  renders body cell data
@@ -123,13 +144,12 @@ export default props => {
    *  @return array of JSX values (table elements) to be created by Javascript
    *
    */
-  
   const renderTableBody = (data, marker) => {
     const filteredData = data.filter((arrayItem, index) => (
       index >= marker &&
       index <= (marker + 9)
     ));
-    
+  
     console.log(filteredData, `=====filteredData=====`);
     
     // return a new array of JSX table rows
@@ -144,8 +164,8 @@ export default props => {
         <TableCell align='center'>{record.offerCutoff}</TableCell>
         <TableCell align='center'>
           <FaTrashAlt
-            onClick={e => {
-              deleteCouponTableRow(record.couponId);
+            onClick={() => {
+              deleteCouponRefetchPostSnackbarMessage(record.couponId)
             }}
           />
         </TableCell>
@@ -177,10 +197,9 @@ export default props => {
   
 
   
-  /**
+  /** RENDER
    * Renders either a data table of current coupons, or a "no coupons" message
    */
-  
   return (
     <div
       // {...props}
@@ -188,6 +207,14 @@ export default props => {
       <h3>View Coupons</h3>
       <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click
          the delete icon to remove it.</p>
+      
+      <button
+        onClick={e => {
+          setSnackbarMessage('test val');
+        }}
+      >
+        props in view coupons
+      </button>
       
       { checkIfCouponDataExists(couponData) ?
         <React.Fragment>
