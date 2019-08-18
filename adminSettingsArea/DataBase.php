@@ -13,7 +13,6 @@ class DataBase {
     $createCouponTableQuery = "CREATE TABLE IF NOT EXISTS {$prefix}delayedCoupons_coupons (
     couponId mediumint not null auto_increment,
     primary key (couponId),
-    totalHits mediumInt not null,
     titleText varchar(250) not null,
     descriptionText varchar(1000) not null,
     titleTextColor varchar(50) not null,

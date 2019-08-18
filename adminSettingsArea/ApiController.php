@@ -17,6 +17,13 @@ class ApiController extends \WP_Rest_Controller {
     
   }
   
+  /** Utility functions
+   */
+  
+  protected function checkIfAdmin() {
+    $isAdmin = current_user_can('delete_site');
+    return $isAdmin;
+  }
   
   /** Callback functions
    */
@@ -29,24 +36,43 @@ class ApiController extends \WP_Rest_Controller {
    * @param $request. all params including json, route, queries, body are consolidated into this one object
    */
   public function addNewCoupon(\WP_REST_Request $request) {
+    global $wpdb;
+    $jsonArray = $request->get_params();
     
-    // escape and sanitize the url string
-//    $escapedTargetPage = esc_url($url);
     
-    $x = $request;
-    $stop = 0;
-
-//    $fileContents = file_get_contents('php://input');
-//    $decodedContents = json_decode($fileContents);
+    $couponQueryResult = $wpdb->insert(
+      "{$wpdb->prefix}delayedCoupons_coupons"
+      , [
+        'titleText' =>
+          $jsonArray['couponHeadline'],
+        'descriptionText' => $jsonArray['couponDescription'],
+        'titleTextColor' => $jsonArray['headlineTextColor'],
+        'titleBackgroundColor' =>
+          $jsonArray['headlineBackgroundColor'],
+        'descriptionTextColor' => $jsonArray['descriptionTextColor'],
+        'descriptionBackgroundColor' => $jsonArray['descriptionBackgroundColor']
+      ]);
     
-    // get and check the nonce
-//    $uncheckedNonce = $decodedContents['sessionNonce'];
-
-
-//    global $wpdb;
-//    $wpdb->insert;
+    $couponId = $wpdb->insert_id;
     
-    wp_send_json($request);
+    // insert a target row using couponId as a foreign key
+    $wpdb->insert("{$wpdb->prefix}delayedCoupons_targets", [
+      'isSitewide' => false
+      , 'targetUrl' => $jsonArray['pageTarget']
+      , 'displayThreshold' => $jsonArray['displayThreshold']
+      , 'offerCutoff' => $jsonArray['numberOfOffers']
+      , 'fk_coupons_targets' => $couponId
+    ]);
+    
+    // todo figure out how to send 2 results back and how to logically configure it
+    if ($wpdb->last_error !== '') {
+      wp_send_json(['error' => $wpdb->last_error]);
+    }
+    
+    wp_send_json([
+      'newCouponId' => $couponId
+    ]);
+  
   }
   
   

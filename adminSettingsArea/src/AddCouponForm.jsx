@@ -69,7 +69,7 @@ const AddCouponForm = props => {
   const postCouponAndSetSnackBarMessage = async () => {
     // push all state keys into an object
     const formData = {
-      pageTarget, // target
+      pageTarget, // target table
       displayThreshold, // target table
       numberOfOffers, // target table
       couponHeadline, // coupon table
@@ -81,9 +81,10 @@ const AddCouponForm = props => {
     };
     
     try {
+      // todo change this url to relative using a wp function to grab the home or site url
       const response = await ajaxRequestor.post( `http://localhost/wptest2/index.php/wp-json/delayedCoupons/1.0/add`, formData);
       
-      return response.data;
+      return response;
     }
     catch (e) {
       console.log(e, `=====postCouponAndSetSnackBarMessage error=====`);
@@ -180,9 +181,9 @@ const AddCouponForm = props => {
      
       <form
         className={styles.form}
-        onSubmit={e => {
+        onSubmit={async e => {
           e.preventDefault();
-          const wpRes = postCouponAndSetSnackBarMessage();
+          const wpRes = await postCouponAndSetSnackBarMessage();
           console.log(wpRes, `=====wpRes=====`);
         }}
       >
