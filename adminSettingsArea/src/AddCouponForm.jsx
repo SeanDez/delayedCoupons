@@ -61,33 +61,19 @@ const AddCouponForm = props => {
       // todo change this url to relative using a wp function to grab the home or site url
       const response = await ajaxRequestor.post( `http://localhost/wptest2/index.php/wp-json/delayedCoupons/1.0/add`, formData);
       
-      // todo set a success and fail message
-      
-      return response;
+      if (response.newCouponId) {
+        setSnackBarType(snackBarTypes.success);
+        setSnackBarMessage(`New Coupon ID ${response.newCouponId} added, click on "View Tables" to view details`);
+      } else if (response.error) {
+        setSnackBarType(snackBarTypes.error);
+        setSnackBarMessage(response.error);
+      }
     }
     catch (e) {
       console.log(e, `=====postCouponAndSetSnackBarMessage error=====`);
-      return setupSnackBarData(e);
+      setupSnackBarData(e);
     }
-    
   };
-  
-  
-  const getUserNameFromRestApi = () => {
-    console.log(clientNonce, `=====clientNonce=====`);
-    
-    fetch('http://localhost/wptest2/?rest_route=/wp/v2/users/me', {
-      method : 'get',
-      mode : 'cors',
-      headers : {
-        'Access-Control-Allow-Origin' : '*',
-        'X-WP-Nonce' : clientNonce
-      }
-    })
-      .then(response => console.log(response.json(), `=====response.json()=====`))
-      .catch(error => console.log(error, `=====error=====`));
-  };
-  
   
   
   
@@ -101,14 +87,14 @@ const AddCouponForm = props => {
     error : 'error'
   });
   
-  const [snackBarType, setSnackBarType] = useState();
+  const [snackBarType, setSnackBarType] = useState('');
   const [snackBarMessage, setSnackBarMessage] = useState('');
   
   const setupSnackBarData = responseData => {
-    if (responseData.success) {
+    if (responseData.newCouponId) {
       // fire snackbar with success state
       setSnackBarType(snackBarTypes.success);
-      setSnackBarMessage("Successfully added a new coupon. Click 'View Coupons' to see your new coupon.")
+      setSnackBarMessage(`Successfully added a new coupon. ID: ${responseData.newCouponId}. Click 'View Coupons' to see your new coupon.`)
     } else if (responseData.error) {
       // setup error snackBar
       setSnackBarType(snackBarTypes.error);
@@ -117,53 +103,20 @@ const AddCouponForm = props => {
   };
   
   
-  const sendXhrLinkRequest = () => {
-    // try {
-    //   const response = await axios('http://localhost/wptest2/wp-admin/admin-ajax.php', {
-    //     method : 'POST',
-    //     action : 'xhrLink',
-    //     config : {
-    //       headers : {
-    //         'Access-Control-Allow-Origin' : '*',
-    //         'X-WP-Nonce' : wpApiSettings.nonce,
-    //       }
-    //     }
-    //   });
-  
-      let form_data = new FormData;
-      form_data.append('action', 'xhrLink');
-  
-      axios
-        .post('http://localhost/wptest2/wp-admin/admin-ajax.php', form_data)
-        .then(response => {
-          console.log(response, `=====sendXhrLinkRequest response=====`);
-      });
-      
-      // console.log(response, `=====sendXhrLinkRequest response=====`);
-      // return (response.data);
-    // }
-    // catch (e) {
-    //   console.log(e, `=====sendXhrLinkRequest error=====`);
-    //   return (e);
-    // }
-  };
-  
-  
-  
   return (
     <div
     >
       <h3>Add Coupons Form</h3>
+      
       <p>There are 2 main parts to add a coupon. First are the coupon settings itself, including information like the text and colors. Then you will also need to define the page that a user must visit, and how many times to count visits before showing a coupon</p>
       <p>Click here for a full explanation of how the plugin works and how to setup your first coupon</p>
       
      
       <form
         className={styles.form}
-        onSubmit={async e => {
+        onSubmit={e => {
           e.preventDefault();
-          const wpRes = await postCouponAndSetSnackBarMessage();
-          console.log(wpRes, `=====wpRes=====`);
+          postCouponAndSetSnackBarMessage();
         }}
       >
         <TextField
@@ -286,9 +239,6 @@ const AddCouponForm = props => {
         <Button
           type='submit'
           className={[styles.addButton, styles.formChild].join(' ')}
-          onClick={ () => {
-            getUserNameFromRestApi();
-          }}
         >Add Coupon</Button>
       </form>
   
@@ -299,8 +249,8 @@ const AddCouponForm = props => {
        */}
   
       <SnackBar
-        open={snackBarType}
-        autoHideDuration={1000}
+        open={Boolean(snackBarType)}
+        autoHideDuration={5000}
         message={<p>{snackBarMessage}</p>}
         onClose={() =>  {
           setSnackBarType('');
@@ -314,7 +264,7 @@ const AddCouponForm = props => {
 
     </div>
   );
-}
+};
 
 
 
