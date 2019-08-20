@@ -48,6 +48,8 @@ if (typeof _wpnonce === 'undefined') {
   clientNonce = _wpnonce;
 }
 
+let clientSiteUrl = 'http://localhost/wptest2';
+if (websiteBaseUrl) { clientSiteUrl = websiteBaseUrl; }
 
 
 
@@ -97,6 +99,7 @@ const AdminArea = props => {
         >
           <AddCouponForm
             clientNonce={ clientNonce }
+            clientSiteUrl={clientSiteUrl}
           />
         </ConditionalDiv>
       </Fade>

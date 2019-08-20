@@ -72,7 +72,7 @@ const AddCouponForm = props => {
     };
     
     // todo change this url to relative using a wp function to grab the home or site url
-    const response = await ajaxRequestor.post( `http://localhost/wptest2/index.php/wp-json/delayedCoupons/1.0/add`, formData);
+    const response = await ajaxRequestor.post( `${apiBaseUrl}/delayedCoupons/1.0/add`, formData);
     setupSnackBarData(response);
     resetAddCouponState();
   };
