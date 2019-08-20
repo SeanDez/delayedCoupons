@@ -250,7 +250,7 @@ const AddCouponForm = props => {
   
       <SnackBar
         open={Boolean(snackBarType)}
-        autoHideDuration={5000}
+        autoHideDuration={10000}
         message={<p>{snackBarMessage}</p>}
         onClose={() =>  {
           setSnackBarType('');
