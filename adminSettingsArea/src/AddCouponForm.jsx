@@ -41,31 +41,8 @@ const AddCouponForm = props => {
   
   /** Form Handling
    * Submits post request
-   * @response: object. If success, success key. if error, error key.
+   * @return: object. If success, success key. if error, error key.
    */
-  
-  const setAjaxUrl = () => {
-    // axios can handle a full or relative path
-    let ajaxUrlPath;
-    
-    if (window && window.ajaxUrl) {
-      ajaxUrlPath = window.ajaxUrl; // relative path
-      console.log(ajaxUrlPath, `=====ajaxUrlPath=====`);
-    }
-    else if (
-      process.env.NODE_ENV === 'development' && (!window || !window.ajaxUrl) && ajaxUrlForTesting) {
-      ajaxUrlPath = ajaxUrlForTesting;  
-    }
-    else if (window && window.location && window.location.origin) {
-      ajaxUrlPath = window.location.origin + '/wp-admin/admin-ajax.php'; // full path
-      console.log(ajaxUrlPath, `=====ajaxUrlPath=====`);
-    }
-    
-    return ajaxUrlPath;
-  };
-  
-  
-  
   const postCouponAndSetSnackBarMessage = async () => {
     // push all state keys into an object
     const formData = {
@@ -83,6 +60,8 @@ const AddCouponForm = props => {
     try {
       // todo change this url to relative using a wp function to grab the home or site url
       const response = await ajaxRequestor.post( `http://localhost/wptest2/index.php/wp-json/delayedCoupons/1.0/add`, formData);
+      
+      // todo set a success and fail message
       
       return response;
     }
