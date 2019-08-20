@@ -36,7 +36,21 @@ const AddCouponForm = props => {
   const [descriptionTextColor, setDescriptionTextColor] = useState("");
   const [descriptionBackgroundColor, setDescriptionBackgroundColor] = useState("");
   
-
+  
+  /** Resets all the form state variables
+   * @return void
+   */
+  const resetAddCouponState = () => {
+    setPageTarget("");
+    setDisplayThreshold(0);
+    setNumberOfOffers(0);
+    setCouponHeadline("");
+    setCouponDescription("");
+    setHeadlineTextColor("");
+    setHeadlineBackgroundColor("");
+    setDescriptionTextColor("");
+    setDescriptionBackgroundColor("");
+  };
   
   
   /** Form Handling
@@ -57,22 +71,10 @@ const AddCouponForm = props => {
       descriptionBackgroundColor // coupon table
     };
     
-    try {
-      // todo change this url to relative using a wp function to grab the home or site url
-      const response = await ajaxRequestor.post( `http://localhost/wptest2/index.php/wp-json/delayedCoupons/1.0/add`, formData);
-      
-      if (response.newCouponId) {
-        setSnackBarType(snackBarTypes.success);
-        setSnackBarMessage(`New Coupon ID ${response.newCouponId} added, click on "View Tables" to view details`);
-      } else if (response.error) {
-        setSnackBarType(snackBarTypes.error);
-        setSnackBarMessage(response.error);
-      }
-    }
-    catch (e) {
-      console.log(e, `=====postCouponAndSetSnackBarMessage error=====`);
-      setupSnackBarData(e);
-    }
+    // todo change this url to relative using a wp function to grab the home or site url
+    const response = await ajaxRequestor.post( `http://localhost/wptest2/index.php/wp-json/delayedCoupons/1.0/add`, formData);
+    setupSnackBarData(response);
+    resetAddCouponState();
   };
   
   
@@ -90,11 +92,14 @@ const AddCouponForm = props => {
   const [snackBarType, setSnackBarType] = useState('');
   const [snackBarMessage, setSnackBarMessage] = useState('');
   
+  /** Sets the snackbar state
+   * A component prop automatically blanks it out after a preset time (in another component prop)
+   */
   const setupSnackBarData = responseData => {
     if (responseData.newCouponId) {
       // fire snackbar with success state
       setSnackBarType(snackBarTypes.success);
-      setSnackBarMessage(`Successfully added a new coupon. ID: ${responseData.newCouponId}. Click 'View Coupons' to see your new coupon.`)
+      setSnackBarMessage(`Successfully added a new coupon. ID: ${ responseData.newCouponId }. Click 'View Coupons' to see your new coupon.`);
     } else if (responseData.error) {
       // setup error snackBar
       setSnackBarType(snackBarTypes.error);
@@ -107,6 +112,12 @@ const AddCouponForm = props => {
     <div
     >
       <h3>Add Coupons Form</h3>
+      
+      <button
+        onClick={() => resetAddCouponState()}
+      >
+        Reset all fields
+      </button>
       
       <p>There are 2 main parts to add a coupon. First are the coupon settings itself, including information like the text and colors. Then you will also need to define the page that a user must visit, and how many times to count visits before showing a coupon</p>
       <p>Click here for a full explanation of how the plugin works and how to setup your first coupon</p>
