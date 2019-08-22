@@ -11,26 +11,24 @@ use Pdp\Rules;
 
 
 trait protectedMethodsInVisitors {
+  protected $visitorIdCookie;
   
   /** Get visitor Id from cookie
    * If none, return an explicit value to indicate none
    *
    * @return mixed. string = value, otherwise false
    */
-  protected function getVisitorIdCookie() {
-    if (array_key_exists('visitorId', $_COOKIE)) {
-      return $_COOKIE['visitorId'];
+  protected function getVisitorIdCookie() : void {
+    if (isset($_COOKIE['visitorId'])) {
+      $this->visitorIdCookie = $_COOKIE['visitorId'];
     }
-    else {
-      return false;
-    };
   }
   
   /** Creates a new database visitor record in the visits table
    *
    * not test covered
    */
-  protected function createVisitorIdCookie() : bool {
+  protected function createVisitorIdCookie() : void {
     global $wpdb;
     // select max(visitorId) from wp_dc_visits
     $highestVisitorId = $wpdb->get_var("SELECT MAX(visitorId) from {$wpdb->prefix}delayedCoupons_visits");
@@ -46,7 +44,7 @@ trait protectedMethodsInVisitors {
       , true
     );
     
-    return $setResult;
+    $this->visitorIdCookie = $setResult;
   }
   
   /** Chunks a url down to an associative array
@@ -62,9 +60,9 @@ trait protectedMethodsInVisitors {
     preg_match('/(^http:\/\/[^\?\s]+)(\?[^\s]+)?/', wp_get_referer(), $regexOutput);
     
     $brokenUpUrl = [
-      'rawUrl' => array_key_exists(0, $regexOutput) ? $regexOutput[0] : ''
-      , 'urlRoot' => array_key_exists(1, $regexOutput) ? $regexOutput[1] : ''
-      , 'queryString' => array_key_exists(2, $regexOutput) ? $regexOutput[2] : ''
+      'rawUrl' => isset($regexOutput[0]) ? $regexOutput[0] : ''
+      , 'urlRoot' => isset($regexOutput[1]) ? $regexOutput[1] : ''
+      , 'queryString' => isset($regexOutput[2]) ? $regexOutput[2] : ''
     ];
     
     return $brokenUpUrl;
@@ -133,10 +131,9 @@ trait protectedMethodsInVisitors {
     return $result;
   }
   
-  protected function scanAgainstUrlTargets(array $urlData) {
+  protected function scanAgainstUrlTargets(array $urlData, string $visitorId) {
     global $wpdb;
-
-    // todo figure out how to alias the subquery
+    
     $conditionMatch = $wpdb->get_results("
       SELECT t.*
       FROM
@@ -145,10 +142,12 @@ trait protectedMethodsInVisitors {
         AND t.displayThreshold < (
           select count(*)
           from {$wpdb->prefix}delayedCoupons_visits v
+          where v.visitorId = {$visitorId}
           )
         AND  t.displayThreshold + t.offerCutoff >= (
           select count(*)
           from {$wpdb->prefix}delayedCoupons_visits v
+          where v.visitorId = {$visitorId}
           )
     ");
     
@@ -176,6 +175,22 @@ trait protectedMethodsInVisitors {
 //    require_once(PLUGIN_FOLDER_PATH . 'frontFacingOverlay/coupon.php');
   }
   
+  /** Filters urls of junk pages that should not be recorded
+   * @return bool. true if passed. false if match found
+   */
+  protected function filterOutJunkUrls(array $urlInfo) : bool {
+    $junkUrlPatterns = [
+      '/\/wp-admin\//'
+      , '/\/wp-cron.php/'
+    ];
+    
+    foreach ($junkUrlPatterns as $pattern) {
+      if (preg_match($pattern, $urlInfo['rawUrl']) === 1) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 
@@ -185,10 +200,19 @@ class Visitors {
   
   ////// Public Functions //////
   
+  /** Visitor cookie generation or retrieval
+   * MUST run before the parent visit logging and coupon render method
+   */
+  public function getOrSetVisitorCookie() {
+    $this->getOrSetVisitorCookie();
+    if (isset($this->visitorIdCookie) === false) {
+      $this->createVisitorIdCookie();
+    }
+  }
   
-  /** handle cookie checks and database on every single page visit
+  /** handle visit logging and coupon renders on every single page visit
    *
-   * If no cookie it will be set
+   * IMPORTANT: Relies on getOrSetVisitorCookie() to run in an earlier hook! Otherwise will break
    *
    * visits will always log to the database
    *
@@ -196,38 +220,29 @@ class Visitors {
    *
    * If a match is found, trigger conditions will be checked against. A positive result will return the coupon data to display
    *
-   * @param $urlInfo array. Contains page url of visitor
-   */
-  
+  */
   public function logVisitsAndControlCouponDisplay() {
-    // get visitor cookie or set new one
-    $cookieInfo = $this->getVisitorIdCookie();
-    
-    // for new visitors
-    if ($cookieInfo === false) {
-      $cookieInfo = $this->createVisitorIdCookie();
-    }
-  
     // grab the url pieces
     $urlInfo = $this->breakApartUrl();
     
-    // log the visit
     try {
-      $this->logVisit($cookieInfo, $urlInfo);
+      // log the visit if not a junk url
+      if ($this->filterOutJunkUrls($urlInfo) === true) {
+        $this->logVisit($this->visitorIdCookie, $urlInfo);
+  
+        // check if this visit matches a URL. if so, return trigger conditions and coupon data
+        $targetMatchData = $this->scanAgainstUrlTargets($urlInfo, $this->visitorIdCookie);
+  
+        // if $targetMatchData then lookup the coupon data and render it. Otherwise die
+        if (isset($targetMatchData['targetId'])) {
+          $textDescriptionColors = $this->lookUpCouponData($targetMatchData['fk_coupons_targets']);
+          $this->renderCoupon($textDescriptionColors);
+        }
+        
+      }
     } catch (\Exception $error) {
-      print_r('something went awry while logging visit');
+      print_r('something went awry while logging visit, scanning against the targets table, or attempting to render');
     }
-    
-    // check if this visit matches a URL. if so, return trigger conditions and coupon data
-    $targetMatchData = $this->scanAgainstUrlTargets($urlInfo);
-    
-    // if $targetMatchData then lookup the coupon data and render it. Otherwise die
-    if (array_key_exists('targetId', $targetMatchData)) {
-      $textDescriptionColors = $this->lookUpCouponData($targetMatchData['fk_coupons_targets']);
-      $this->renderCoupon($textDescriptionColors);
-    }
-    // else do nothing. DON'T Die
-    
   }
 }
 

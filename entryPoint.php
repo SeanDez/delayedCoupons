@@ -51,11 +51,13 @@ require_once ('adminSettingsArea/index.php');
 
 
 
-/** Handles all aspects of triggers and coupon display
- * Cookie setting. Trigger checks. Coupon retrieval and rendering
+/** On init getOrSetVisitorCookie() handles the cookie data, for the very next method
+ *
+ * At the end of rendering the body, the visit is logged and db checks are done to see if this pageload should trigger a coupon render
  */
 $visitors = new Visitors();
-add_action('init', [$visitors, 'logVisitsAndControlCouponDisplay']);
+add_action('init', [$visitors, 'getOrSetVisitorCookie']);
+add_action('wp_footer', [$visitors, 'logVisitsAndControlCouponDisplay']);
 
 
 
