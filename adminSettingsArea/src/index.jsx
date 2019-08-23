@@ -33,6 +33,8 @@ const useStyles = makeStyles(theme => ({
 // create and export a context
 export const StatePassingContext = React.createContext(true);
 
+let apiBaseUrl = 'http://localhost/wptest2/index.php/wp-json/';
+if (typeof apiBaseUrlFromWp !== 'undefined') { apiBaseUrl = apiBaseUrlFromWp; }
 
 
 // todo fix routing problem (wordpress install/subfolder not included)
@@ -47,9 +49,6 @@ if (typeof _wpnonce === 'undefined') {
 } else {
   clientNonce = _wpnonce;
 }
-
-let clientSiteUrl = 'http://localhost/wptest2';
-if (websiteBaseUrl) { clientSiteUrl = websiteBaseUrl; }
 
 
 
@@ -99,7 +98,7 @@ const AdminArea = props => {
         >
           <AddCouponForm
             clientNonce={ clientNonce }
-            clientSiteUrl={clientSiteUrl}
+            apiBaseUrl={apiBaseUrl}
           />
         </ConditionalDiv>
       </Fade>

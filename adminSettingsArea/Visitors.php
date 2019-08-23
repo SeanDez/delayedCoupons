@@ -133,10 +133,10 @@ trait protectedMethodsInVisitors {
     return $result;
   }
   
-  protected function scanAgainstUrlTargets(array $urlData, string $visitorId) {
+  protected function scanAgainstUrlTargets(array $urlData, string $visitorId) : object {
     global $wpdb;
     
-    $conditionMatch = $wpdb->get_results("
+    $conditionMatch = $wpdb->get_row("
       SELECT t.*
       FROM
         {$wpdb->prefix}delayedCoupons_targets t
@@ -145,11 +145,13 @@ trait protectedMethodsInVisitors {
           select count(*)
           from {$wpdb->prefix}delayedCoupons_visits v
           where v.visitorId = {$visitorId}
+          and v.urlVisited = '{$urlData['rawUrl']}'
           )
         AND  t.displayThreshold + t.offerCutoff >= (
           select count(*)
           from {$wpdb->prefix}delayedCoupons_visits v
           where v.visitorId = {$visitorId}
+          and v.urlVisited = '{$urlData['rawUrl']}'
           )
     ");
     
@@ -158,23 +160,23 @@ trait protectedMethodsInVisitors {
   
   /** Returns coupon data as assoc. array
    */
-  protected function lookUpCouponData(string $couponId) {
+  protected function lookUpCouponData(string $couponId) : object {
     global $wpdb;
     
-    $query = $wpdb->get_results("
+    $query = $wpdb->get_row("
       SELECT *
-      FROM {$wpdb->prefix}delayedCoupons_coupons
-      WHERE couponId = {$couponId}
+      FROM {$wpdb->prefix}delayedCoupons_coupons c
+      WHERE c.couponId = {$couponId}
     ");
     
     return $query;
   }
   
   /** Render the coupon to the page as an overlay
-   * @param $couponSettings array. Has information for text/bg colors, and headline/desc content
+   * @param $couponSettings object. Has information for text/bg colors, and headline/desc content
    */
-  protected function renderCoupon(array $couponSettings) {
-//    require_once(PLUGIN_FOLDER_PATH . 'frontFacingOverlay/coupon.php');
+  protected function renderCoupon(object $couponSettings) {
+    require_once(PLUGIN_FOLDER_PATH . '/frontFacingOverlay/coupon.php');
   }
   
   /** Filters urls of junk pages that should not be recorded
@@ -237,8 +239,8 @@ class Visitors {
         $targetMatchData = $this->scanAgainstUrlTargets($urlInfo, $this->visitorIdCookie);
   
         // if $targetMatchData then lookup the coupon data and render it. Otherwise die
-        if (isset($targetMatchData['targetId'])) {
-          $textDescriptionColors = $this->lookUpCouponData($targetMatchData['fk_coupons_targets']);
+        if (isset($targetMatchData->targetId)) {
+          $textDescriptionColors = $this->lookUpCouponData($targetMatchData->fk_coupons_targets);
           $this->renderCoupon($textDescriptionColors);
         }
         

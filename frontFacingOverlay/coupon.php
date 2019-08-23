@@ -3,13 +3,13 @@
 <div id="outerContainer">
   <div id="headingContainer">
     <h1>
-      <?php echo $couponSettings['titleText'] ?>
+      <?php echo $couponSettings->titleText ?>
     </h1>
   </div>
   
   <div id="descriptionContainer">
     <p>
-      <?php echo $couponSettings['descriptionText'] ?>
+      <?php echo $couponSettings->descriptionText ?>
     </p>
   </div>
 </div>

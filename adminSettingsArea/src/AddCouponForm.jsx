@@ -20,7 +20,7 @@ const ajaxRequestor = new AjaxRequestor();
 
 
 const AddCouponForm = props => {
-  let {clientNonce} = props;
+  let {clientNonce, apiBaseUrl} = props;
   const styles = jssStyles();
   
   ////// State for inputs //////
