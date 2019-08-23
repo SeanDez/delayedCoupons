@@ -53,11 +53,13 @@ trait protectedMethodsInVisitors {
    * passes test with a long url
    */
   protected function breakApartUrl() : array {
+    $currentUrl = home_url() . wp_unslash($_SERVER['REQUEST_URI']);
+    
     // i = 0: raw match
     // i = 1: subdomain, domain, categories, pages
     // i = 2: query string
     $regexOutput = [];
-    preg_match('/(^http:\/\/[^\?\s]+)(\?[^\s]+)?/', wp_get_referer(), $regexOutput);
+    preg_match('/(^http:\/\/[^\?\s]+)(\?[^\s]+)?/', $currentUrl, $regexOutput);
     
     $brokenUpUrl = [
       'rawUrl' => isset($regexOutput[0]) ? $regexOutput[0] : ''
@@ -204,7 +206,8 @@ class Visitors {
    * MUST run before the parent visit logging and coupon render method
    */
   public function getOrSetVisitorCookie() {
-    $this->getOrSetVisitorCookie();
+    $this->getVisitorIdCookie();
+    
     if (isset($this->visitorIdCookie) === false) {
       $this->createVisitorIdCookie();
     }
