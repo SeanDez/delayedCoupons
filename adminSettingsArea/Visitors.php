@@ -54,8 +54,8 @@ trait protectedMethodsInVisitors {
    */
   protected function breakApartUrl() : array {
     // i = 0: raw match
-    // i = 1: capture group for: subdomain, domain, categories, pages
-    // i = 2: capture group: query string
+    // i = 1: subdomain, domain, categories, pages
+    // i = 2: query string
     $regexOutput = [];
     preg_match('/(^http:\/\/[^\?\s]+)(\?[^\s]+)?/', wp_get_referer(), $regexOutput);
     
