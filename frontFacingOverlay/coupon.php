@@ -12,7 +12,31 @@
       <?php echo $couponSettings->descriptionText; ?>
     </p>
   </div>
+  
+  <div
+    id="closeButton"
+  >X
+  </div>
 </div>
+
+<script>
+  const couponContainer = document.getElementById('outerContainer');
+  const closeButton = document.getElementById('closeButton');
+  
+  function setDisplayToNone() {
+    couponContainer.style.display = 'none';
+  }
+  
+  const closeListenerOptions = {
+    once : true
+  };
+  
+  closeButton.addEventListener(
+    'click',
+    setDisplayToNone,
+    closeListenerOptions
+  );
+</script>
 
 <style>
   #outerContainer {
@@ -40,5 +64,10 @@
     color : <?php echo $couponSettings->descriptionTextColor; ?>
   }
 
-
+  #closeButton {
+    position: absolute;
+    right: 5px;
+    top: 2px;
+    cursor: pointer;
+  }
 </style>
