@@ -1,9 +1,13 @@
 <?php
 // require (PLUGIN_FOLDER_PATH . '/vendor/autoload.php');
-require (ADMIN_SETTINGS_PATH . '/Visitors.php');
+require_once (ADMIN_SETTINGS_PATH . '/Visitors.php');
+require_once (ADMIN_SETTINGS_PATH . '/src/utilities/wordpressMockFunctions.php');
 
 use \admin\controllers\Visitors;
 use \admin\controllers\protectedMethodsInVisitors;
+
+
+
 
 
 class VisitorsTest extends \PHPUnit\Framework\TestCase {
@@ -16,6 +20,7 @@ class VisitorsTest extends \PHPUnit\Framework\TestCase {
 //  }
   
   public function testBreakApartUrl() {
+    $_SERVER['REQUEST_URI'] = 'category/page?query1=value1&query2=value2';
     
     $result = $this->breakApartUrl();
     $this->assertEquals([

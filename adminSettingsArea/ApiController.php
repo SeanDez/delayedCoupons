@@ -62,6 +62,7 @@ class ApiController extends \WP_Rest_Controller {
       , 'displayThreshold' => $jsonArray['displayThreshold']
       , 'offerCutoff' => $jsonArray['numberOfOffers']
       , 'fk_coupons_targets' => $couponId
+      , 'unixTime' => microtime(true)
     ]);
     
     // todo figure out how to send 2 results back and how to logically configure it

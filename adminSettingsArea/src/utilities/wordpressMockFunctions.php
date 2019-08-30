@@ -9,7 +9,13 @@ function wp_get_referer() : string {
   return 'http://subdomain.maindomain.com/category/page?query1=value1&query2=value2';
 }
 
+function home_url() {
+  return 'http://subdomain.maindomain.com/';
+}
 
+function wp_unslash(string $string) {
+  return $string;
+}
 
 
 

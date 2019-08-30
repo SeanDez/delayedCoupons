@@ -53,7 +53,7 @@ trait protectedMethodsInVisitors {
    * passes test with a long url
    */
   protected function breakApartUrl() : array {
-    $currentUrl = home_url() . wp_unslash($_SERVER['REQUEST_URI']);
+    $currentUrl = 'http://' . $_SERVER['SERVER_NAME'] . wp_unslash($_SERVER['REQUEST_URI']);
     
     // i = 0: raw match
     // i = 1: subdomain, domain, categories, pages
@@ -127,35 +127,58 @@ trait protectedMethodsInVisitors {
         , "urlVisited" => $urlData['rawUrl']
         , "urlRoot" => $urlData['urlRoot']
         , 'queryString' => $urlData['queryString']
+        , 'unixTime' => microtime(true)
       ]
     );
     
     return $result;
   }
   
-  protected function scanAgainstUrlTargets(array $urlData, string $visitorId) : object {
+  /** checks the current page visit to see if it meets triggers of any targets
+   *
+   * @param $urlData object. contains rawUrl string
+   *
+   * @param $visitorId string. taken from visitor cookie. used to match against visit records
+   *
+   * @return mixed. Object containing target data on success, otherwise null
+   */
+  protected function scanAgainstUrlTargets(array $urlData, string $visitorId) {
     global $wpdb;
     
-    $conditionMatch = $wpdb->get_row("
-      SELECT t.*
-      FROM
-        {$wpdb->prefix}delayedCoupons_targets t
-      WHERE t.targetUrl = '{$urlData['rawUrl']}'
-        AND t.displayThreshold < (
-          select count(*)
-          from {$wpdb->prefix}delayedCoupons_visits v
-          where v.visitorId = {$visitorId}
-          and v.urlVisited = '{$urlData['rawUrl']}'
-          )
-        AND  t.displayThreshold + t.offerCutoff >= (
-          select count(*)
-          from {$wpdb->prefix}delayedCoupons_visits v
-          where v.visitorId = {$visitorId}
-          and v.urlVisited = '{$urlData['rawUrl']}'
-          )
+    $visitUrlCount = $wpdb->get_var("
+      select count(*)
+      from {$wpdb->prefix}delayedCoupons_visits v
+      where v.urlVisited = '{$urlData['rawUrl']}'
     ");
     
-    return $conditionMatch;
+    // select the target record that matches the current visit
+    $matchingTargetRow = $wpdb->get_row("
+      select *
+      from {$wpdb->prefix}delayedCoupons_targets t
+      where t.targetUrl = '{$urlData['rawUrl']}'
+    ");
+    
+    // if target is found check if the visit count for this user falls within parameters
+    if (isset($matchingTargetRow)) {
+      $minTargetViews = $matchingTargetRow->displayThreshold;
+      $maxTargetViews = $minTargetViews + $matchingTargetRow->offerCutoff;
+      
+      $numberOfPageVisitsByUser = intval(
+        $wpdb->get_var("
+        select count(*)
+        from {$wpdb->prefix}delayedCoupons_visits v
+        where v.visitorId = '{$visitorId}'
+        and v.urlVisited = '{$urlData['rawUrl']}'
+      "));
+      
+      if ($numberOfPageVisitsByUser >= $minTargetViews &&
+        $numberOfPageVisitsByUser <= $maxTargetViews
+      ) {
+        return $matchingTargetRow;
+      }
+    }
+    
+    return null;
   }
   
   /** Returns coupon data as assoc. array

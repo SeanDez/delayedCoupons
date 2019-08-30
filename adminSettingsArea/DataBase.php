@@ -30,6 +30,7 @@ class DataBase {
        targetUrl varchar(500),
        displayThreshold tinyint(5) not null default 20,
        offerCutoff tinyint(5),
+       unixTime bigint not null,
        fk_coupons_targets mediumint not null unique,
        foreign key (fk_coupons_targets) references {$prefix}delayedCoupons_coupons(couponId) on delete cascade
       ) {$charset_collate}";
@@ -43,6 +44,7 @@ class DataBase {
     urlVisited varchar(500) not null,
     urlRoot varchar(400) not null,
     queryString varchar(400),
+    unixTime bigint not null,
     fk_targets_visits mediumint(5) not null unique,
     foreign key (fk_targets_visits) references {$wpdb->prefix}delayedCoupons_targets(targetId) on delete cascade
     ) {$charset_collate}";
