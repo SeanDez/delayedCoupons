@@ -68,8 +68,8 @@
 
   #closeButton {
     position: absolute;
-    right: 5px;
-    top: 2px;
+    right: 8px;
+    top: 8px;
     cursor: pointer;
   }
 </style>
