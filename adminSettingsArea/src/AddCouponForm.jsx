@@ -108,6 +108,17 @@ const AddCouponForm = props => {
   };
   
   
+  const generateColorOptions = () => {
+    const colors = ['black', 'blue', 'brown', 'gray', 'green', 'orange', 'purple', 'red', 'yellow', 'white'];
+    
+    const menuJsx = colors.map(color => (
+      <MenuItem value={color}>{color}</MenuItem>
+    ));
+    
+    return menuJsx;
+  };
+  
+  
   return (
     <div
     >
@@ -189,8 +200,7 @@ const AddCouponForm = props => {
               setHeadlineTextColor(e.target.value);
             }}
           >
-            <MenuItem value='black'>Black</MenuItem>
-            <MenuItem value='white'>White</MenuItem>
+            {generateColorOptions()}
           </Select>
         </div>
         
@@ -208,8 +218,7 @@ const AddCouponForm = props => {
             value={headlineBackgroundColor}
             onChange={e => setHeadlineBackgroundColor(e.target.value)}
           >
-            <MenuItem value='black'>Black</MenuItem>
-            <MenuItem value='white'>White</MenuItem>
+            {generateColorOptions()}
           </Select>
         </div>
         
@@ -225,8 +234,7 @@ const AddCouponForm = props => {
             value={descriptionTextColor}
             onChange={e => setDescriptionTextColor(e.target.value)}
           >
-            <MenuItem value='black'>Black</MenuItem>
-            <MenuItem value='white'>White</MenuItem>
+            {generateColorOptions()}
           </Select>
         </div>
         
@@ -242,8 +250,7 @@ const AddCouponForm = props => {
             value={descriptionBackgroundColor}
             onChange={e => setDescriptionBackgroundColor(e.target.value)}
           >
-            <MenuItem value='black'>Black</MenuItem>
-            <MenuItem value='white'>White</MenuItem>
+            {generateColorOptions()}
           </Select>
         </div>
         

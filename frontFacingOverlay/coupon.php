@@ -40,7 +40,7 @@
 
 <style>
   #outerContainer {
-    padding: 20px 60px;
+    z-index: 1001;
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-around;
@@ -51,7 +51,8 @@
   }
   
   #headingContainer {
-    background-color: <?php echo $couponSettings->titleBackgroundColor; ?>
+    background-color: <?php echo $couponSettings->titleBackgroundColor; ?>;
+    padding: 20px 40px 0 40px;
   }
   #headingContainer h1 {
     color : <?php echo $couponSettings->titleTextColor; ?>
@@ -59,6 +60,7 @@
   
   #descriptionContainer {
     background-color: <?php echo $couponSettings->descriptionBackgroundColor ?>;
+    padding: 0 40px 20px 40px;
   }
   #descriptionContainer h1 {
     color : <?php echo $couponSettings->descriptionTextColor; ?>

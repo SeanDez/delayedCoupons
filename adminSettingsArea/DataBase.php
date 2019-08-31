@@ -28,8 +28,8 @@ class DataBase {
        primary key (targetId),
        isSitewide tinyint(1) not null,
        targetUrl varchar(500),
-       displayThreshold tinyint(5) not null default 20,
-       offerCutoff tinyint(5),
+       displayThreshold smallint(5) not null default 20,
+       offerCutoff smallint(5) not null,
        unixTime bigint not null,
        fk_coupons_targets mediumint not null unique,
        foreign key (fk_coupons_targets) references {$prefix}delayedCoupons_coupons(couponId) on delete cascade
