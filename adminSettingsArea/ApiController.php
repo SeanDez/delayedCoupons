@@ -20,9 +20,36 @@ class ApiController extends \WP_Rest_Controller {
   /** Utility functions
    */
   
-  protected function checkIfAdmin() {
-    $isAdmin = current_user_can('delete_site');
-    return $isAdmin;
+  /** If true, is NOT a duplicate
+   */
+  protected function isUniquePageTarget(string $pageUrl) : bool  {
+    global $wpdb;
+    
+    $matchingPageTarget = $wpdb->get_var("
+      select count(*)
+      from {$wpdb->prefix}delayedCoupons_targets
+      where targetUrl = '{$pageUrl}'
+    ");
+    
+    if (intval($matchingPageTarget) > 0) {
+      return false;
+    }
+    return true;
+  }
+  
+  /** If true, IS admin.
+   */
+  protected function isAdmin() : bool {
+    return current_user_can('administrator');
+    
+  }
+  
+  /** Do the admin access check and return an error if it fails
+   */
+  protected function responseWithErrorIfBelowAdmin() {
+    if ($this->isAdmin() === false) {
+      wp_send_json(['error' => "Either something is wrong with your Administrator privileges or you aren't logged into your admin account."]);
+    }
   }
   
   /** Callback functions
@@ -39,6 +66,7 @@ class ApiController extends \WP_Rest_Controller {
     global $wpdb;
     $jsonArray = $request->get_params();
     
+    $this->responseWithErrorIfBelowAdmin();
     
     $couponQueryResult = $wpdb->insert(
       "{$wpdb->prefix}delayedCoupons_coupons"
@@ -80,32 +108,37 @@ class ApiController extends \WP_Rest_Controller {
   public function respondAllCoupons() {
     global $wpdb;
     
-      $urlCounts = $wpdb->get_results("
-      SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
-      FROM {$wpdb->prefix}delayedCoupons_coupons c
+    $this->responseWithErrorIfBelowAdmin();
+    
+    $urlCounts = $wpdb->get_results("
+    SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
+    FROM {$wpdb->prefix}delayedCoupons_coupons c
+    
+    left join {$wpdb->prefix}delayedCoupons_targets t
+    on c.couponId = t.fk_coupons_targets
+    
+    left join -- left retains all left (target) rows
+    ( -- step 1
+      SELECT urlVisited -- needed for the join
+      , count(*) as 'totalVisits'
+      FROM {$wpdb->prefix}delayedCoupons_visits
       
-      left join {$wpdb->prefix}delayedCoupons_targets t
-      on c.couponId = t.fk_coupons_targets
-      
-      left join -- left retains all left (target) rows
-      ( -- step 1
-        SELECT urlVisited -- needed for the join
-        , count(*) as 'totalVisits'
-        FROM {$wpdb->prefix}delayedCoupons_visits
-        
-        group by urlVisited
-      ) as visitCounts
-      on t.targetUrl = visitCounts.urlVisited
-      
-      order by c.couponId
-      ");
-      
-      wp_send_json($urlCounts);
+      group by urlVisited
+    ) as visitCounts
+    on t.targetUrl = visitCounts.urlVisited
+    
+    order by c.couponId
+    ");
+    
+    wp_send_json($urlCounts);
   }
   
   
   public function deleteSingleCoupon(\WP_REST_Request $request) {
     global $wpdb;
+  
+    $this->responseWithErrorIfBelowAdmin();
+  
     $couponId = $request->get_param('couponId');
     
     $queryResult = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons",  ['couponId' => $couponId]);

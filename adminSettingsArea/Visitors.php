@@ -247,7 +247,6 @@ class Visitors {
    * visits will check against a database of triggers for a given target. Triggers are all URL based
    *
    * If a match is found, trigger conditions will be checked against. A positive result will return the coupon data to display
-   *
   */
   public function logVisitsAndControlCouponDisplay() {
     // grab the url pieces
