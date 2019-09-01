@@ -18,17 +18,11 @@ import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons
 // setup the request handler
 const ajaxRequestor = new AjaxRequestor();
 
-// sets up the apiBaseUrl
-// todo revert to the error when out of testing
-// let apiBaseUrlSet = new Error("Custom Message: Wordpress did not set the api base url");
-let apiBaseUrlSet = 'http://localhost/wptest2/index.php/wp-json/';
-if (window && window.apiBaseUrl) {
-  apiBaseUrlSet = apiBaseUrl;
-}
 
 
 ////// Component //////
 export default props => {
+  const {apiBaseUrl} = props;
   const {setSnackbarMessage} = useContext(StatePassingContext);
   
   const styles = useStyles();
@@ -38,14 +32,18 @@ export default props => {
    *
    * Automatically updates after a delete request, which also modifies the array bound to couponData
    */
-
   const [couponData, setCouponData] = useState([]);
   
   // return a promise which if resolves, responds with the data array
   const fetchAllCoupons = async () => {
     try {
-      const response = await fetch('http://localhost/wptest2/?rest_route=/delayedCoupons/1.0/loadAll');
+      const response = await fetch(`${apiBaseUrl}/delayedCoupons/1.0/loadAll`);
       let data = await response.json();
+      
+      if (data && 'error' in data) {
+        setSnackbarMessage(data.error)
+      }
+      
       return data;
     }
     catch (e) {
@@ -99,7 +97,12 @@ export default props => {
     try {
       const jsonResponse = await ajaxRequestor.post(appendedUrl);
       console.log(jsonResponse, `=====jsonResponse=====`);
-      return jsonResponse;
+      
+      if (jsonResponse && 'error' in jsonResponse) {
+        return setSnackbarMessage(jsonResponse.error)
+      }
+      
+      return jsonResponse.row;
     }
     catch (e) {
       console.log(e, `=====error=====`);
@@ -115,7 +118,7 @@ export default props => {
     const result = await deleteCouponTableRow(couponId);
     // on success a string of the id is returned
     
-    if (result.deletedCouponId) {
+    if (result && 'deletedCouponId' in result) {
       setSnackbarMessage(`SUCCESS: Coupon ID ${result.deletedCouponId} has been deleted`);
       // fetch is 2nd to let message show right away;
       
@@ -126,11 +129,10 @@ export default props => {
       catch (e) {
         console.error(e, `=====error=====`);
       }
-    } else if (result.error) {
+    } else if (result && 'error' in result) {
       setSnackbarMessage(result.error)
     } else {
-      setSnackbarMessage('Internal error, please contact the plugin developer with details of what caused you to see this message');
-      console.error('else block hit inside deleteCouponUpdateTableOrDisplayError()');
+      setSnackbarMessage('Internal error, please contact the plugin developer');
     }
   };
   
@@ -205,16 +207,7 @@ export default props => {
       // {...props}
     >
       <h3>View Coupons</h3>
-      <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click
-         the delete icon to remove it.</p>
-      
-      <button
-        onClick={e => {
-          setSnackbarMessage('test val');
-        }}
-      >
-        props in view coupons
-      </button>
+      <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click the delete icon to remove it.</p>
       
       { checkIfCouponDataExists(couponData) ?
         <React.Fragment>

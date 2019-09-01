@@ -20,28 +20,28 @@ class ApiController extends \WP_Rest_Controller {
   /** Utility functions
    */
   
-  /** If true, is NOT a duplicate
+  /** returns target data if a current target matches, otherwise returns null
    */
-  protected function isUniquePageTarget(string $pageUrl) : bool  {
+  protected function getTargetRowForMatchingPageUrl(string $pageUrl)  {
     global $wpdb;
     
-    $matchingPageTarget = $wpdb->get_var("
-      select count(*)
+    $targetRow = $wpdb->get_var("
+      select *
       from {$wpdb->prefix}delayedCoupons_targets
       where targetUrl = '{$pageUrl}'
     ");
     
-    if (intval($matchingPageTarget) > 0) {
-      return false;
+    if (isset($targetRow)) {
+      return $targetRow;
     }
-    return true;
+    
+    else return null;
   }
   
   /** If true, IS admin.
    */
   protected function isAdmin() : bool {
     return current_user_can('administrator');
-    
   }
   
   /** Do the admin access check and return an error if it fails
@@ -67,6 +67,12 @@ class ApiController extends \WP_Rest_Controller {
     $jsonArray = $request->get_params();
     
     $this->responseWithErrorIfBelowAdmin();
+  
+    $currentPageTarget = $this->getTargetRowForMatchingPageUrl($jsonArray['pageTarget']);
+    
+    if (isset($currentPageTarget)) {
+      wp_send_json(['error' => "A coupon is already assigned to this page. If you want to reassign a coupon, first click on 'View Coupons' and delete the record with id: {$currentPageTarget->fk_coupons_targets}"]);
+    };
     
     $couponQueryResult = $wpdb->insert(
       "{$wpdb->prefix}delayedCoupons_coupons"
@@ -110,7 +116,7 @@ class ApiController extends \WP_Rest_Controller {
     
     $this->responseWithErrorIfBelowAdmin();
     
-    $urlCounts = $wpdb->get_results("
+    $rows = $wpdb->get_results("
     SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
     FROM {$wpdb->prefix}delayedCoupons_coupons c
     
@@ -130,7 +136,7 @@ class ApiController extends \WP_Rest_Controller {
     order by c.couponId
     ");
     
-    wp_send_json($urlCounts);
+    wp_send_json(['rows' => '$rows']);
   }
   
   

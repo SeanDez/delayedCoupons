@@ -60,6 +60,8 @@ const AdminArea = props => {
   // todo move this somewhere else
   const [snackbarMessage, setSnackbarMessage] = useState(false);
   
+  
+  
   /** Controls the body section of the admin area 
    */
   const bodyViews = Object.freeze({
@@ -112,6 +114,7 @@ const AdminArea = props => {
           displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}
         >
           <ViewCoupons
+            apiBaseUrl={apiBaseUrl}
           />
         </ConditionalDiv>
       </Fade>

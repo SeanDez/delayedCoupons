@@ -71,7 +71,6 @@ const AddCouponForm = props => {
       descriptionBackgroundColor // coupon table
     };
     
-    // todo change this url to relative using a wp function to grab the home or site url
     const response = await ajaxRequestor.post( `${apiBaseUrl}/delayedCoupons/1.0/add`, formData);
     setupSnackBarData(response);
     resetAddCouponState();
@@ -112,7 +111,12 @@ const AddCouponForm = props => {
     const colors = ['black', 'blue', 'brown', 'gray', 'green', 'orange', 'purple', 'red', 'yellow', 'white'];
     
     const menuJsx = colors.map(color => (
-      <MenuItem value={color}>{color}</MenuItem>
+      <MenuItem
+        value={color}
+        key={color}
+      >
+        {color}
+      </MenuItem>
     ));
     
     return menuJsx;
