@@ -68,7 +68,8 @@ const AddCouponForm = props => {
       headlineTextColor, // coupon table
       headlineBackgroundColor, // coupon table
       descriptionTextColor, // coupon table
-      descriptionBackgroundColor // coupon table
+      descriptionBackgroundColor, // coupon table
+      clientNonce // authentication
     };
     
     const response = await ajaxRequestor.post( `${apiBaseUrl}/delayedCoupons/1.0/add`, formData);

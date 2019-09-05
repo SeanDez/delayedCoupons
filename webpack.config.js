@@ -1,4 +1,4 @@
-require("babel-polyfill");
+// require("babel-polyfill"); // moved to index.jsx
 
 // can't use ES6 here
 const webpack = require("webpack");
@@ -8,7 +8,8 @@ const path = require("path");
 module.exports = {
   entry : {
     adminArea :
-      ['babel-polyfill', './adminSettingsArea/src/index.jsx']
+      // ['babel-polyfill', './adminSettingsArea/src/index.jsx']
+      ['./adminSettingsArea/src/index.jsx']
   },
   output : {
     filename : 'shared/[name].bundle.js',

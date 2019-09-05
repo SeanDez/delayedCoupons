@@ -22,7 +22,7 @@ const ajaxRequestor = new AjaxRequestor();
 
 ////// Component //////
 export default props => {
-  const {apiBaseUrl} = props;
+  const {apiBaseUrl, clientNonce} = props;
   const {setSnackbarMessage} = useContext(StatePassingContext);
   
   const styles = useStyles();
@@ -37,7 +37,13 @@ export default props => {
   // return a promise which if resolves, responds with the data array
   const fetchAllCoupons = async () => {
     try {
-      const response = await fetch(`${apiBaseUrl}/delayedCoupons/1.0/loadAll`);
+      const response = await fetch(`${apiBaseUrl}/delayedCoupons/1.0/loadAll`, {
+        method : 'post',
+        headers : {
+          'Content-Type' : 'application/json'
+        },
+        body : JSON.stringify({clientNonce})
+      });
       let data = await response.json();
       
       if (data && 'error' in data) {
@@ -54,7 +60,10 @@ export default props => {
   
   useEffect( () => {
     fetchAllCoupons()
-      .then(data => setCouponData(data))
+      .then(data => {
+        console.log(`=====fetch sent=====`);
+        setCouponData(data)
+      })
       .catch(e => console.log(e, '====error===='));
   }, []);
   
@@ -95,7 +104,7 @@ export default props => {
     const appendedUrl = `${apiBaseUrlSet}delayedCoupons/1.0/delete/${couponId}`;
     
     try {
-      const jsonResponse = await ajaxRequestor.post(appendedUrl);
+      const jsonResponse = await ajaxRequestor.post(appendedUrl, {clientNonce});
       console.log(jsonResponse, `=====jsonResponse=====`);
       
       if (jsonResponse && 'error' in jsonResponse) {

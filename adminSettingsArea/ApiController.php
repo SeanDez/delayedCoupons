@@ -38,17 +38,13 @@ class ApiController extends \WP_Rest_Controller {
     else return null;
   }
   
-  /** If true, IS admin.
-   */
-  protected function isAdmin() : bool {
-    return current_user_can('administrator');
-  }
-  
   /** Do the admin access check and return an error if it fails
    */
-  protected function responseWithErrorIfBelowAdmin() {
-    if ($this->isAdmin() === false) {
-      wp_send_json(['error' => "Either something is wrong with your Administrator privileges or you aren't logged into your admin account."]);
+  protected function authUserOrRespondWithError($clientNonce) {
+    $verification = wp_verify_nonce($clientNonce);
+    
+    if ($verification === false) {
+      wp_send_json(['error' => "Either something is wrong with your Administrator privileges or your admin session has expired. Try a page refresh, or contact the plugin creator if this continues"]);
     }
   }
   
@@ -66,7 +62,7 @@ class ApiController extends \WP_Rest_Controller {
     global $wpdb;
     $jsonArray = $request->get_params();
     
-    $this->responseWithErrorIfBelowAdmin();
+    $this->authUserOrRespondWithError($jsonArray['clientNonce']);
   
     $currentPageTarget = $this->getTargetRowForMatchingPageUrl($jsonArray['pageTarget']);
     
@@ -111,10 +107,11 @@ class ApiController extends \WP_Rest_Controller {
   }
   
   
-  public function respondAllCoupons() {
+  public function respondAllCoupons(\WP_REST_Request $request) {
     global $wpdb;
     
-    $this->responseWithErrorIfBelowAdmin();
+    $clientNonce = $request->get_param('clientNonce');
+    $this->authUserOrRespondWithError($clientNonce);
     
     $rows = $wpdb->get_results("
     SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
@@ -142,11 +139,11 @@ class ApiController extends \WP_Rest_Controller {
   
   public function deleteSingleCoupon(\WP_REST_Request $request) {
     global $wpdb;
-  
-    $this->responseWithErrorIfBelowAdmin();
-  
-    $couponId = $request->get_param('couponId');
     
+    $clientNonce = $request->get_param('clientNonce');
+    $this->authUserOrRespondWithError($clientNonce);
+    
+    $couponId = $request->get_param('couponId');
     $queryResult = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons",  ['couponId' => $couponId]);
     
     if ($queryResult === 1) {

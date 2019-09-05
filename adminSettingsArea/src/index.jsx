@@ -1,4 +1,9 @@
 require("./globals");
+
+if (!global._babelPolyfill) {
+  require('babel-polyfill');
+}
+
 import React, {useReducer, useState, useEffect} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -114,6 +119,7 @@ const AdminArea = props => {
           displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}
         >
           <ViewCoupons
+            clientNonce={clientNonce}
             apiBaseUrl={apiBaseUrl}
           />
         </ConditionalDiv>
