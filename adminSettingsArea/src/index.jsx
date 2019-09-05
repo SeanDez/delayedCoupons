@@ -1,5 +1,6 @@
 require("./globals");
 
+// some dependency is loading babel-polyfill
 if (!global._babelPolyfill) {
   require('babel-polyfill');
 }
@@ -41,7 +42,6 @@ export const StatePassingContext = React.createContext(true);
 
 
 
-
 // todo fix routing problem (wordpress install/subfolder not included)
 
 
@@ -49,7 +49,8 @@ export const StatePassingContext = React.createContext(true);
  */
 
 let clientNonce;
-if (typeof _wpnonce === 'undefined') {
+if (serverParams &&
+    typeof serverParams._wpnonce === 'undefined') {
   clientNonce = 10;
 } else {
   clientNonce = _wpnonce;
@@ -105,7 +106,7 @@ const AdminArea = props => {
         >
           <AddCouponForm
             clientNonce={ clientNonce }
-            apiBaseUrl={apiBaseUrl}
+            apiBaseUrl={serverParams.apiBaseUrl}
           />
         </ConditionalDiv>
       </Fade>
@@ -120,7 +121,7 @@ const AdminArea = props => {
         >
           <ViewCoupons
             clientNonce={clientNonce}
-            apiBaseUrl={apiBaseUrl}
+            apiBaseUrl={serverParams.apiBaseUrl}
           />
         </ConditionalDiv>
       </Fade>
