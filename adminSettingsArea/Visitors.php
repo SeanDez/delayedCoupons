@@ -7,12 +7,12 @@ use Pdp\Cache;
 use Pdp\CurlHttpClient;
 use Pdp\Manager;
 use Pdp\Rules;
-
+use \Firebase\JWT\JWT;
 
 
 trait protectedMethodsInVisitors {
   protected $visitorIdCookie;
-  
+  public $Jwtkey = 'aromaHallSound';
   /** Get visitor Id from cookie
    * If none, return an explicit value to indicate none
    *
@@ -20,7 +20,10 @@ trait protectedMethodsInVisitors {
    */
   protected function getVisitorIdCookie() : void {
     if (isset($_COOKIE['visitorId'])) {
-      $this->visitorIdCookie = $_COOKIE['visitorId'];
+      // JWT must be an array so 0 index is accessed
+      $decodedCookie = JWT::decode($_COOKIE['visitorId'], $this->Jwtkey, ['HS256'])[0];
+      
+      $this->visitorIdCookie = $decodedCookie;
     }
   }
   
@@ -34,17 +37,19 @@ trait protectedMethodsInVisitors {
     $highestVisitorId = $wpdb->get_var("SELECT MAX(visitorId) from {$wpdb->prefix}delayedCoupons_visits");
     
     $newIdForNewVisitor = intval($highestVisitorId) + 1;
+    $this->visitorIdCookie = $newIdForNewVisitor;
+    
+    $tokenizedVisitorIdArray = JWT::encode([$newIdForNewVisitor], $this->Jwtkey);
+    
     $setResult = setcookie(
       'visitorId'
-      , "{$newIdForNewVisitor}"
+      , "{$tokenizedVisitorIdArray}"
       , time() + (50 * 365 * 24 * 60 * 60)
       , '/'
       , null
       , null
       , true
     );
-    
-    $this->visitorIdCookie = $setResult;
   }
   
   /** Chunks a url down to an associative array

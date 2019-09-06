@@ -13,7 +13,8 @@
         , "vlucas/phpdotenv": "^3.4",
         "jeremykendall/php-domain-parser": "^5.5",
         "league/uri-parser": "^1.4",
-        "league/uri-schemes": "^1.2"
+        "league/uri-schemes": "^1.2",
+        "firebase/php-jwt": "^5.0"
     },
     "require-dev": {
         "lucatume/wp-browser": "^2.2"
