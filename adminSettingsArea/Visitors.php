@@ -22,10 +22,9 @@ trait protectedMethodsInVisitors {
     if (isset($_COOKIE['visitorId'])) {
       // decode() expects an object or array
       // todo switch back to decoding when ready
-//      $decodedCookie = JWT::decode($_COOKIE['visitorId'], $this->Jwtkey, ['HS256'])[0];
+      $decodedCookie = JWT::decode($_COOKIE['visitorId'], $this->Jwtkey, ['HS256'])[0];
       
-//      $this->visitorIdCookie = $decodedCookie;
-      $this->visitorIdCookie = $_COOKIE['visitorId'];
+      $this->visitorIdCookie = $decodedCookie;
     }
   }
   
@@ -35,19 +34,19 @@ trait protectedMethodsInVisitors {
    */
   protected function createVisitorIdCookie() : void {
     global $wpdb;
-    // select max(visitorId) from wp_dc_visits
+    
     $highestVisitorId = $wpdb->get_var("SELECT MAX(visitorId) from {$wpdb->prefix}delayedCoupons_visits");
     
     $newIdForNewVisitor = intval($highestVisitorId) + 1;
     $this->visitorIdCookie = $newIdForNewVisitor;
     
-//    $tokenizedVisitorIdArray = JWT::encode([$newIdForNewVisitor], $this->Jwtkey);
+    $tokenizedVisitorIdArray = JWT::encode([$newIdForNewVisitor], $this->Jwtkey);
     
     $setResult = setcookie(
       'visitorId'
-//      , strval($tokenizedVisitorIdArray)
+      , strval($tokenizedVisitorIdArray)
       // todo remove when jwt issue is fixed
-      , strval($newIdForNewVisitor)
+//      , strval($newIdForNewVisitor)
       , time() + (50 * 365 * 24 * 60 * 60)
       , '/'
       , null
