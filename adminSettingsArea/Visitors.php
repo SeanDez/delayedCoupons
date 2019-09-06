@@ -20,10 +20,12 @@ trait protectedMethodsInVisitors {
    */
   protected function getVisitorIdCookie() : void {
     if (isset($_COOKIE['visitorId'])) {
-      // JWT must be an array so 0 index is accessed
-      $decodedCookie = JWT::decode($_COOKIE['visitorId'], $this->Jwtkey, ['HS256'])[0];
+      // decode() expects an object or array
+      // todo switch back to decoding when ready
+//      $decodedCookie = JWT::decode($_COOKIE['visitorId'], $this->Jwtkey, ['HS256'])[0];
       
-      $this->visitorIdCookie = $decodedCookie;
+//      $this->visitorIdCookie = $decodedCookie;
+      $this->visitorIdCookie = $_COOKIE['visitorId'];
     }
   }
   
@@ -39,11 +41,13 @@ trait protectedMethodsInVisitors {
     $newIdForNewVisitor = intval($highestVisitorId) + 1;
     $this->visitorIdCookie = $newIdForNewVisitor;
     
-    $tokenizedVisitorIdArray = JWT::encode([$newIdForNewVisitor], $this->Jwtkey);
+//    $tokenizedVisitorIdArray = JWT::encode([$newIdForNewVisitor], $this->Jwtkey);
     
     $setResult = setcookie(
       'visitorId'
-      , "{$tokenizedVisitorIdArray}"
+//      , strval($tokenizedVisitorIdArray)
+      // todo remove when jwt issue is fixed
+      , strval($newIdForNewVisitor)
       , time() + (50 * 365 * 24 * 60 * 60)
       , '/'
       , null
