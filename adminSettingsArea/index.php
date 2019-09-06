@@ -1,15 +1,12 @@
 <?php
 
-// setup a data passage variable
-// localize the variable
-
-// setup a wrapper function for the localizer and also to enqueue the react script
-
-// add action to enqueue the loader
+use \Firebase\JWT\JWT;
 
 /** Registers, then localizes, then enqueues the react view
  */
 function prepAllAdminScripts() {
+  $tokenizedNonce = JWT::encode([wp_create_nonce('wp_rest')], 'sooRazorFine');
+  
   wp_register_script(
     'reactAdminArea'
     , PLUGIN_FOLDER_URL . 'shared/adminArea.bundle.js'
@@ -19,7 +16,7 @@ function prepAllAdminScripts() {
   );
   
   wp_localize_script('reactAdminArea', 'serverParams', [
-    '_wpnonce' => wp_create_nonce('wp_rest')
+    '_wpnonce' => $tokenizedNonce
     , 'apiBaseUrlFromWp' => get_rest_url()
   ]);
   
