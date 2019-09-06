@@ -1,10 +1,5 @@
 require("./globals");
 
-// some dependency is loading babel-polyfill
-if (!global._babelPolyfill) {
-  require('babel-polyfill');
-}
-
 import React, {useReducer, useState, useEffect} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -50,10 +45,11 @@ export const StatePassingContext = React.createContext(true);
 
 let clientNonce;
 if (serverParams &&
-    typeof serverParams._wpnonce === 'undefined') {
-  clientNonce = 10;
+    serverParams._wpnonce &&
+    typeof serverParams._wpnonce !== 'undefined') {
+  clientNonce = serverParams._wpnonce;
 } else {
-  clientNonce = _wpnonce;
+  clientNonce = 10;
 }
 
 
@@ -121,7 +117,7 @@ const AdminArea = props => {
         >
           <ViewCoupons
             clientNonce={clientNonce}
-            apiBaseUrl={serverParams.apiBaseUrl}
+            apiBaseUrl={apiBaseUrl}
           />
         </ConditionalDiv>
       </Fade>

@@ -168,7 +168,7 @@ class ApiController extends \WP_Rest_Controller {
   
   public function registerLoadCouponRoute() : void {
     register_rest_route($this->urlBase, 'loadAll', [
-      'methods' => ['GET', 'post'],
+      'methods' => ['get', 'post'],
       'callback' => [$this, 'respondAllCoupons']
     ]);
   }
