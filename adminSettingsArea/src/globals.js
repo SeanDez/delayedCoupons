@@ -1,11 +1,6 @@
-// normally I need to individually export
+// globals remove the need for export keyword
 global.apiBaseUrl = `${process.env.REACT_APP_DEV_API_BASE}`;
-
-if (serverParams &&
-  typeof serverParams.apiBaseUrlFromWp !== 'undefined') {
-  global.apiBaseUrl = serverParams.apiBaseUrlFromWp;
-}
-
+global.clientNonce = 10;
 
 // some dependency is loading babel-polyfill. This is just a backup
 if (!global._babelPolyfill) {

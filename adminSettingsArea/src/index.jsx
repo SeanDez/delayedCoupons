@@ -1,5 +1,4 @@
-require("./globals");
-
+import {localDefaults} from "./globals";
 import React, {useReducer, useState, useEffect} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -35,24 +34,18 @@ const useStyles = makeStyles(theme => ({
 export const StatePassingContext = React.createContext(true);
 
 
-
-
 // todo fix routing problem (wordpress install/subfolder not included)
 
 
 /** Handle PHP variable passage from back end (initial pageload)
+ *
+ * Prioritize server variables over local defaults
  */
 
-let clientNonce;
-if (serverParams &&
-    serverParams._wpnonce &&
-    typeof serverParams._wpnonce !== 'undefined') {
+if ('serverParams' in window) {
   clientNonce = serverParams._wpnonce;
-} else {
-  clientNonce = 10;
+  apiBaseUrl = serverParams.apiBaseUrlFromWp;
 }
-
-
 
 ////// TOP LEVEL COMPONENT //////
 const AdminArea = props => {
@@ -75,7 +68,7 @@ const AdminArea = props => {
   
   const [state, dispatch] = useReducer(reducer, initialState);
   
-  
+  let outsideP = 'test';
   
   return (
     <React.Fragment>
@@ -102,7 +95,7 @@ const AdminArea = props => {
         >
           <AddCouponForm
             clientNonce={ clientNonce }
-            apiBaseUrl={serverParams.apiBaseUrl}
+            apiBaseUrl={apiBaseUrl}
           />
         </ConditionalDiv>
       </Fade>
@@ -116,7 +109,7 @@ const AdminArea = props => {
           displayBool={Boolean(adminView === bodyViews.viewCurrentCoupons)}
         >
           <ViewCoupons
-            clientNonce={clientNonce}
+            clientNonce={ clientNonce }
             apiBaseUrl={apiBaseUrl}
           />
         </ConditionalDiv>
@@ -159,7 +152,6 @@ const loadCouponData = () => {
   ) {
     ajaxUrl === window.ajaxUrl;
   }
-  
   
   try {
     const response = ajaxRequestor.post()

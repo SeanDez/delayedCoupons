@@ -38,11 +38,10 @@ export default props => {
   const fetchAllCoupons = async () => {
     try {
       const response = await fetch(`${apiBaseUrl}/delayedCoupons/1.0/loadAll`, {
-        method : 'post',
-        headers : {
-          'Content-Type' : 'application/json'
-        },
-        body : JSON.stringify({clientNonce})
+        method : 'get'
+        // , headers : {
+        //   'X-WP-Nonce' : serverParams._wpnonce
+        // }
       });
       let data = await response.json();
       
@@ -58,11 +57,14 @@ export default props => {
     }
   };
   
+  /** ON INITIAL LOAD
+   */
   useEffect( () => {
     fetchAllCoupons()
       .then(data => {
         console.log(`=====fetch sent=====`);
-        setCouponData(data)
+        console.log(data, `=====data=====`);
+        setCouponData(data.rows)
       })
       .catch(e => console.log(e, '====error===='));
   }, []);
