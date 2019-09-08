@@ -39,13 +39,14 @@ export const StatePassingContext = React.createContext(true);
 
 /** Handle PHP variable passage from back end (initial pageload)
  *
- * Prioritize server variables over local defaults
+ * Defaults to globals set in globals.js
  */
-
 if ('serverParams' in window) {
   clientNonce = serverParams._wpnonce;
   apiBaseUrl = serverParams.apiBaseUrlFromWp;
 }
+
+
 
 ////// TOP LEVEL COMPONENT //////
 const AdminArea = props => {

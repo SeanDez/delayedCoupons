@@ -39,9 +39,9 @@ export default props => {
     try {
       const response = await fetch(`${apiBaseUrl}/delayedCoupons/1.0/loadAll`, {
         method : 'get'
-        // , headers : {
-        //   'X-WP-Nonce' : serverParams._wpnonce
-        // }
+        , headers : {
+          'X-WP-Nonce' : clientNonce
+        }
       });
       let data = await response.json();
       

@@ -1,11 +1,10 @@
 <?php
 
-use \Firebase\JWT\JWT;
+// use \Firebase\JWT\JWT;
 
 /** Registers, then localizes, then enqueues the react view
  */
 function prepAllAdminScripts() {
-  $tokenizedNonce = JWT::encode([wp_create_nonce('wp_rest')], 'sooRazorFine');
   
   wp_register_script(
     'reactAdminArea'
@@ -16,7 +15,7 @@ function prepAllAdminScripts() {
   );
   
   wp_localize_script('reactAdminArea', 'serverParams', [
-    '_wpnonce' => $tokenizedNonce
+    '_wpnonce' => wp_create_nonce('wp_rest')
     , 'apiBaseUrlFromWp' => get_rest_url()
   ]);
   

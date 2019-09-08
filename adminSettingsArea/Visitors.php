@@ -19,12 +19,8 @@ trait protectedMethodsInVisitors {
    * @return mixed. string = value, otherwise false
    */
   protected function getVisitorIdCookie() : void {
-    if (isset($_COOKIE['visitorId'])) {
-      // decode() expects an object or array
-      // todo switch back to decoding when ready
-      $decodedCookie = JWT::decode($_COOKIE['visitorId'], $this->Jwtkey, ['HS256'])[0];
-      
-      $this->visitorIdCookie = $decodedCookie;
+    if (isset($_COOKIE['delayedCoupons_visitorId'])) {
+      $this->visitorIdCookie = $_COOKIE['delayedCoupons_visitorId'];
     }
   }
   
@@ -40,13 +36,9 @@ trait protectedMethodsInVisitors {
     $newIdForNewVisitor = intval($highestVisitorId) + 1;
     $this->visitorIdCookie = $newIdForNewVisitor;
     
-    $tokenizedVisitorIdArray = JWT::encode([$newIdForNewVisitor], $this->Jwtkey);
-    
     $setResult = setcookie(
-      'visitorId'
-      , strval($tokenizedVisitorIdArray)
-      // todo remove when jwt issue is fixed
-//      , strval($newIdForNewVisitor)
+      'delayedCoupons_visitorId'
+      , strval($newIdForNewVisitor)
       , time() + (50 * 365 * 24 * 60 * 60)
       , '/'
       , null

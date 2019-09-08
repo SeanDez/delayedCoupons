@@ -2,7 +2,6 @@
 
 namespace admin\controllers;
 
-use \Firebase\JWT\JWT;
 
 class ApiController extends \WP_Rest_Controller {
   // edit these, especially the version, when they change
@@ -38,18 +37,6 @@ class ApiController extends \WP_Rest_Controller {
     else return null;
   }
   
-  /** Do the admin access check and return an error if it fails
-   */
-  protected function authUserOrRespondWithError($clientNonce) {
-    $decodedNonce = JWT::decode($clientNonce, 'sooRazorFine')[0];
-    
-    $verification = wp_verify_nonce($decodedNonce);
-    
-    if ($verification === false) {
-      wp_send_json(['error' => "Either something is wrong with your Administrator privileges or your admin session has expired. Try a page refresh, or contact the plugin creator if this continues"]);
-    }
-  }
-  
   /** Callback functions
    */
   
@@ -63,9 +50,6 @@ class ApiController extends \WP_Rest_Controller {
   public function addNewCoupon(\WP_REST_Request $request) {
     global $wpdb;
     $jsonArray = $request->get_params();
-    
-    // todo fix the verify issue
-//    $this->authUserOrRespondWithError($jsonArray['clientNonce']);
   
     $currentPageTarget = $this->getTargetRowForMatchingPageUrl($jsonArray['pageTarget']);
     
@@ -112,9 +96,6 @@ class ApiController extends \WP_Rest_Controller {
   
   public function respondAllCoupons(\WP_REST_Request $request) {
     global $wpdb;
-    
-    $currentUser = wp_get_current_user();
-    $isAdmin = current_user_can('manage_options');
     
     $rows = $wpdb->get_results("
     SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
