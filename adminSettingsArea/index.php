@@ -17,7 +17,7 @@ function prepAllAdminScripts() {
   wp_localize_script('reactAdminArea', 'serverParams', [
     '_wpnonce' => wp_create_nonce('wp_rest')
     , 'apiBaseUrlFromWp' => get_rest_url()
-    , 'namepaceAndVersion' => $visitors->namepaceAndVersion
+    , 'namepaceAndVersion' => $apiController->namepaceAndVersion
   ]);
   
   wp_enqueue_script('reactAdminArea');

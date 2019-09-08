@@ -2,23 +2,30 @@
 
 namespace DelayedCoupons;
 
-////// Plugin Declaration (read by WP Core) //////
-use admin\controllers\AjaxController;
+// todo doing absolute path on this seems to break it. Find out why
+require_once ('bootstrap.php'); // Env variables, constant definitions, class autoloads
+require_once ('adminSettingsArea/DataBase.php');
+require_once (ADMIN_SETTINGS_PATH . '/Visitors.php');
+require_once ('adminSettingsArea/ApiController.php');
 
+use admin\controllers\Visitors;
+use \DataBase;
+use admin\controllers\AjaxController;
+use \admin\controllers\ApiController;
+
+$apiController = new ApiController();
+$database = new DataBase();
+$visitors = new Visitors();
+
+
+
+////// Plugin Declaration (read by WP Core) //////
 
 /**
  * Plugin Name: Delayed Coupons
+ *
  * Description: Show coupons after a visitor visits a specific page a certain number of times
  * */
-
-
-
-/** Basic Project Setup
- * Env variables, constant definitions, class autoloads
- */
-// todo doing absolute path on this seems to break it. Find out why
-require_once ('bootstrap.php');
-
 
 
 
@@ -28,16 +35,8 @@ define("PLUGIN_FOLDER_URL", plugin_dir_url(__FILE__));
 
 ////// On Plugin Activation //////
 
-require_once ('adminSettingsArea/DataBase.php');
-require_once (ADMIN_SETTINGS_PATH . '/Visitors.php');
-
-use admin\controllers\Visitors;
-
 /** Creates DB tables on plugin activation
  */
-use \DataBase;
-$database = new DataBase();
-
 register_activation_hook(__FILE__, [$database, 'initializeTables']);
 register_activation_hook(__FILE__, [$database, 'initializeDummyTable']);
 
@@ -55,7 +54,6 @@ require_once ('adminSettingsArea/index.php');
  *
  * At the end of rendering the body, the visit is logged and db checks are done to see if this pageload should trigger a coupon render
  */
-$visitors = new Visitors();
 add_action('init', [$visitors, 'getOrSetVisitorCookie']);
 add_action('wp_footer', [$visitors, 'logVisitsAndControlCouponDisplay']);
 
@@ -82,10 +80,6 @@ add_action('init', __NAMESPACE__ . '\\' . 'add_cors_http_header');
 /** Rest Api Extensions
  * Endpoints for adding coupons, deleting, and loading coupon data.
  */
-require_once ('adminSettingsArea/ApiController.php');
-use \admin\controllers\ApiController;
-
-$apiController = new ApiController();
 add_action('rest_api_init', [$apiController, 'registerLoadCouponRoute']);
 add_action('rest_api_init', [$apiController, 'registerAddCoupon']);
 add_action('rest_api_init', [$apiController, 'registerDeleteSingleCouponRoute']);
