@@ -9,11 +9,10 @@ class ApiController extends \WP_Rest_Controller {
   protected $version = '1.0';
   
   // use this
-  protected $urlBase;
+  public $namepaceAndVersion;
   
   public function __construct() {
-    $this->urlBase = $this->namespace . '/' . $this->version;
-    
+    $this->namepaceAndVersion = $this->namespace . '/' . $this->version;
   }
   
   /** Utility functions
@@ -151,14 +150,14 @@ class ApiController extends \WP_Rest_Controller {
    */
   
   public function registerLoadCouponRoute() : void {
-    register_rest_route($this->urlBase, 'loadAll', [
+    register_rest_route($this->namepaceAndVersion, 'loadAll', [
       'methods' => ['get', 'post'],
       'callback' => [$this, 'respondAllCoupons']
     ]);
   }
   
   public function registerAddCoupon() : void {
-    register_rest_route($this->urlBase, 'add', [
+    register_rest_route($this->namepaceAndVersion, 'add', [
       'methods' => 'post',
       'callback' => [$this, 'addNewCoupon']
     ]);
@@ -166,7 +165,7 @@ class ApiController extends \WP_Rest_Controller {
   
   
   public function registerDeleteSingleCouponRoute() : void {
-    register_rest_route($this->urlBase, "delete/(?P<couponId>[\d]+)", [
+    register_rest_route($this->namepaceAndVersion, "delete/(?P<couponId>[\d]+)", [
       'methods' => ['get', 'post'],
       'callback' => [$this, 'deleteSingleCoupon']
     ]);

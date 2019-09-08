@@ -78,41 +78,6 @@ function add_cors_http_header() {
 add_action('init', __NAMESPACE__ . '\\' . 'add_cors_http_header');
 
 
-//function add_allowed_origins(array $origins = []) {
-//  $origins[] = 'http://localhost:8080';
-//  return $origins;
-//}
-//add_filter('allowed_http_origins', 'add_allowed_origins');
-
-
-
-/** Not sure about these next 2
- */
-
-//function add_cors_http_header() {
-//  header("Access-Control-Allow-Origin: *");
-//}
-//
-//add_action('send_headers', 'add_cors_http_header');
-
-
-//function handleRestPreServeRequest() {
-//  function( $value ) {
-//    header( 'Access-Control-Allow-Origin: *' );
-//    header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
-//    header( 'Access-Control-Allow-Credentials: true' );
-//
-//    return $value;
-//  };
-//}
-//
-//function resetPreServeRequest() {
-//  remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
-//  add_filter( 'rest_pre_serve_request', 'handleRestPreServeRequest');
-//}
-//
-//add_action( 'rest_api_init', 'resetPreServeRequest', 15 );
-
 
 /** Rest Api Extensions
  * Endpoints for adding coupons, deleting, and loading coupon data.
