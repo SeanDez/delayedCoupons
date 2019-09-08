@@ -5,6 +5,7 @@
 /** Registers, then localizes, then enqueues the react view
  */
 function prepAllAdminScripts() {
+  global $apiController;
   
   wp_register_script(
     'reactAdminArea'

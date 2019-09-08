@@ -72,7 +72,7 @@ const AddCouponForm = props => {
       clientNonce // authentication
     };
     
-    const response = await ajaxRequestor.post( `${apiBaseUrl}/delayedCoupons/1.0/add`, formData);
+    const response = await ajaxRequestor.post( `${apiBaseUrl}/${namepaceAndVersion}/add`, formData);
     setupSnackBarData(response);
     resetAddCouponState();
   };

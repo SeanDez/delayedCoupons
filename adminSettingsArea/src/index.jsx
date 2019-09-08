@@ -44,6 +44,7 @@ export const StatePassingContext = React.createContext(true);
 if ('serverParams' in window) {
   clientNonce = serverParams._wpnonce;
   apiBaseUrl = serverParams.apiBaseUrlFromWp;
+  namepaceAndVersion = serverParams.namepaceAndVersion;
 }
 
 
@@ -97,6 +98,7 @@ const AdminArea = props => {
           <AddCouponForm
             clientNonce={ clientNonce }
             apiBaseUrl={apiBaseUrl}
+            namepaceAndVersion={namepaceAndVersion}
           />
         </ConditionalDiv>
       </Fade>
@@ -112,6 +114,7 @@ const AdminArea = props => {
           <ViewCoupons
             clientNonce={ clientNonce }
             apiBaseUrl={apiBaseUrl}
+            namepaceAndVersion={namepaceAndVersion}
           />
         </ConditionalDiv>
       </Fade>

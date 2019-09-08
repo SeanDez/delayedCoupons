@@ -37,7 +37,7 @@ export default props => {
   // return a promise which if resolves, responds with the data array
   const fetchAllCoupons = async () => {
     try {
-      const response = await fetch(`${apiBaseUrl}/delayedCoupons/1.0/loadAll`, {
+      const response = await fetch(`${apiBaseUrl}/${namepaceAndVersion}/loadAll`, {
         method : 'get'
         , headers : {
           'X-WP-Nonce' : clientNonce
@@ -62,8 +62,6 @@ export default props => {
   useEffect( () => {
     fetchAllCoupons()
       .then(data => {
-        console.log(`=====fetch sent=====`);
-        console.log(data, `=====data=====`);
         setCouponData(data.rows)
       })
       .catch(e => console.log(e, '====error===='));
@@ -103,7 +101,7 @@ export default props => {
    *
    */
   const deleteCouponTableRow = async couponId => {
-    const appendedUrl = `${apiBaseUrlSet}delayedCoupons/1.0/delete/${couponId}`;
+    const appendedUrl = `${apiBaseUrl}/${namepaceAndVersion}/delete/${couponId}`;
     
     try {
       const jsonResponse = await ajaxRequestor.post(appendedUrl, {clientNonce});

@@ -46,6 +46,9 @@ register_activation_hook(__FILE__, [$database, 'initializeDummyTable']);
 ////// Page Builder Functions & Matching Hooks //////
 
 // Admin Page
+
+$namespaceAgain = $apiController->namepaceAndVersion;
+
 require_once ('adminSettingsArea/index.php');
 
 
