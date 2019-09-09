@@ -9,7 +9,8 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem"
 import InputLabel from "@material-ui/core/InputLabel";
 import SnackBar from '@material-ui/core/Snackbar';
-import SnackBarContent from '@material-ui/core/SnackbarContent'
+import SnackBarContent from '@material-ui/core/SnackbarContent';
+import Typography from "@material-ui/core/Typography";
 
 import axios from "axios";
 import AjaxRequestor from "./utilities/AjaxRequestor";
@@ -127,20 +128,23 @@ const AddCouponForm = props => {
   return (
     <div
     >
-      <h3>Add Coupons Form</h3>
+      <Typography
+        className={[styles.all, styles.paragraphSpacing].join(" ")}
+        variant={'h6'}
+      >Add Coupons Form</Typography>
       
-      <button
-        onClick={() => resetAddCouponState()}
-      >
-        Reset all fields
-      </button>
-      
-      <p>There are 2 main parts to add a coupon. First are the coupon settings itself, including information like the text and colors. Then you will also need to define the page that a user must visit, and how many times to count visits before showing a coupon</p>
-      <p>Click here for a full explanation of how the plugin works and how to setup your first coupon</p>
+      <Typography
+        className={[styles.all, styles.paragraphSpacing].join(" ")}
+        variant={'subtitle2'}
+      >There are 2 main parts to add a coupon. First are the coupon settings itself, including information like the text and colors. Then you will also need to define the page that a user must visit, and how many times to count visits before showing a coupon</Typography>
+      <Typography
+        className={[styles.all, styles.paragraphSpacing].join(" ")}
+        variant={'subtitle2'}
+      >Click here for a full explanation of how the plugin works and how to setup your first coupon</Typography>
       
      
       <form
-        className={styles.form}
+        className={[styles.form, styles.all].join(" ")}
         onSubmit={e => {
           e.preventDefault();
           postCouponAndSetSnackBarMessage();
@@ -153,6 +157,7 @@ const AddCouponForm = props => {
           className={styles.formChild}
           value={pageTarget}
           onChange={e => setPageTarget(e.target.value)}
+          
         />
         <TextField
           label='Delay before showing offer'
@@ -162,6 +167,7 @@ const AddCouponForm = props => {
           type='number'
           value={displayThreshold}
           onChange={e => setDisplayThreshold(e.target.value)}
+          className={styles.formChild}
         />
         <TextField
           label='Number of times offer shown'
@@ -171,6 +177,7 @@ const AddCouponForm = props => {
           type='number'
           value={numberOfOffers}
           onChange={e => setNumberOfOffers(e.target.value)}
+          className={styles.formChild}
         />
         <TextField
           label='Coupon Headline'
@@ -294,15 +301,15 @@ const AddCouponForm = props => {
 ////// Styles //////
 
 const jssStyles = makeStyles(theme => ({
+  all : {
+    maxWidth : '500px',
+    padding: '0 3vw'
+  },
   form: {
-    width: '100%', // Fix IE 11 issue.
-    // minHeight : 800,
     marginTop: theme.spacing(0),
-    // border: '1px solid lightgray',
-    padding: '0 3vw',
     display : "flex",
     flexFlow : "column wrap",
-    justifyContent : 'space-around'
+    justifyContent : 'space-around',
   },
   addButton: {
     margin: theme.spacing(3, 0, 2),
@@ -311,10 +318,13 @@ const jssStyles = makeStyles(theme => ({
     minWidth : '300px'
   },
   formChild : {
-    margin : '30px 0'
+    margin : '40px 0 0 0',
   },
   errorSnackbar : {
     backgroundColor : theme.palette.error.dark
+  },
+  paragraphSpacing : {
+    padding : theme.spacing(2, 2, 0, 2),
   }
 }));
 

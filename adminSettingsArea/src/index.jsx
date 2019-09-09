@@ -1,4 +1,6 @@
 import {localDefaults} from "./globals";
+import './theme.css'
+
 import React, {useReducer, useState, useEffect} from "react";
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -212,6 +214,7 @@ const ConditionalFade = styled(Fade)`
 
 const AppContainer = styled.div`
   margin-left: 170px;
+  border: 2px dashed yellow;
   
   @media (max-width: 784px) {
   margin-left: 10px;

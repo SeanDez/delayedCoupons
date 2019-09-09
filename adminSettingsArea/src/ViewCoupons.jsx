@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from "@material-ui/core/Typography";
 
 import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
@@ -215,8 +216,18 @@ export default props => {
     <div
       // {...props}
     >
-      <h3>View Coupons</h3>
-      <p>On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click the delete icon to remove it.</p>
+      <Typography
+        variant={'h6'}
+        className={styles.spacing}
+      >
+        View Coupons
+      </Typography>
+      <Typography
+        variant={'subtitle2'}
+        className={styles.spacing}
+      >
+        On this page you will find all the coupons you have setup and the pages they target. To delete a coupon click the delete icon to remove it.
+      </Typography>
       
       { checkIfCouponDataExists(couponData) ?
         <React.Fragment>
@@ -258,7 +269,12 @@ export default props => {
         
         // no couponData
         :
-        <p>No Coupons to Show</p>
+        <Typography
+          variant={"body1"}
+          className={styles.spacing}
+        >
+          [No Coupons to Show]
+        </Typography>
       }
     </div>
   );
@@ -279,10 +295,13 @@ const useStyles = makeStyles(theme => ({
     border : '2px dashed red',
   },
   bigIcon : {
-    width : '30px',
+    width : '50px',
     height : 'auto',
     color : 'blue',
     border : '2px dashed green'
+  },
+  spacing : {
+    margin : theme.spacing(2, 1, 0, 1)
   }
 }));
 
@@ -295,12 +314,12 @@ const StyledTable = styled(Table)`
 `;
 
 const PrevNextContainer = styled('div')`
-  margin-top : 20px;
   display: flex;
   flex-flow: row nowrap;
-  width: 80px;
+  width: 150px;
   justify-content: space-around;
   border: 2px dashed pink;
+  margin: 20px auto 0 auto;
 `;
 
 
