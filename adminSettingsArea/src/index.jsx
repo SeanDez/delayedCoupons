@@ -70,10 +70,32 @@ const AdminArea = props => {
   
   const [state, dispatch] = useReducer(reducer, initialState);
   
-  let outsideP = 'test';
+  
+  
+  ////// Application Width and Placement Adjustments //////
+
+  const [appWidth, setAppWidth] = useState(window.innerWidth);
+  
+  const handleSetAppWidth = resizeEvent => {
+    setAppWidth(window.innerWidth);
+  };
+  
+  useEffect(() => {
+    window.addEventListener('resize', handleSetAppWidth);
+    
+    return () => {
+      // do this on unmount
+      window.removeEventListener('resize', handleSetAppWidth)
+    };
+  }, []);
+  
+  useEffect(() => {
+    console.log(appWidth, `=====appWidth=====`);
+  }, [appWidth]);
+  
   
   return (
-    <React.Fragment>
+    <AppContainer>
       <StatePassingContext.Provider value={{setSnackbarMessage}}>
       
       {/* ////// HEADER ////// */ }
@@ -137,7 +159,7 @@ const AdminArea = props => {
     />
     
       </StatePassingContext.Provider>
-    </React.Fragment>
+    </AppContainer>
   );
 };
 
@@ -188,6 +210,13 @@ const ConditionalFade = styled(Fade)`
   display : ${props => props.in ? 'block' : 'none'}
 `;
 
+const AppContainer = styled.div`
+  margin-left: 170px;
+  
+  @media (max-width: 784px) {
+  margin-left: 10px;
+  }
+`;
 
 
 ////// Script Injection //////
