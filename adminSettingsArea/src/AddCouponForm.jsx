@@ -11,6 +11,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import SnackBar from '@material-ui/core/Snackbar';
 import SnackBarContent from '@material-ui/core/SnackbarContent';
 import Typography from "@material-ui/core/Typography";
+import Checkbox from "@material-ui/core/Checkbox";
+
 
 import axios from "axios";
 import AjaxRequestor from "./utilities/AjaxRequestor";
@@ -265,6 +267,11 @@ const AddCouponForm = props => {
             {generateColorOptions()}
           </Select>
         </div>
+        
+        <Checkbox
+        <Typography>
+          Include a dashed border around this coupon. The dashes will be the same color as the description text.
+        </Typography>
         
         <Button
           type='submit'
