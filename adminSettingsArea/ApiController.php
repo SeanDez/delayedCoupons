@@ -50,6 +50,9 @@ class ApiController extends \WP_Rest_Controller {
     global $wpdb;
     $jsonArray = $request->get_params();
   
+    $currentUser = wp_get_current_user();
+    $authed = current_user_can('manage_options');
+    
     $currentPageTarget = $this->getTargetRowForMatchingPageUrl($jsonArray['pageTarget']);
     
     if (isset($currentPageTarget)) {
