@@ -59,6 +59,12 @@ const AddCouponForm = props => {
   };
   
   
+  useEffect(() => {
+    console.log(addCouponBorder, `=====addCouponBorder=====`);
+  }, [addCouponBorder]);
+  
+  
+  
   /** Form Handling
    * Submits post request
    * @return: object. If success, success key. if error, error key.
