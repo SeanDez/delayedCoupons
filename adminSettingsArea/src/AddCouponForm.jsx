@@ -79,6 +79,8 @@ const AddCouponForm = props => {
       clientNonce
     };
     
+    console.log(formData, `=====formData=====`);
+    
     const response = await ajaxRequestor.post( `${apiBaseUrl}/${namepaceAndVersion}/add`, formData);
     setupSnackBarData(response);
     resetAddCouponState();
