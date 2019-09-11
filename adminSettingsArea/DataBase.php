@@ -18,7 +18,8 @@ class DataBase {
     titleTextColor varchar(50) not null,
     titleBackgroundColor varchar(50) not null,
     descriptionTextColor varchar(50) not null,
-    descriptionBackgroundColor varchar(50) not null
+    descriptionBackgroundColor varchar(50) not null,
+    addCouponBorder tinyint not null
     ) {$charset_collate}";
     dbDelta($createCouponTableQuery);
     

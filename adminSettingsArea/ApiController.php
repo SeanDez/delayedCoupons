@@ -67,6 +67,7 @@ class ApiController extends \WP_Rest_Controller {
           $jsonArray['headlineBackgroundColor'],
         'descriptionTextColor' => $jsonArray['descriptionTextColor'],
         'descriptionBackgroundColor' => $jsonArray['descriptionBackgroundColor']
+        , 'addCouponBorder' => $jsonArray['addCouponBorder']
       ]);
     
     $couponId = $wpdb->insert_id;

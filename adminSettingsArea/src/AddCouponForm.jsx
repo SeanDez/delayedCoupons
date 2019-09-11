@@ -12,7 +12,7 @@ import SnackBar from '@material-ui/core/Snackbar';
 import SnackBarContent from '@material-ui/core/SnackbarContent';
 import Typography from "@material-ui/core/Typography";
 import Checkbox from "@material-ui/core/Checkbox";
-
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 import axios from "axios";
 import AjaxRequestor from "./utilities/AjaxRequestor";
@@ -39,6 +39,9 @@ const AddCouponForm = props => {
   const [descriptionTextColor, setDescriptionTextColor] = useState("");
   const [descriptionBackgroundColor, setDescriptionBackgroundColor] = useState("");
   
+  ////// Checkbox State //////
+  const [addCouponBorder, setAddCouponBorder] = useState(true);
+  
   
   /** Resets all the form state variables
    * @return void
@@ -53,6 +56,7 @@ const AddCouponForm = props => {
     setHeadlineBackgroundColor("");
     setDescriptionTextColor("");
     setDescriptionBackgroundColor("");
+    setAddCouponBorder(true);
   };
   
   
@@ -72,7 +76,7 @@ const AddCouponForm = props => {
       headlineBackgroundColor, // coupon table
       descriptionTextColor, // coupon table
       descriptionBackgroundColor, // coupon table
-      clientNonce // authentication
+      addCouponBorder
     };
     
     const response = await ajaxRequestor.post( `${apiBaseUrl}/${namepaceAndVersion}/add`, formData);
@@ -268,10 +272,15 @@ const AddCouponForm = props => {
           </Select>
         </div>
         
-        <Checkbox
-        <Typography>
-          Include a dashed border around this coupon. The dashes will be the same color as the description text.
-        </Typography>
+        <FormControlLabel
+          control={<Checkbox
+            checked={addCouponBorder}
+            onClick={() => setAddCouponBorder(!addCouponBorder)}
+          />}
+          label={'Include a dashed border around this coupon. The dashes will be the same color as the description text.'}
+          className={styles.formChild}
+        />
+
         
         <Button
           type='submit'
@@ -319,7 +328,9 @@ const jssStyles = makeStyles(theme => ({
     justifyContent : 'space-around',
   },
   addButton: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(3, 0, 10, 0)
+    , padding: theme.spacing(3, 0, 10, 0)
+    , border : '2px dashed brown'
   },
   dropDownSelect : {
     minWidth : '300px'

@@ -7,12 +7,10 @@ use Pdp\Cache;
 use Pdp\CurlHttpClient;
 use Pdp\Manager;
 use Pdp\Rules;
-use \Firebase\JWT\JWT;
 
 
 trait protectedMethodsInVisitors {
   protected $visitorIdCookie;
-  public $Jwtkey = 'aromaHallSound';
   /** Get visitor Id from cookie
    * If none, return an explicit value to indicate none
    *
