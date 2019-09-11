@@ -75,10 +75,6 @@ export default props => {
   
   const [tableMarker, setTableMarker] = useState(0);
   
-  useEffect(() => {
-    console.log(couponData, `=====couponData=====`);
-    console.log(tableMarker, `=====tableMarker=====`);
-  }, [couponData, tableMarker]);
   
   
   /**
