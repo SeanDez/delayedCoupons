@@ -42,7 +42,7 @@
     "dotenv": "^8.0.0",
     "dotenv-webpack": "^1.7.0",
     "history": "^4.9.0",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.15",
     "material-ui-number-input": "^5.0.24",
     "query-string": "^6.8.1",
     "react": "^16.8.6",

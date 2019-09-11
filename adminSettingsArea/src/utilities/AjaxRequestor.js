@@ -40,8 +40,8 @@ export default class AjaxRequestor {
           , mode : 'cors'
           , headers : {
             'Content-Type' : 'application/json'
+            , 'X-WP-Nonce' : postData.clientNonce
           }
-          , body : JSON.stringify(postData)
         });
         return await response.json(); // returns promise that resolves with the response body
       }

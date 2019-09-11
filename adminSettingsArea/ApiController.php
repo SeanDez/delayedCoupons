@@ -124,9 +124,6 @@ class ApiController extends \WP_Rest_Controller {
   public function deleteSingleCoupon(\WP_REST_Request $request) {
     global $wpdb;
     
-    $clientNonce = $request->get_param('clientNonce');
-    $this->authUserOrRespondWithError($clientNonce);
-    
     $couponId = $request->get_param('couponId');
     $queryResult = $wpdb->delete("{$wpdb->prefix}delayedCoupons_coupons",  ['couponId' => $couponId]);
     
@@ -139,9 +136,6 @@ class ApiController extends \WP_Rest_Controller {
     } else {
       wp_send_json(['error' => 'unspecified error, else block in callback hit']);
     }
-    
-    wp_send_json($request);
-    wp_send_json('test string');
   }
   
   

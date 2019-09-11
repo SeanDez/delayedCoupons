@@ -1,4 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
+import _ from 'lodash';
 import {StatePassingContext} from "./index.jsx";
 import AjaxRequestor from './utilities/AjaxRequestor';
 import dummyCouponData from "./dummyCouponData";
@@ -63,10 +64,13 @@ export default props => {
   useEffect( () => {
     fetchAllCoupons()
       .then(data => {
-        setCouponData(data.rows)
+        // setting an object as a dep. in the 2nd argument of the useEffect fails as new objects always have new reference values. Therefore _.isEqual is used instead
+          if (_.isEqual(data.rows, couponData) === false) {
+            setCouponData(data.rows)
+          }
       })
       .catch(e => console.log(e, '====error===='));
-  }, []);
+  });
   
   
   const [tableMarker, setTableMarker] = useState(0);
@@ -74,7 +78,7 @@ export default props => {
   useEffect(() => {
     console.log(couponData, `=====couponData=====`);
     console.log(tableMarker, `=====tableMarker=====`);
-  });
+  }, [couponData, tableMarker]);
   
   
   /**
@@ -106,13 +110,12 @@ export default props => {
     
     try {
       const jsonResponse = await ajaxRequestor.post(appendedUrl, {clientNonce});
-      console.log(jsonResponse, `=====jsonResponse=====`);
       
       if (jsonResponse && 'error' in jsonResponse) {
         return setSnackbarMessage(jsonResponse.error)
       }
       
-      return jsonResponse.row;
+      return jsonResponse; // next method will handle the keys
     }
     catch (e) {
       console.log(e, `=====error=====`);
@@ -142,7 +145,7 @@ export default props => {
     } else if (result && 'error' in result) {
       setSnackbarMessage(result.error)
     } else {
-      setSnackbarMessage('Internal error, please contact the plugin developer');
+      setSnackbarMessage('Internal error [else block], please contact the plugin developer');
     }
   };
   
