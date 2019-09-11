@@ -14,7 +14,6 @@ import Typography from "@material-ui/core/Typography";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
-import axios from "axios";
 import AjaxRequestor from "./utilities/AjaxRequestor";
 
 // todo create a success / error Snackbar and send it data (will be a direct child)
@@ -76,7 +75,8 @@ const AddCouponForm = props => {
       headlineBackgroundColor, // coupon table
       descriptionTextColor, // coupon table
       descriptionBackgroundColor, // coupon table
-      addCouponBorder
+      addCouponBorder,
+      clientNonce
     };
     
     const response = await ajaxRequestor.post( `${apiBaseUrl}/${namepaceAndVersion}/add`, formData);
@@ -284,7 +284,7 @@ const AddCouponForm = props => {
         
         <Button
           type='submit'
-          className={[styles.addButton, styles.formChild].join(' ')}
+          className={styles.addButton}
         >Add Coupon</Button>
       </form>
   
@@ -322,14 +322,14 @@ const jssStyles = makeStyles(theme => ({
     padding: '0 3vw'
   },
   form: {
-    marginTop: theme.spacing(0),
+    margin: theme.spacing(0, 0, 0, 0),
     display : "flex",
     flexFlow : "column wrap",
     justifyContent : 'space-around',
   },
   addButton: {
-    margin: theme.spacing(3, 0, 10, 0)
-    , padding: theme.spacing(3, 0, 10, 0)
+    margin: theme.spacing(5, 2, 20, 2)
+    , padding: theme.spacing(1, 2, 1, 2)
     , border : '2px dashed brown'
   },
   dropDownSelect : {
