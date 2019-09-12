@@ -58,13 +58,7 @@ const AddCouponForm = props => {
     setAddCouponBorder(true);
   };
   
-  
-  useEffect(() => {
-    console.log(addCouponBorder, `=====addCouponBorder=====`);
-  }, [addCouponBorder]);
-  
-  
-  
+
   /** Form Handling
    * Submits post request
    * @return: object. If success, success key. if error, error key.
@@ -283,7 +277,7 @@ const AddCouponForm = props => {
         <FormControlLabel
           control={<Checkbox
             checked={addCouponBorder}
-            onClick={() => setAddCouponBorder(!addCouponBorder)}
+            onChange={() => setAddCouponBorder(!addCouponBorder)}
           />}
           label={'Include a dashed border around this coupon. The dashes will be the same color as the description text.'}
           className={styles.formChild}
