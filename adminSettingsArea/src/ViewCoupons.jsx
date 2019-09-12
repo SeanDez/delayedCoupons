@@ -178,6 +178,7 @@ export default props => {
             onClick={() => {
               deleteCouponRefetchPostSnackbarMessage(record.couponId)
             }}
+            style={{cursor : 'pointer'}}
           />
         </TableCell>
       </TableRow>
@@ -240,7 +241,7 @@ export default props => {
                 <TableCell align='center'>Total Hits</TableCell>
                 <TableCell align='center'>Delay</TableCell>
                 <TableCell align='center'># of Offers</TableCell>
-                <TableCell align='center'>Delete?</TableCell>
+                <TableCell align='center' >Delete?</TableCell>
               </TableRow>
             </TableHead>
             
@@ -294,10 +295,11 @@ const useStyles = makeStyles(theme => ({
     border : '2px dashed red',
   },
   bigIcon : {
-    width : '50px',
-    height : 'auto',
-    color : 'blue',
-    border : '2px dashed green'
+    width : '50px'
+    , height : 'auto'
+    , color : 'blue'
+    , border : '2px dashed green'
+    , cursor : 'pointer'
   },
   spacing : {
     margin : theme.spacing(2, 1, 0, 1)

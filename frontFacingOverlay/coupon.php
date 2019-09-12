@@ -48,7 +48,8 @@
     bottom: 20px;
     right: 20px;
     <?php if (boolval($couponSettings->addCouponBorder) === true): ?>
-    border: 2px dashed <?php echo $couponSettings->descriptionTextColor; ?>
+    border: 2px dashed <?php echo $couponSettings->descriptionTextColor; ?>;
+    border-radius: 2px;
     <?php endif; ?>
   }
   
