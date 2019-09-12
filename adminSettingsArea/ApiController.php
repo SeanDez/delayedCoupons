@@ -23,7 +23,7 @@ class ApiController extends \WP_Rest_Controller {
   protected function getTargetRowForMatchingPageUrl(string $pageUrl)  {
     global $wpdb;
     
-    $targetRow = $wpdb->get_var("
+    $targetRow = $wpdb->get_row("
       select *
       from {$wpdb->prefix}delayedCoupons_targets
       where targetUrl = '{$pageUrl}'
@@ -49,9 +49,6 @@ class ApiController extends \WP_Rest_Controller {
   public function addNewCoupon(\WP_REST_Request $request) {
     global $wpdb;
     $jsonArray = $request->get_params();
-  
-    $currentUser = wp_get_current_user();
-    $authed = current_user_can('manage_options');
     
     $currentPageTarget = $this->getTargetRowForMatchingPageUrl($jsonArray['pageTarget']);
     
