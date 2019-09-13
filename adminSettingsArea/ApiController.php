@@ -18,6 +18,37 @@ class ApiController extends \WP_Rest_Controller {
   /** Utility functions
    */
   
+  /** Translate error keys into messages
+   *
+   * @param $errorKeys. keys set to non-null value
+   * @return array. Messages ready to be concatted and displayed
+   */
+  protected function translatedErrorKeysIntoMessages (array $errorKeys) : array {
+    $errorMessages = [];
+    
+    foreach ($errorKeys as $key => $value) {
+      if ($key === 'displayThreshold') {
+        $errorMessages[] = 'Number of Required Page Visits Before Showing Coupon.';
+      } else if ($key === 'numberOfOffers') {
+        $errorMessages[] = 'Max Times Offer Shown (per visitor).';
+      } else if (isset($key)) {
+        $wordsArray = preg_split('/($=[A-Z])/', $key, null, PREG_SPLIT_NO_EMPTY);
+        
+        // capitalizes first word which is normally lowercase by convention
+        $wordsArray[0] = ucfirst($wordsArray[0]);
+        
+        $wordsString = implode(" ", $wordsArray);
+        $messageWithPeriod = $wordsString . '.';
+        
+        $errorMessages[] = $messageWithPeriod;
+      } else {
+        wp_send_json(['error' => 'error from function translatedErrorKeysIntoMessages']);
+      }
+    }
+    
+    return $errorMessages;
+  }
+  
   /** returns target data if a current target matches, otherwise returns null
    */
   protected function getTargetRowForMatchingPageUrl(string $pageUrl)  {
@@ -35,6 +66,25 @@ class ApiController extends \WP_Rest_Controller {
     
     else return null;
   }
+  
+  
+  /** responds with JSON string, with an embedded array, on error. else returns false
+   */
+  protected function checkForBlankRequestProperties(array $request) {
+    
+    $errorKeys = [];
+    
+    foreach ($request as $key => $value) {
+      if (isset($value) === false) {
+        $errorKeys[] = $key;
+      }
+    }
+    
+    $transformedErrors = transformErrorKeysIntoMessages($errorKeys);
+    
+    wp_send_json($transformedErrors);
+  }
+  
   
   /** Callback functions
    */
