@@ -164,9 +164,11 @@ trait protectedMethodsInVisitors {
       $numberOfPageVisitsByUser = intval(
         $wpdb->get_var("
         select count(*)
-        from {$wpdb->prefix}delayedCoupons_visits v
+        from {$wpdb->prefix}delayedCoupons_visits v,
+          {$wpdb->prefix}delayedCoupons_targets t
         where v.visitorId = '{$visitorId}'
         and v.urlVisited = '{$urlData['rawUrl']}'
+        and v.unixTime > t.unixTime
       "));
       
       if ($numberOfPageVisitsByUser >= $minTargetViews &&
