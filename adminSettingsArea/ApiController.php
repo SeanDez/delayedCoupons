@@ -23,16 +23,17 @@ class ApiController extends \WP_Rest_Controller {
    * @param $errorKeys. keys set to non-null value
    * @return array. Messages ready to be concatted and displayed
    */
-  protected function translatedErrorKeysIntoMessages (array $errorKeys) : array {
+  protected function translateErrorKeysIntoMessages (array $errorKeys) : array {
     $errorMessages = [];
     
     foreach ($errorKeys as $key => $value) {
-      if ($key === 'displayThreshold') {
+      if ($key === 'clientNonce') { continue; }
+      else if ($key === 'displayThreshold') {
         $errorMessages[] = 'Number of Required Page Visits Before Showing Coupon.';
       } else if ($key === 'numberOfOffers') {
         $errorMessages[] = 'Max Times Offer Shown (per visitor).';
       } else if (isset($key)) {
-        $wordsArray = preg_split('/($=[A-Z])/', $key, null, PREG_SPLIT_NO_EMPTY);
+        $wordsArray = preg_split('/(?=[A-Z])/', $value, null, PREG_SPLIT_NO_EMPTY);
         
         // capitalizes first word which is normally lowercase by convention
         $wordsArray[0] = ucfirst($wordsArray[0]);
@@ -70,19 +71,18 @@ class ApiController extends \WP_Rest_Controller {
   
   /** responds with JSON string, with an embedded array, on error. else returns false
    */
-  protected function checkForBlankRequestProperties(array $request) {
-    
+  protected function respondWithErrorMessagesIfNullFieldsFound(array $requestParams) {
     $errorKeys = [];
-    
-    foreach ($request as $key => $value) {
-      if (isset($value) === false) {
+    foreach ($requestParams as $key => $value) {
+      if (isset($key) === false || $value === "") {
         $errorKeys[] = $key;
       }
     }
     
-    $transformedErrors = transformErrorKeysIntoMessages($errorKeys);
+    $errorMessageArray = $this->translateErrorKeysIntoMessages($errorKeys);
+    $uiReadyMessage = 'Please fill out these empty fields: ' . implode(' ' , $errorMessageArray);
     
-    wp_send_json($transformedErrors);
+    wp_send_json(['error' => $uiReadyMessage]);
   }
   
   
@@ -99,6 +99,9 @@ class ApiController extends \WP_Rest_Controller {
   public function addNewCoupon(\WP_REST_Request $request) {
     global $wpdb;
     $jsonArray = $request->get_params();
+    
+    // server form validation
+    $this->respondWithErrorMessagesIfNullFieldsFound($jsonArray);
     
     $currentPageTarget = $this->getTargetRowForMatchingPageUrl($jsonArray['pageTarget']);
     
