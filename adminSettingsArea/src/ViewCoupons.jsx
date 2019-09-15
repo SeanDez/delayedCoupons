@@ -162,8 +162,7 @@ export default props => {
       index >= marker &&
       index <= (marker + 9)
     ));
-  
-    console.log(filteredData, `=====filteredData=====`);
+    
     
     // return a new array of JSX table rows
     return filteredData.map(record => (
@@ -173,6 +172,10 @@ export default props => {
         <TableCell align='center'>{record.descriptionText}</TableCell>
         <TableCell
           align='center'
+          onMouseEnter={e => {
+            console.log( `=====entered=====`);
+            setPopoverAnchor(e.currentTarget)
+          }}
         >{record.targetUrl}</TableCell>
         <TableCell align='center'>{record.totalVisits || 0}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
@@ -259,10 +262,10 @@ export default props => {
           <Popover
               open={Boolean(popOverAnchor)}
               anchorEl={popOverAnchor}
-              anchorOrigin={{ vertical : 'top', horizontal : 'center' }}
-              onClose={() => setPopoverAnchor(null)}
           >
-            <Typography>Test</Typography>
+            <Typography
+              className={styles.popover}
+            >Test</Typography>
           </Popover>
           
           
@@ -319,6 +322,10 @@ const useStyles = makeStyles(theme => ({
   },
   spacing : {
     margin : theme.spacing(2, 1, 0, 1)
+  },
+  popover : {
+    margin : theme.spacing(2)
+    , backgroundColor : 'red'
   }
 }));
 
