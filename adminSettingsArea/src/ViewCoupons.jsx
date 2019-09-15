@@ -120,9 +120,15 @@ export default props => {
   };
   
   
-  /** truncates the input string
+  /** truncates and returns the end of an input string
+   *
    */
-  
+  const truncateEndingSegment = (inputString, numberOfCharacters) => {
+    const interpolatedRegex = new RegExp(`.{${numberOfCharacters}}$`);
+    
+    const truncatedString = inputString.match(interpolatedRegex);
+    return '...' + truncatedString;
+  };
   
   /** Handles coupon deletion, updating of table or error box
    * @param couponId number. The id of the row to be deleted
@@ -196,7 +202,7 @@ export default props => {
           <TableCell
             align={'center'}
             className={styles.fixedWidthColumn}
-          >{record.targetUrl}</TableCell>
+          >{truncateEndingSegment(record.targetUrl, 15)}</TableCell>
         </Tooltip>
         <TableCell align='center'>{record.totalVisits || 0}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
