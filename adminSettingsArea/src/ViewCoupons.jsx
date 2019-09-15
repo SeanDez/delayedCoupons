@@ -11,6 +11,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import Typography from "@material-ui/core/Typography";
+import Popover from "@material-ui/core/Popover";
 
 import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
@@ -26,6 +27,7 @@ const ajaxRequestor = new AjaxRequestor();
 export default props => {
   const {apiBaseUrl, clientNonce} = props;
   const {setSnackbarMessage} = useContext(StatePassingContext);
+  const [popOverAnchor, setPopoverAnchor] = useState(null);
   
   const styles = useStyles();
   
@@ -169,7 +171,9 @@ export default props => {
         <TableCell align='center'>{record.couponId}</TableCell>
         <TableCell align='center'>{record.titleText}</TableCell>
         <TableCell align='center'>{record.descriptionText}</TableCell>
-        <TableCell align='center'>{record.targetUrl}</TableCell>
+        <TableCell
+          align='center'
+        >{record.targetUrl}</TableCell>
         <TableCell align='center'>{record.totalVisits || 0}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
         <TableCell align='center'>{record.offerCutoff}</TableCell>
@@ -250,6 +254,15 @@ export default props => {
             </TableBody>
           </StyledTable>
         
+          
+          {/* Popover */}
+          <Popover
+            open={false}
+          >
+            <Typography>Test</Typography>
+          </Popover>
+          
+          
           {/* Prev / Next Buttons*/}
           <PrevNextContainer>
             <FaChevronCircleLeft
