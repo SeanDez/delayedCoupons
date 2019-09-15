@@ -260,7 +260,7 @@ export default props => {
               open={Boolean(popOverAnchor)}
               anchorEl={popOverAnchor}
               anchorOrigin={{ vertical : 'top', horizontal : 'center' }}
-              // onClose={setPopoverAnchor(null)}
+              onClose={() => setPopoverAnchor(null)}
           >
             <Typography>Test</Typography>
           </Popover>
