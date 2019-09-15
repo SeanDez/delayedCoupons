@@ -120,6 +120,10 @@ export default props => {
   };
   
   
+  /** truncates the input string
+   */
+  
+  
   /** Handles coupon deletion, updating of table or error box
    * @param couponId number. The id of the row to be deleted
    * @return void
@@ -171,19 +175,28 @@ export default props => {
           title={record.titleText}
           placement={'top'}
         >
-          <TableCell align='center'>{record.titleText}</TableCell>
+          <TableCell
+            align='center'
+            className={styles.fixedWidthColumn}
+          >{record.titleText}</TableCell>
         </Tooltip>
         <Tooltip
           title={record.descriptionText}
           placement={'top'}
         >
-          <TableCell align='center'>{record.descriptionText}</TableCell>
+          <TableCell
+            align='center'
+            className={styles.fixedWidthColumn}
+          >{record.descriptionText}</TableCell>
         </Tooltip>
         <Tooltip
           title={record.targetUrl}
           placement={'top'}
         >
-          <TableCell>{record.targetUrl}</TableCell>
+          <TableCell
+            align={'center'}
+            className={styles.fixedWidthColumn}
+          >{record.targetUrl}</TableCell>
         </Tooltip>
         <TableCell align='center'>{record.totalVisits || 0}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
@@ -250,9 +263,18 @@ export default props => {
             <TableHead>
               <TableRow>
                 <TableCell align='center'>Coupon Id</TableCell>
-                <TableCell align='center'>Title Text</TableCell>
-                <TableCell align='center'>Description Text</TableCell>
-                <TableCell align='center'>Target Page</TableCell>
+                <TableCell
+                  align='center'
+                  className={styles.fixedWidthColumn}
+                >Title Text</TableCell>
+                <TableCell
+                  align='center'
+                  className={styles.fixedWidthColumn}
+                >Description Text</TableCell>
+                <TableCell
+                  align='center'
+                  className={styles.fixedWidthColumn}
+                >Target Page</TableCell>
                 <TableCell align='center'>Total Hits</TableCell>
                 <TableCell align='center'>Delay</TableCell>
                 <TableCell align='center'># of Offers</TableCell>
@@ -310,6 +332,12 @@ export default props => {
 const useStyles = makeStyles(theme => ({
   table : {
     border : '2px dashed red',
+  },
+  fixedWidthColumn : {
+    maxWidth : '200px'
+    , overflow : 'hidden'
+    , textOverflow : 'ellipsis'
+    , whiteSpace : 'nowrap'
   },
   bigIcon : {
     width : '50px'
