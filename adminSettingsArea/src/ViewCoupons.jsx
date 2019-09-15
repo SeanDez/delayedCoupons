@@ -11,7 +11,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import Typography from "@material-ui/core/Typography";
-import Popover from "@material-ui/core/Popover";
+import Tooltip from '@material-ui/core/Tooltip';
 
 import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
@@ -27,7 +27,6 @@ const ajaxRequestor = new AjaxRequestor();
 export default props => {
   const {apiBaseUrl, clientNonce} = props;
   const {setSnackbarMessage} = useContext(StatePassingContext);
-  const [popOverAnchor, setPopoverAnchor] = useState(null);
   
   const styles = useStyles();
   
@@ -168,15 +167,24 @@ export default props => {
     return filteredData.map(record => (
       <TableRow key={record.couponId}>
         <TableCell align='center'>{record.couponId}</TableCell>
-        <TableCell align='center'>{record.titleText}</TableCell>
-        <TableCell align='center'>{record.descriptionText}</TableCell>
-        <TableCell
-          align='center'
-          onMouseEnter={e => {
-            console.log( `=====entered=====`);
-            setPopoverAnchor(e.currentTarget)
-          }}
-        >{record.targetUrl}</TableCell>
+        <Tooltip
+          title={record.titleText}
+          placement={'top'}
+        >
+          <TableCell align='center'>{record.titleText}</TableCell>
+        </Tooltip>
+        <Tooltip
+          title={record.descriptionText}
+          placement={'top'}
+        >
+          <TableCell align='center'>{record.descriptionText}</TableCell>
+        </Tooltip>
+        <Tooltip
+          title={record.targetUrl}
+          placement={'top'}
+        >
+          <TableCell>{record.targetUrl}</TableCell>
+        </Tooltip>
         <TableCell align='center'>{record.totalVisits || 0}</TableCell>
         <TableCell align='center'>{record.displayThreshold}</TableCell>
         <TableCell align='center'>{record.offerCutoff}</TableCell>
@@ -257,16 +265,6 @@ export default props => {
             </TableBody>
           </StyledTable>
         
-          
-          {/* Popover */}
-          <Popover
-              open={Boolean(popOverAnchor)}
-              anchorEl={popOverAnchor}
-          >
-            <Typography
-              className={styles.popover}
-            >Test</Typography>
-          </Popover>
           
           
           {/* Prev / Next Buttons*/}
