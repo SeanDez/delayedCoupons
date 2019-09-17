@@ -74,10 +74,12 @@ export default props => {
    *
    * Also sets pagination state for the offset and total record count
    */
+  
+  // if couponData = blank then run
+  
   useEffect( () => {
     fetchAllCoupons(10, pageOffset)
       .then(data => {
-        // setting an object as a dep. in the 2nd argument of the useEffect fails as new objects always have new reference values. Therefore _.isEqual is used instead
           if (_.isEqual(data.rows, couponData) === false) {
             setCouponData(data.rows);
             setPageOffset(() => pageOffset + 10);
@@ -85,7 +87,7 @@ export default props => {
           }
       })
       .catch(e => console.log(e, '====error===='));
-  });
+  }, []);
   
   
   
@@ -171,8 +173,6 @@ export default props => {
    *
    *  @param data array. Holds coupon, target, and view data
    *
-   *  @param marker int. decides what list item to start/end rendering
-   *
    *  @return array of JSX values (table elements) to be created by Javascript
    *
    */
@@ -228,9 +228,7 @@ export default props => {
    * Renders either a data table of current coupons, or a "no coupons" message
    */
   return (
-    <div
-      // {...props}
-    >
+    <div>
       <Typography
         variant={'h6'}
         className={styles.spacing}
@@ -275,8 +273,17 @@ export default props => {
           </StyledTable>
         
           <ReactPaginate
-            pagecount={totalRecordCount / 10}
+            pageCount={Math.ceil(totalRecordCount / 10)}
           />
+          
+          <button
+            onClick={() => {
+              console.log(couponData, `=====couponData=====`);
+              console.log(Math.ceil(totalRecordCount / 10), `=====Math.ceil(totalRecordCount / 10)=====`);
+              console.log(totalRecordCount, `=====totalRecordCount=====`);
+              console.log(pageOffset, `=====pageOffset=====`);
+            }}
+          >console log</button>
           
         </React.Fragment>
         
