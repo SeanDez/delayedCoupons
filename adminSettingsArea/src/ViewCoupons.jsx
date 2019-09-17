@@ -12,6 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import Typography from "@material-ui/core/Typography";
 import Tooltip from '@material-ui/core/Tooltip';
+import ReactPaginate from 'react-paginate';
 
 import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
@@ -28,6 +29,12 @@ export default props => {
   const {apiBaseUrl, clientNonce} = props;
   const {setSnackbarMessage} = useContext(StatePassingContext);
   
+  
+  ////// Pagination State //////
+  const [pageOffset, setPageOffset] = useState(0);
+  const [totalRecordCount, setTotalRecordCount] = useState(null);
+  
+  ////// JSS //////
   const styles = useStyles();
   
   /**
@@ -38,9 +45,9 @@ export default props => {
   const [couponData, setCouponData] = useState([]);
   
   // return a promise which if resolves, responds with the data array
-  const fetchAllCoupons = async () => {
+  const fetchAllCoupons = async (limit, offset) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/${namepaceAndVersion}/loadAll`, {
+      const response = await fetch(`${apiBaseUrl}/${namepaceAndVersion}/load?limit=${limit}&offset=${offset}`, {
         method : 'get'
         , headers : {
           'X-WP-Nonce' : clientNonce
@@ -60,26 +67,31 @@ export default props => {
     }
   };
   
-  /** ON INITIAL LOAD
+  
+  /** ON INITIAL LOAD AND TABLE UPDATES
+   *
+   * Sets up couponData state, which also controls whether a table or "Nothing to Display" message is shown
+   *
+   * Also sets pagination state for the offset and total record count
    */
   useEffect( () => {
-    fetchAllCoupons()
+    fetchAllCoupons(10, pageOffset)
       .then(data => {
         // setting an object as a dep. in the 2nd argument of the useEffect fails as new objects always have new reference values. Therefore _.isEqual is used instead
           if (_.isEqual(data.rows, couponData) === false) {
-            setCouponData(data.rows)
+            setCouponData(data.rows);
+            setPageOffset(() => pageOffset + 10);
+            setTotalRecordCount(data.totalCount);
           }
       })
       .catch(e => console.log(e, '====error===='));
   });
   
   
-  const [tableMarker, setTableMarker] = useState(0);
   
   
   
-  /**
-   * decides whether to render table or "no data" msg
+  /** Decides whether to render table or "no data" msg
    *
    * @return boolean (bound to a test in render)
    *
@@ -93,10 +105,7 @@ export default props => {
   };
   
   
-
-  
-  /**
-   * Deletes a single table row
+  /** Deletes a single table row
    * takes in a couponId. Gives it to a handler on the back end to run a delete query
    *
    * Also modifies a state key being watched by a useEffect, which will then update automatically on change
@@ -120,8 +129,7 @@ export default props => {
   };
   
   
-  /** truncates and returns the end of an input string
-   *
+  /** Truncates and returns the end of an input string
    */
   const truncateEndingSegment = (inputString, numberOfCharacters) => {
     const interpolatedRegex = new RegExp(`.{${numberOfCharacters}}$`);
@@ -130,7 +138,9 @@ export default props => {
     return '...' + truncatedString;
   };
   
+  
   /** Handles coupon deletion, updating of table or error box
+   *
    * @param couponId number. The id of the row to be deleted
    * @return void
    */
@@ -156,8 +166,8 @@ export default props => {
     }
   };
   
-  /**
-   *  renders body cell data
+  
+  /** Renders body cell data
    *
    *  @param data array. Holds coupon, target, and view data
    *
@@ -166,15 +176,8 @@ export default props => {
    *  @return array of JSX values (table elements) to be created by Javascript
    *
    */
-  const renderTableBody = (data, marker) => {
-    const filteredData = data.filter((arrayItem, index) => (
-      index >= marker &&
-      index <= (marker + 9)
-    ));
-    
-    
-    // return a new array of JSX table rows
-    return filteredData.map(record => (
+  const renderTableBody = data => {
+    return data.map(record => (
       <TableRow key={record.couponId}>
         <TableCell align='center'>{record.couponId}</TableCell>
         <Tooltip
@@ -217,28 +220,6 @@ export default props => {
         </TableCell>
       </TableRow>
     ))
-  };
-  
-  
-  /** calculate table position
-   *
-   * prevents the table marker from going too high or low
-   *
-   * @param currentPosition int.
-   * @param direction int. Examples: 10, -10
-   * @param upperLimit int. Gives the .length of the data array in state
-   *
-   * @return void. State is updated. Next, useEffect calls dependent on same state key will auto-update
-   */
-  const adjustTableMarker = (currentPosition, direction, upperLimit) => {
-    if ( // below 0, reset to 0
-      currentPosition + direction <= 0) {
-      setTableMarker(0);
-    } else if (currentPosition + direction >= upperLimit) { // goes over limit, no adding
-      setTableMarker(currentPosition);
-    } else { // else let it run
-      setTableMarker(currentPosition + direction);
-    }
   };
   
 
@@ -289,27 +270,14 @@ export default props => {
             </TableHead>
             
             <TableBody>
-              { renderTableBody(couponData, tableMarker) }
+              { renderTableBody(couponData) }
             </TableBody>
           </StyledTable>
         
+          <ReactPaginate
+            pagecount={totalRecordCount / 10}
+          />
           
-          
-          {/* Prev / Next Buttons*/}
-          <PrevNextContainer>
-            <FaChevronCircleLeft
-              className={styles.bigIcon}
-              onClick={() => {
-                adjustTableMarker(tableMarker, -10, couponData.length)
-              }}
-            />
-            <FaChevronCircleRight
-              className={styles.bigIcon}
-              onClick={() => {
-                adjustTableMarker(tableMarker, 10, couponData.length)
-              }}
-            />
-          </PrevNextContainer>
         </React.Fragment>
         
         // no couponData

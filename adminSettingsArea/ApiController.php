@@ -147,8 +147,10 @@ class ApiController extends \WP_Rest_Controller {
   }
   
   
-  public function respondAllCoupons(\WP_REST_Request $request) {
+  public function loadCoupons(\WP_REST_Request $request) {
     global $wpdb;
+    
+    $queryParams = $request->get_params();
     
     $rows = $wpdb->get_results("
     SELECT c.couponId, t.fk_coupons_targets, t.targetUrl, t.displayThreshold, t.offerCutoff, visitCounts.totalVisits, c.titleText, c.descriptionText
@@ -168,9 +170,16 @@ class ApiController extends \WP_Rest_Controller {
     on t.targetUrl = visitCounts.urlVisited
     
     order by c.couponId
+    LIMIT {$queryParams['limit']}
+    OFFSET {$queryParams['offset']}
     ");
     
-    wp_send_json(['rows' => $rows]);
+    $totalCount = $wpdb->get_var("select count(*) from {$wpdb->prefix}delayedCoupons_coupons");
+    
+    wp_send_json([
+      'rows' => $rows
+      , 'totalCount' => $totalCount
+    ]);
   }
   
   
@@ -198,9 +207,9 @@ class ApiController extends \WP_Rest_Controller {
    */
   
   public function registerLoadCouponRoute() : void {
-    register_rest_route($this->namepaceAndVersion, 'loadAll', [
+    register_rest_route($this->namepaceAndVersion, "load", [
       'methods' => ['get', 'post'],
-      'callback' => [$this, 'respondAllCoupons']
+      'callback' => [$this, 'loadCoupons']
     ]);
   }
   
