@@ -92,12 +92,6 @@ export default props => {
   }, [pageOffset]);
   
   
-  /** Receives a page object
-   */
-  const handlePageClick = page => {
-    console.log(page, `=====page=====`);
-  };
-  
   /** Decides whether to render table or "no data" msg
    *
    * @return boolean (bound to a test in render)
@@ -119,7 +113,10 @@ export default props => {
    *
    */
   const deleteCouponTableRow = async couponId => {
-    const appendedUrl = `${apiBaseUrl}/${namepaceAndVersion}/delete/${couponId}`;
+    // todo fix post url
+    
+    // const appendedUrl = `${apiBaseUrl}/${namepaceAndVersion}/delete/${couponId}`;
+    const appendedUrl = `http://localhost/wptest2/index.php?rest_route=/delayedCoupons/1.0/delete/${couponId}`;
     
     try {
       const jsonResponse = await ajaxRequestor.post(appendedUrl, {clientNonce});
@@ -160,8 +157,9 @@ export default props => {
       // fetch is 2nd to let message show right away;
       
       try {
-        const newData = await fetchSomeCoupons();
-        setCouponData(newData);
+        const newData = await fetchSomeCoupons(10, pageOffset);
+        setCouponData(newData.rows);
+        setTotalRecordCount(newData.totalCount);
       }
       catch (e) {
         console.error(e, `=====error=====`);
