@@ -71,6 +71,7 @@ const MinimalButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: #c1e8ed;
+    text-decoration: underline;
   }
 `;
 
