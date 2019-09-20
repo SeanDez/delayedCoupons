@@ -15,8 +15,19 @@ class ApiController extends \WP_Rest_Controller {
     $this->namepaceAndVersion = $this->namespace . '/' . $this->version;
   }
   
+  
   /** Utility functions
    */
+  
+  
+  /** Sends auth error if not admin
+   */
+  protected function isAdminOrRejectionResponse() {
+    if (current_user_can('administrator') === false) {
+      wp_send_json(['error' => 'You do not have Administrator credentials.']);
+    }
+  }
+  
   
   /** Translate error keys into messages
    *
@@ -49,6 +60,7 @@ class ApiController extends \WP_Rest_Controller {
     
     return $errorMessages;
   }
+  
   
   /** returns target data if a current target matches, otherwise returns null
    */
@@ -201,10 +213,27 @@ class ApiController extends \WP_Rest_Controller {
   }
   
   
+  public function authCallback(\WP_REST_Request $request) : void {
+    $this->isAdminOrRejectionResponse();
+    
+    wp_send_json([
+      'success' => "You've received back an Authenticated endpoint response and have access to wp_get_current_user()"
+    ]);
+  }
+  
   
   
   /** Route registrations
    */
+  
+  
+  public function registerAuth() : void {
+    register_rest_route($this->namepaceAndVersion, 'auth', [
+      'methods' => 'get'
+      , 'callback' => [$this, 'authCallback']
+    ]);
+  }
+  
   
   public function registerLoadCouponRoute() : void {
     register_rest_route($this->namepaceAndVersion, "load", [
@@ -212,6 +241,7 @@ class ApiController extends \WP_Rest_Controller {
       'callback' => [$this, 'loadCoupons']
     ]);
   }
+  
   
   public function registerAddCoupon() : void {
     register_rest_route($this->namepaceAndVersion, 'add', [

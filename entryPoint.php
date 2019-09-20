@@ -73,10 +73,13 @@ add_action('wp_footer', [$visitors, 'logVisitsAndControlCouponDisplay']);
  * As plugins can not depend on what is in other php files this needs to be fixed
  */
  
-function add_cors_http_header() {
+function add_cors_http_header($served) {
   header("Access-Control-Allow-Origin: *");
+  header("Access-Control-Allow-Headers: X-WP-Nonce", false);
+  
+  return $served;
 }
-add_action('init', __NAMESPACE__ . '\\' . 'add_cors_http_header');
+add_filter('rest_pre_serve_request', __NAMESPACE__ . '\\' . 'add_cors_http_header');
 
 
 
@@ -86,7 +89,7 @@ add_action('init', __NAMESPACE__ . '\\' . 'add_cors_http_header');
 add_action('rest_api_init', [$apiController, 'registerLoadCouponRoute']);
 add_action('rest_api_init', [$apiController, 'registerAddCoupon']);
 add_action('rest_api_init', [$apiController, 'registerDeleteSingleCouponRoute']);
-
+add_action('rest_api_init', [$apiController, 'registerAuth']);
 
 
 

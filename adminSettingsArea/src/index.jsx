@@ -16,8 +16,10 @@ import SnackbarContent from "@material-ui/core/SnackbarContent";
 import TabSection from "./TabSection.jsx";
 import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
+import Pagination from "./Pagination.jsx";
 
 import axios from "axios";
+
 
 const useStyles = makeStyles(theme => ({
   snackbar : {
@@ -91,10 +93,6 @@ const AdminArea = props => {
     };
   }, []);
   
-  useEffect(() => {
-    console.log(appWidth, `=====appWidth=====`);
-  }, [appWidth]);
-  
   
   return (
     <AppContainer>
@@ -142,8 +140,11 @@ const AdminArea = props => {
           />
         </ConditionalDiv>
       </Fade>
-      
-      
+  
+      <Pagination
+        totalPages={33}
+        setActivePage={() => console.log(`=====test fire=====`)}
+      />
       
       {/* ////// FOOTER ////// */ }
     

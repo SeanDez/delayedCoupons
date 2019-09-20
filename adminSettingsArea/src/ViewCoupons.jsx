@@ -47,7 +47,10 @@ export default props => {
   // return a promise which if resolves, responds with the data array
   const fetchAllCoupons = async (limit, offset) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/${namepaceAndVersion}/load?limit=${limit}&offset=${offset}`, {
+      const response = await fetch(
+        // `${apiBaseUrl}${namepaceAndVersion}/load?limit=${limit}&offset=${offset}`
+        `http://localhost/wptest2/index.php?rest_route=/delayedCoupons/1.0/load&limit=10&offset=${offset}`
+        , {
         method : 'get'
         , headers : {
           'X-WP-Nonce' : clientNonce
@@ -90,8 +93,11 @@ export default props => {
   }, []);
   
   
-  
-  
+  /** Receives a page object
+   */
+  const handlePageClick = page => {
+    console.log(page, `=====page=====`);
+  };
   
   /** Decides whether to render table or "no data" msg
    *
@@ -272,19 +278,15 @@ export default props => {
             </TableBody>
           </StyledTable>
         
-          <ReactPaginate
-            pageCount={Math.ceil(totalRecordCount / 10)}
-          />
-          
-          <button
-            onClick={() => {
-              console.log(couponData, `=====couponData=====`);
-              console.log(Math.ceil(totalRecordCount / 10), `=====Math.ceil(totalRecordCount / 10)=====`);
-              console.log(totalRecordCount, `=====totalRecordCount=====`);
-              console.log(pageOffset, `=====pageOffset=====`);
-            }}
-          >console log</button>
-          
+          <div>
+            <ReactPaginate
+              pageCount={Math.ceil(totalRecordCount / 10)}
+              onPageChange={e => handlePageClick(e)}
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={2}
+            />
+          </div>
+  
         </React.Fragment>
         
         // no couponData
@@ -304,10 +306,7 @@ export default props => {
 
 /** a JSS preprocessor that takes styles as a large object argument,
  *
- * @type {StylesHook<Styles<Theme, {}, string>>}
- *
- * @return function. Resulting function useStyles is executed and returns an object that allows access to the styles
- *   below by their key. Styles are assigned in className
+ * @return function. Resulting function useStyles is executed and returns an object that allows access to the styles below by their key. Styles are assigned in className
  */
 
 const useStyles = makeStyles(theme => ({
@@ -319,13 +318,6 @@ const useStyles = makeStyles(theme => ({
     , overflow : 'hidden'
     , textOverflow : 'ellipsis'
     , whiteSpace : 'nowrap'
-  },
-  bigIcon : {
-    width : '50px'
-    , height : 'auto'
-    , color : 'blue'
-    , border : '2px dashed green'
-    , cursor : 'pointer'
   },
   spacing : {
     margin : theme.spacing(2, 1, 0, 1)
@@ -342,15 +334,6 @@ const useStyles = makeStyles(theme => ({
 const StyledTable = styled(Table)`
    max-width : 400px !important;
    width : 400px !important;
-`;
-
-const PrevNextContainer = styled('div')`
-  display: flex;
-  flex-flow: row nowrap;
-  width: 150px;
-  justify-content: space-around;
-  border: 2px dashed pink;
-  margin: 20px auto 0 auto;
 `;
 
 

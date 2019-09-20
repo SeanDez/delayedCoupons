@@ -309,7 +309,7 @@ const AddCouponForm = props => {
           horizontal: 'center'
         }}
       />
-
+      
     </div>
   );
 };
