@@ -10,14 +10,19 @@ export default props => {
     const jsxLinks = [];
     
     for (let i = 1; i <= totalPages; i++) {
-      jsxLinks.push(
-        <MinimalButton
-          key={i}
-          onClick={() => console.log(i, `=====i=====`)}
-        >
-          {i}
-        </MinimalButton>
-      )
+      
+      if (i === activePage) {
+        jsxLinks.push(<DisabledButton key={i}>{i}</DisabledButton>)
+      } else {
+        jsxLinks.push(
+          <MinimalButton
+            key={i}
+            onClick={() => setActivePage(i)}
+          >
+            {i}
+          </MinimalButton>
+        )
+      }
     }
     
     return jsxLinks;
@@ -25,9 +30,27 @@ export default props => {
   
   return (
     <OuterContainer>
-      <MinimalButton>Previous</MinimalButton>
+      {activePage === 1 ?
+       <DisabledButton>
+         Previous
+       </DisabledButton>
+                                 :
+       <MinimalButton
+
+       >Previous</MinimalButton>
+      }
+      
       {renderPageLinks(totalPages)}
-      <MinimalButton>Next</MinimalButton>
+  
+      {activePage === totalPages ?
+       <DisabledButton
+       >
+         Next
+       </DisabledButton>
+                                 :
+       <MinimalButton
+       >Next</MinimalButton>
+      }
     </OuterContainer>
   )
 }
@@ -38,7 +61,7 @@ const OuterContainer = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  margin: 0 auto;
+  margin: 40px auto;
 `;
 
 const MinimalButton = styled.button`
@@ -46,4 +69,15 @@ const MinimalButton = styled.button`
   border : none;
   color: #0a5f10;
   cursor: pointer;
+  &:hover {
+    background-color: #c1e8ed;
+  }
+`;
+
+const DisabledButton = styled(MinimalButton)`
+  color: #c3d3d7;
+  cursor: not-allowed;
+    &:hover {
+    background-color: inherit;
+  }
 `;

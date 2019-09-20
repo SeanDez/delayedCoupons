@@ -330,7 +330,7 @@ const jssStyles = makeStyles(theme => ({
     justifyContent : 'space-around',
   },
   addButton: {
-    margin: theme.spacing(5, 2, 20, 2)
+    margin: theme.spacing(5, 2, 1, 2)
     , padding: theme.spacing(1, 2, 1, 2)
     , border : '2px dashed brown'
   },
