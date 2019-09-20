@@ -44,8 +44,9 @@ export default props => {
    */
   const [couponData, setCouponData] = useState([]);
   
+  // todo fix the url to be dynamic
   // return a promise which if resolves, responds with the data array
-  const fetchAllCoupons = async (limit, offset) => {
+  const fetchSomeCoupons = async (limit = 10, offset) => {
     try {
       const response = await fetch(
         // `${apiBaseUrl}${namepaceAndVersion}/load?limit=${limit}&offset=${offset}`
@@ -71,26 +72,24 @@ export default props => {
   };
   
   
-  /** ON INITIAL LOAD AND TABLE UPDATES
+  // todo set the pageOffset to 0 after a delete request and test it. This should force a new request
+  
+  /** ON INITIAL LOAD AND CHANGES TO PAGE OFFSET
    *
    * Sets up couponData state, which also controls whether a table or "Nothing to Display" message is shown
    *
    * Also sets pagination state for the offset and total record count
    */
-  
-  // if couponData = blank then run
-  
   useEffect( () => {
-    fetchAllCoupons(10, pageOffset)
+    fetchSomeCoupons(10, pageOffset)
       .then(data => {
           if (_.isEqual(data.rows, couponData) === false) {
             setCouponData(data.rows);
-            setPageOffset(() => pageOffset + 10);
             setTotalRecordCount(data.totalCount);
           }
       })
       .catch(e => console.log(e, '====error===='));
-  }, []);
+  }, [pageOffset]);
   
   
   /** Receives a page object
@@ -161,7 +160,7 @@ export default props => {
       // fetch is 2nd to let message show right away;
       
       try {
-        const newData = await fetchAllCoupons();
+        const newData = await fetchSomeCoupons();
         setCouponData(newData);
       }
       catch (e) {
