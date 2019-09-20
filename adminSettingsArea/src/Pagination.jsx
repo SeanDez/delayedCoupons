@@ -37,7 +37,7 @@ const OuterContainer = styled.div`
   max-width: 400px;
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-around;
+  justify-content: center;
   margin: 0 auto;
 `;
 
