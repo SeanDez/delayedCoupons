@@ -12,7 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import Typography from "@material-ui/core/Typography";
 import Tooltip from '@material-ui/core/Tooltip';
-import ReactPaginate from 'react-paginate';
+import Pagination from "./Pagination.jsx";
 
 import styled from "styled-components";
 import {FaChevronCircleLeft, FaChevronCircleRight, FaTrashAlt} from 'react-icons/fa';
@@ -277,15 +277,11 @@ export default props => {
               { renderTableBody(couponData) }
             </TableBody>
           </StyledTable>
-        
-          <div>
-            <ReactPaginate
-              pageCount={Math.ceil(totalRecordCount / 10)}
-              onPageChange={e => handlePageClick(e)}
-              pageRangeDisplayed={2}
-              marginPagesDisplayed={2}
-            />
-          </div>
+  
+          <Pagination
+            totalPages={Math.ceil(totalRecordCount / 10)}
+            setPageOffset={setPageOffset}
+          />
   
         </React.Fragment>
         
