@@ -15,8 +15,10 @@ module.exports = {
     filename : 'shared/[name].bundle.js',
     path : path.resolve(__dirname, ''),
     publicPath : "/",
+    devtoolModuleFilenameTemplate : info =>
+      'file://' + path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
   },
-  devtool: 'eval',
+  devtool: 'inline-source-map',
   devServer : {
     contentBase : './adminSettingsArea/src',
     hot : true,
@@ -26,6 +28,9 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new dotenvWebpack()
   ],
+  node: { // this is for dotenv to work without errors
+    fs: "empty"
+  },
   module : {
     rules : [
       {

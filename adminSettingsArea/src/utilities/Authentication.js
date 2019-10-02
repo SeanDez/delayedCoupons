@@ -1,44 +1,92 @@
+import '../globals';
 import Cookies from "js-cookie";
 
 export default class Authentication {
   
-  constructor() {
+  async createToken(userAndPass) {
+    const createTokenUrl = apiBaseUrl + '/jwt-auth/v1/token';
+    
+    try {
+      const response = await fetch(createTokenUrl, {
+        method : 'post'
+        , mode : 'cors'
+        , headers : {
+          'Content-Type' : 'application/json'
+        }
+        , body : JSON.stringify(userAndPass)
+      });
+      
+      return response.json();
+    }
+    
+    catch (e) {
+      console.log(e, `=====error=====`);
+    }
   }
   
-  createToken() {
-  
+  getCurrentJwt() {
+    const currentJwt = Cookies.get('delayedCoupons_token');
+    
+    return currentJwt;
   }
   
-  validateToken() {
+  saveTokenToCookie(tokenValue) {
+    Cookies.set('delayedCoupons_token', tokenValue);
+  }
   
+  /** Returns boolean
+   */
+  async tokenIsValid(token) {
+    const validationUrl = apiBaseUrl + '/jwt-auth/v1/token/validate';
+    
+    // if data.status === 200 it's valid
+    try {
+      const response = await fetch(validationUrl, {
+        method : 'post'
+        , mode : 'cors'
+        , headers : {
+          'Content-Type' : 'application/json'
+          , 'Authorization' : `Bearer ${token}`
+        }
+      });
+      const json = await response.json();
+      
+      // 200 means token is valid
+      if ('data' in json && 'status' in json.data) {
+        return Boolean(json.data.status === 200)
+      }
+    }
+    catch (e) {
+      console.log(e, `=====error during fetch=====`);
+    }
   }
   
   
   /** Controls validation and new token creation
-   * returns token string on success
+   * Returns token string on success
    *
    * Only errs if both validating and creating a token fails
    */
-  authenticateUser(credentials) {
-    const TOKEN_COOKIE = "delayedCoupons_token";
-    let token = Cookies.get(TOKEN_COOKIE);
-    
-    // if token present try to validate it
-    if (token) {
-      const response = this.validateToken(token);
-      
-      // if token validated return it
-      if (response && 'token' in response) {
-        return response.token;
+  async retrieveOrCreateValidJwt(userAndPass) {
+    const currentJwt = this.getCurrentJwt();
+
+    if (currentJwt && currentJwt !== 'undefined') {
+      // return current token if valid
+      const jwtIsValid = await this.tokenIsValid(currentJwt);
+
+      if (jwtIsValid) {
+        return currentJwt;
       }
     }
     
-    // if no token, or prev token not valid, create new token and save/overwrite token cookie
-    const newToken = this.createToken(credentials);
-    Cookies.set(TOKEN_COOKIE);
+    // if no valid current token, create a new one, save and return it
+    const newTokenDetails = await this.createToken(userAndPass);
+
+    if (newTokenDetails && 'token' in newTokenDetails && newTokenDetails.token !== 'undefined') {
+      this.saveTokenToCookie(newTokenDetails.token)
+    }
     
-    // return newly created token
-    return newToken.token;
+    return newTokenDetails.token;
   }
   
 }

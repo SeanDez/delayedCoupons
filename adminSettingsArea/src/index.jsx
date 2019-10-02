@@ -18,6 +18,7 @@ import AddCouponForm from "./AddCouponForm.jsx";
 import ViewCoupons from "./ViewCoupons.jsx";
 
 import Authentication from "./utilities/Authentication";
+import toPropertyKey from "@babel/runtime/helpers/esm/toPropertyKey";
 
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +43,7 @@ export const StatePassingContext = React.createContext(true);
 
 /** Handle PHP variable passage from back end (initial pageload)
  *
- * Defaults to globals set in globals.js
+ * If none detected, such as in development, these are set based on globals.js
  */
 if ('serverParams' in window) {
   clientNonce = serverParams._wpnonce;
@@ -60,6 +61,34 @@ const AdminArea = props => {
   // todo move this somewhere else
   const [snackbarMessage, setSnackbarMessage] = useState(false);
   
+  
+  /** Setup JWT Auth IF credentials found and dev env is in dev
+   */
+  
+  if (window) {
+    window.wpUser = process.env.REACT_APP_WP_USER;
+    window.wpPassword = process.env.REACT_APP_WP_PASSWORD;
+  }
+  
+  useEffect(() => {
+    const authenticate = async () =>  {
+      if ( process.env.NODE_ENV === 'development' &&
+           process.env.REACT_APP_WP_USER &&
+           process.env.REACT_APP_WP_PASSWORD
+      ) {
+        const authentication = new Authentication();
+        const token = await authentication.retrieveOrCreateValidJwt({
+          username : process.env.REACT_APP_WP_USER
+          , password : process.env.REACT_APP_WP_PASSWORD
+        });
+    
+        console.log(token, `=====token=====`);
+      }
+    };
+    
+    authenticate()
+      .then(data => console.log(data, `=====final authenticate() call=====`));
+  });
   
   
   /** Controls the body section of the admin area 
@@ -141,7 +170,7 @@ const AdminArea = props => {
       </Fade>
       
       
-      {/* ////// FOOTER ////// */ }
+    {/* ////// FOOTER ////// */ }
     
       
     {/* FLOATS / HIDDEN / SPECIAL */}
